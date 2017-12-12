@@ -11,9 +11,6 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\src\rigid_transformation\rigid_transformation.h" />
-  </ItemGroup>
-  <ItemGroup>
     <ClCompile Include="..\src\ilamp.cpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

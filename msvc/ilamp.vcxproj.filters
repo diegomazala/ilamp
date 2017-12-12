@@ -11,9 +11,4 @@
   <ItemGroup>
     <ClCompile Include="..\src\ilamp.cpp" />
   </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="..\src\rigid_transformation\rigid_transformation.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-  </ItemGroup>
 </Project>

@@ -24,29 +24,26 @@ static Type RadToDeg(Type angle_in_radians)
 }
 
 
-//#define ASSIMP_DOUBLE_PRECISION	// if defined, use double instead float
 typedef float Decimal;
 
-// ../../data/iris.2d ../../data/iris.data 16 4 128
-// ../../data/primitives.2d ../../data/primitives.nd 2 4 4
 
 int main(int argc, char* argv[])
 {
 	std::cout
 		<< std::fixed << std::endl
 		<< "Usage            : ./<app.exe> <data_file_2d> <data_file_Nd> <number_of_neighbours> <kd_tree_count> <knn_search_checks>" << std::endl
-		<< "Default          : ./ilamp.exe iris.2d iris.data" << std::endl
+		<< "Default          : ./ilamp.exe iris.2d iris.data 16 4 128" << std::endl
 		<< std::endl;
 	
-	std::string input_filename_2d = "../../data/iris_27d.2d";
-	std::string input_filename_Nd = "../../data/iris.27d";
-	std::string output_filename_Nd = "../../data/iris_out.27d";
-	std::string output_filename_dist_Nd = "../../data/iris_out_dist.27d";
+	std::string input_filename_2d = "../../data/iris_6d.2d";
+	std::string input_filename_Nd = "../../data/iris.6d";
+	std::string output_filename_Nd = "../../data/iris_out.6d";
+	std::string output_filename_dist_Nd = "../../data/iris_out_dist.6d";
 
-	//if (argc > 1)
-	//	input_filename_2d = argv[1];
-	//if (argc > 2)
-	//	input_filename_Nd = argv[2];
+	if (argc > 1)
+		input_filename_2d = argv[1];
+	if (argc > 2)
+		input_filename_Nd = argv[2];
 
 	const int dimension_2d = 2;
 	int dimension_Nd = 0;
