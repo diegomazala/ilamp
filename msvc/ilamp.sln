@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27130.2003
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ilamp", "ilamp.vcxproj", "{29D4B289-B012-4E4F-8695-CF13067DFCB5}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Release|x64 = Release|x64
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{29D4B289-B012-4E4F-8695-CF13067DFCB5}.Debug|x64.ActiveCfg = Debug|x64
+		{29D4B289-B012-4E4F-8695-CF13067DFCB5}.Debug|x64.Build.0 = Debug|x64
+		{29D4B289-B012-4E4F-8695-CF13067DFCB5}.Release|x64.ActiveCfg = Release|x64
+		{29D4B289-B012-4E4F-8695-CF13067DFCB5}.Release|x64.Build.0 = Release|x64
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {1437B4F8-8C41-48A6-B6D8-5C9987BB7D0A}
+	EndGlobalSection
+EndGlobal
