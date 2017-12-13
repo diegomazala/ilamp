@@ -35,21 +35,37 @@ int main(int argc, char* argv[])
 		<< "Default          : ./ilamp.exe iris.2d iris.data 16 4 128" << std::endl
 		<< std::endl;
 	
-	std::string input_filename_2d = "../../data/iris_6d.2d";
-	std::string input_filename_Nd = "../../data/iris.6d";
-	std::string output_filename_Nd = "../../data/iris_out.6d";
-	std::string output_filename_dist_Nd = "../../data/iris_out_dist.6d";
+	std::string input_filename_2d = "../../data/iris_5d.2d";
+	std::string input_filename_Nd = "../../data/iris.5d";
+	std::string output_filename_Nd = "../../data/iris_out.5d";
+	std::string output_filename_dist_Nd = "../../data/iris_out_dist.5d";
 
-	if (argc > 1)
-		input_filename_2d = argv[1];
-	if (argc > 2)
-		input_filename_Nd = argv[2];
+	//std::string input_filename_2d = "../../../../Data/Heads/heads.2d";
+	//std::string input_filename_Nd = "../../../../Data/Heads/heads.nd";
+	//std::string output_filename_Nd = "../../../../Data/Heads/heads_out.nd";
+	//std::string output_filename_dist_Nd = "../../../../Data/Heads/heads.dist";
+
+	//std::string input_filename_2d = "../../../../Data/Primitives/primitives.2d";
+	//std::string input_filename_Nd = "../../../../Data/Primitives/primitives.nd";
+	//std::string output_filename_Nd = "../../../../Data/Primitives/primitives_out.nd";
+	//std::string output_filename_dist_Nd = "../../../../Data/Primitives/primitives.dist";
+
+	//if (argc > 1)
+	//	input_filename_2d = argv[1];
+	//if (argc > 2)
+	//	input_filename_Nd = argv[2];
+
+	//const int dimension_2d = 2;
+	//int dimension_Nd = 0;
+	//const int numNeighbours = (argc > 3) ? atoi(argv[3]) : 16;
+	//const int kdTreeCount = (argc > 4) ? atoi(argv[4]) : 4;
+	//const int knnSearchChecks = (argc > 5) ? atoi(argv[5]) : 128;
 
 	const int dimension_2d = 2;
 	int dimension_Nd = 0;
-	const int numNeighbours = (argc > 3) ? atoi(argv[3]) : 16;
-	const int kdTreeCount = (argc > 4) ? atoi(argv[4]) : 4;
-	const int knnSearchChecks = (argc > 5) ? atoi(argv[5]) : 128;
+	const int numNeighbours = 16;
+	const int kdTreeCount = 4;
+	const int knnSearchChecks = 128;
 	
 	
 	//
@@ -64,9 +80,12 @@ int main(int argc, char* argv[])
 
 		while (!input_file_2d.eof())
 		{
-			input_file_2d >> x >> c >> y;
+			//input_file_2d >> x >> c >> y;
+			input_file_2d >> x >> y;
 			if (input_file_2d.good())
 				verts_2d.push_back(Eigen::Matrix<Decimal, 2, 1>(x, y));
+
+			//std::cout << x << ' ' << y << std::endl;
 		}
 
 		std::cout << "Vertices Loaded 2d: " << verts_2d.size() << std::endl;
@@ -86,7 +105,8 @@ int main(int argc, char* argv[])
 			std::string line;
 			std::getline(input_file_Nd, line);
 			std::istringstream tokenStream(line);
-			for (std::string each; std::getline(tokenStream, std::string(), ','); dimension_Nd++){}
+			//for (std::string each; std::getline(tokenStream, std::string(), ','); dimension_Nd++){}
+			for (std::string each; std::getline(tokenStream, std::string(), ' '); dimension_Nd++) {}
 			input_file_Nd.clear();                 // clear fail and eof bits
 			input_file_Nd.seekg(0, std::ios::beg); // back to the start!
 		}
@@ -96,9 +116,9 @@ int main(int argc, char* argv[])
 		while (!input_file_Nd.eof())
 		{
 			Eigen::Matrix<Decimal, Eigen::Dynamic, 1> v(dimension_Nd, 1);
-			for (int i=0; i<dimension_Nd - 1; ++i)
-				input_file_Nd >> v[i] >> c;
-			input_file_Nd >> v[dimension_Nd - 1];
+			for (int i=0; i<dimension_Nd; ++i)
+				input_file_Nd >> v[i];
+			
 			if (input_file_Nd.good())
 				verts_Nd.push_back(v);
 
@@ -116,22 +136,12 @@ int main(int argc, char* argv[])
 	
 
 
-
-	const size_t vertex_array_count_2d = verts_2d.size() * 2; // 2d dimension
-	Decimal* vertex_array_2d = new Decimal[vertex_array_count_2d];
-	memcpy(vertex_array_2d, verts_2d.data(), sizeof(Decimal) * vertex_array_count_2d);
-
-	const size_t vertex_array_count_Nd = verts_2d.size() * dimension_Nd; // Nd dimension
-	Decimal* vertex_array_Nd = new Decimal[vertex_array_count_Nd];
-	memcpy(vertex_array_Nd, verts_Nd.data(), sizeof(Decimal) * vertex_array_count_Nd);
-
-
 	// for each vertex find nearest neighbours
-	const size_t numInput = vertex_array_count_2d / dimension_2d;
+	const size_t numInput = verts_2d.size();
 	const size_t numQuery = numInput;
 
-	flann::Matrix<Decimal> dataset_2d(vertex_array_2d, numInput, dimension_2d);
-	flann::Matrix<Decimal> query(vertex_array_2d, numQuery, dimension_2d);
+	flann::Matrix<Decimal> dataset_2d(verts_2d.data()->data(), numInput, dimension_2d);
+	flann::Matrix<Decimal> query(verts_2d.data()->data(), numQuery, dimension_2d);
 
 	flann::Matrix<int> indices(new int[query.rows * numNeighbours], query.rows, numNeighbours);
 	flann::Matrix<Decimal> dists(new Decimal[query.rows * numNeighbours], query.rows, numNeighbours);
@@ -144,9 +154,9 @@ int main(int argc, char* argv[])
 	index.knnSearch(query, indices, dists, numNeighbours, flann::SearchParams(knnSearchChecks));	//flann::SearchParams(128));
 
 
-																									//
-																									// Output info
-																									// 
+	//
+	// Output info
+	// 
 	std::cout << std::fixed
 		<< "Dimension         : " << dimension_2d << std::endl
 		<< "Dimension         : " << dimension_Nd << std::endl
@@ -291,9 +301,6 @@ int main(int argc, char* argv[])
 
 	output_file.close();
 	output_file_dist.close();
-
-	delete[] vertex_array_2d;
-	delete[] vertex_array_Nd;
 
 	delete[] indices.ptr();
 	delete[] dists.ptr();
