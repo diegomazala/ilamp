@@ -35,15 +35,15 @@ int main(int argc, char* argv[])
 		<< "Default          : ./ilamp.exe iris.2d iris.data 16 4 128" << std::endl
 		<< std::endl;
 	
-	std::string input_filename_2d = "../../data/iris_5d.2d";
-	std::string input_filename_Nd = "../../data/iris.5d";
-	std::string output_filename_Nd = "../../data/iris_out.5d";
-	std::string output_filename_dist_Nd = "../../data/iris_out_dist.5d";
+	//std::string input_filename_2d = "../../data/iris_5d.2d";
+	//std::string input_filename_Nd = "../../data/iris.5d";
+	//std::string output_filename_Nd = "../../data/iris_out.5d";
+	//std::string output_filename_dist_Nd = "../../data/iris_out_dist.5d";
 
-	//std::string input_filename_2d = "../../../../Data/Heads/heads.2d";
-	//std::string input_filename_Nd = "../../../../Data/Heads/heads.nd";
-	//std::string output_filename_Nd = "../../../../Data/Heads/heads_out.nd";
-	//std::string output_filename_dist_Nd = "../../../../Data/Heads/heads.dist";
+	std::string input_filename_2d = "../../../../Data/Heads/heads.2d";
+	std::string input_filename_Nd = "../../../../Data/Heads/heads.nd";
+	std::string output_filename_Nd = "../../../../Data/Heads/heads_out_x0_y1.nd";
+	std::string output_filename_dist_Nd = "../../../../Data/Heads/heads_x0_y1.dist";
 
 	//std::string input_filename_2d = "../../../../Data/Primitives/primitives.2d";
 	//std::string input_filename_Nd = "../../../../Data/Primitives/primitives.nd";
