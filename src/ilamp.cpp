@@ -63,7 +63,7 @@ int main(int argc, char* argv[])
 
 	const int dimension_2d = 2;
 	int dimension_Nd = 0;
-	const int numNeighbours = 16;
+	const int numNeighbours = 4;
 	const int kdTreeCount = 4;
 	const int knnSearchChecks = 128;
 	
@@ -89,6 +89,11 @@ int main(int argc, char* argv[])
 		}
 
 		std::cout << "Vertices Loaded 2d: " << verts_2d.size() << std::endl;
+	}
+	else
+	{
+		std::cerr << "<Error> Could not open 2d file : " << input_filename_2d << std::endl;
+		return EXIT_FAILURE;
 	}
 
 
@@ -126,6 +131,11 @@ int main(int argc, char* argv[])
 		}
 
 		std::cout << "Vertices Loaded Nd: " << verts_Nd.size() << std::endl;
+	}
+	else
+	{
+		std::cerr << "<Error> Could not open Nd file : " << input_filename_Nd << std::endl;
+		return EXIT_FAILURE;
 	}
 
 	if (verts_Nd.size() != verts_2d.size())
@@ -286,7 +296,7 @@ int main(int argc, char* argv[])
 		//std::cout << "V   : " << svd.matrixV().rows() << ' ' << svd.matrixV().cols() << std::endl;
 
 		const auto M = svd.matrixU() * svd.matrixV().transpose();
-		//std::cout << "M: " << M.rows() << ' ' << M.cols() << std::endl;
+		std::cout << "M: " << M.rows() << ' ' << M.cols() << std::endl;
 
 		 
 		const auto q = (p - y_tilde).transpose() * M + x_tilde.transpose();
