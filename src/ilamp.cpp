@@ -63,7 +63,6 @@ int main(int argc, char* argv[])
 	//if (argc > 2)
 	//	input_filename_Nd = argv[2];
 
-<<<<<<< HEAD
 	const uint16_t numNeighbours = (argc > 3) ? atoi(argv[3]) : 4;
 	const uint16_t kdTreeCount = (argc > 4) ? atoi(argv[4]) : 4;
 	const uint16_t knnSearchChecks = (argc > 5) ? atoi(argv[5]) : 128;
@@ -71,83 +70,18 @@ int main(int argc, char* argv[])
 	//const int kdTreeCount = 4;
 	//const int knnSearchChecks = 128;
 
-=======
-	//const int dimension_2d = 2;
-	//int dimension_Nd = 0;
-	//const int numNeighbours = (argc > 3) ? atoi(argv[3]) : 16;
-	//const int kdTreeCount = (argc > 4) ? atoi(argv[4]) : 4;
-	//const int knnSearchChecks = (argc > 5) ? atoi(argv[5]) : 128;
-
-	const int dimension_2d = 2;
-	int dimension_Nd = 0;
-	const int numNeighbours = 4;
-	const int kdTreeCount = 4;
-	const int knnSearchChecks = 128;
-	
->>>>>>> 7f4d0f333bba3b4482e45e244dc7fe61c39ce473
 	
 
 	//
 	// Import 2d file
 	// 
-<<<<<<< HEAD
 	ilamp.load_data_2d(input_filename_2d);
-=======
-	std::vector<Eigen::Matrix<Decimal, 2, 1>> verts_2d;
-	std::ifstream input_file_2d(input_filename_2d, std::ios::in);
-	if (input_file_2d.is_open())
-	{
-		char c;
-		float x, y;
-
-		while (!input_file_2d.eof())
-		{
-			//input_file_2d >> x >> c >> y;
-			input_file_2d >> x >> y;
-			if (input_file_2d.good())
-				verts_2d.push_back(Eigen::Matrix<Decimal, 2, 1>(x, y));
-
-			//std::cout << x << ' ' << y << std::endl;
-		}
-
-		std::cout << "Vertices Loaded 2d: " << verts_2d.size() << std::endl;
-	}
-	else
-	{
-		std::cerr << "<Error> Could not open 2d file : " << input_filename_2d << std::endl;
-		return EXIT_FAILURE;
-	}
-
->>>>>>> 7f4d0f333bba3b4482e45e244dc7fe61c39ce473
 
 	//
 	// Import Nd file
 	// 
 	ilamp.load_data_Nd(input_filename_Nd);
 
-<<<<<<< HEAD
-=======
-		char c;
-		while (!input_file_Nd.eof())
-		{
-			Eigen::Matrix<Decimal, Eigen::Dynamic, 1> v(dimension_Nd, 1);
-			for (int i=0; i<dimension_Nd; ++i)
-				input_file_Nd >> v[i];
-			
-			if (input_file_Nd.good())
-				verts_Nd.push_back(v);
-
-			//std::cout << v.transpose() << std::endl;
-		}
-
-		std::cout << "Vertices Loaded Nd: " << verts_Nd.size() << std::endl;
-	}
-	else
-	{
-		std::cerr << "<Error> Could not open Nd file : " << input_filename_Nd << std::endl;
-		return EXIT_FAILURE;
-	}
->>>>>>> 7f4d0f333bba3b4482e45e244dc7fe61c39ce473
 
 	if (ilamp.verts_Nd.size() != ilamp.verts_2d.size())
 	{
@@ -195,34 +129,8 @@ int main(int argc, char* argv[])
 		//
 		// Write q to file 
 		//
-<<<<<<< HEAD
 		output_file << std::fixed << std::setprecision(2) << q.transpose() << std::endl;
 		
-=======
-		const auto ATB = A.transpose() * B;
-		Eigen::JacobiSVD<Eigen::Matrix<Decimal, Eigen::Dynamic, Eigen::Dynamic>> svd;
-		//svd.compute(ATB, Eigen::ComputeFullU | Eigen::ComputeFullV);
-		svd.compute(ATB, Eigen::ComputeThinU | Eigen::ComputeThinV);
-
-		if (!svd.computeU() || !svd.computeV())
-		{
-			std::cerr << "<Error> Decomposition error" << std::endl;
-			return false;
-		}
-
-		//std::cout << "ATB : " << ATB.rows() << ' ' << ATB.cols() << std::endl;
-		//std::cout << "U   : " << svd.matrixU().rows() << ' ' << svd.matrixU().cols() << std::endl;
-		//std::cout << "V   : " << svd.matrixV().rows() << ' ' << svd.matrixV().cols() << std::endl;
-
-		const auto M = svd.matrixU() * svd.matrixV().transpose();
-		std::cout << "M: " << M.rows() << ' ' << M.cols() << std::endl;
-
-		 
-		const auto q = (p - y_tilde).transpose() * M + x_tilde.transpose();
-		//std::cout << "q    : " << q.rows() << ' ' << q.cols() << std::endl << q << std::endl;
-		output_file << std::fixed << std::setprecision(2) << q << std::endl;
-
->>>>>>> 7f4d0f333bba3b4482e45e244dc7fe61c39ce473
 
 		//
 		// Write file woth the distances between original q and resultant q
