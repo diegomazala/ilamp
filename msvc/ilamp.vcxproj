@@ -13,6 +13,9 @@
   <ItemGroup>
     <ClCompile Include="..\src\ilamp.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\src\ilamp.h" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{29D4B289-B012-4E4F-8695-CF13067DFCB5}</ProjectGuid>
     <RootNamespace>ilamp</RootNamespace>

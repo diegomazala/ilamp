@@ -1,3 +1,7 @@
+#include "ilamp.h"
+
+
+#include "ilamp.h"
 #include <iostream>
 #include <iomanip> 
 #include <fstream>
@@ -27,6 +31,8 @@ static Type RadToDeg(Type angle_in_radians)
 typedef float Decimal;
 
 
+
+
 int main(int argc, char* argv[])
 {
 	std::cout
@@ -34,7 +40,9 @@ int main(int argc, char* argv[])
 		<< "Usage            : ./<app.exe> <data_file_2d> <data_file_Nd> <number_of_neighbours> <kd_tree_count> <knn_search_checks>" << std::endl
 		<< "Default          : ./ilamp.exe iris.2d iris.data 16 4 128" << std::endl
 		<< std::endl;
-	
+
+	ILamp<Decimal> ilamp;
+
 	//std::string input_filename_2d = "../../data/iris_5d.2d";
 	//std::string input_filename_Nd = "../../data/iris.5d";
 	//std::string output_filename_Nd = "../../data/iris_out.5d";
@@ -42,8 +50,8 @@ int main(int argc, char* argv[])
 
 	std::string input_filename_2d = "../../../../Data/Heads/heads.2d";
 	std::string input_filename_Nd = "../../../../Data/Heads/heads.nd";
-	std::string output_filename_Nd = "../../../../Data/Heads/heads_out_x0_y1.nd";
-	std::string output_filename_dist_Nd = "../../../../Data/Heads/heads_x0_y1.dist";
+	std::string output_filename_Nd = "../../../../Data/Heads/heads_out.nd";
+	std::string output_filename_dist_Nd = "../../../../Data/Heads/heads.dist";
 
 	//std::string input_filename_2d = "../../../../Data/Primitives/primitives.2d";
 	//std::string input_filename_Nd = "../../../../Data/Primitives/primitives.nd";
@@ -55,255 +63,90 @@ int main(int argc, char* argv[])
 	//if (argc > 2)
 	//	input_filename_Nd = argv[2];
 
-	//const int dimension_2d = 2;
-	//int dimension_Nd = 0;
-	//const int numNeighbours = (argc > 3) ? atoi(argv[3]) : 16;
-	//const int kdTreeCount = (argc > 4) ? atoi(argv[4]) : 4;
-	//const int knnSearchChecks = (argc > 5) ? atoi(argv[5]) : 128;
+	const uint16_t numNeighbours = (argc > 3) ? atoi(argv[3]) : 4;
+	const uint16_t kdTreeCount = (argc > 4) ? atoi(argv[4]) : 4;
+	const uint16_t knnSearchChecks = (argc > 5) ? atoi(argv[5]) : 128;
+	//const int numNeighbours = 4;
+	//const int kdTreeCount = 4;
+	//const int knnSearchChecks = 128;
 
-	const int dimension_2d = 2;
-	int dimension_Nd = 0;
-	const int numNeighbours = 16;
-	const int kdTreeCount = 4;
-	const int knnSearchChecks = 128;
 	
-	
+
 	//
 	// Import 2d file
 	// 
-	std::vector<Eigen::Matrix<Decimal, 2, 1>> verts_2d;
-	std::ifstream input_file_2d(input_filename_2d, std::ios::in);
-	if (input_file_2d.is_open())
-	{
-		char c;
-		float x, y;
-
-		while (!input_file_2d.eof())
-		{
-			//input_file_2d >> x >> c >> y;
-			input_file_2d >> x >> y;
-			if (input_file_2d.good())
-				verts_2d.push_back(Eigen::Matrix<Decimal, 2, 1>(x, y));
-
-			//std::cout << x << ' ' << y << std::endl;
-		}
-
-		std::cout << "Vertices Loaded 2d: " << verts_2d.size() << std::endl;
-	}
-
+	ilamp.load_data_2d(input_filename_2d);
 
 	//
-	// Import nd file
+	// Import Nd file
 	// 
-	std::vector<Eigen::Matrix<Decimal, Eigen::Dynamic, 1>> verts_Nd;
-	std::ifstream input_file_Nd(input_filename_Nd, std::ios::in);
-	if (input_file_Nd.is_open())
+	ilamp.load_data_Nd(input_filename_Nd);
+
+
+	if (ilamp.verts_Nd.size() != ilamp.verts_2d.size())
 	{
-		// reading dimension nd based on first line in input file
-		{
-			dimension_Nd = 0;
-			std::string line;
-			std::getline(input_file_Nd, line);
-			std::istringstream tokenStream(line);
-			//for (std::string each; std::getline(tokenStream, std::string(), ','); dimension_Nd++){}
-			for (std::string each; std::getline(tokenStream, std::string(), ' '); dimension_Nd++) {}
-			input_file_Nd.clear();                 // clear fail and eof bits
-			input_file_Nd.seekg(0, std::ios::beg); // back to the start!
-		}
-		
-
-		char c;
-		while (!input_file_Nd.eof())
-		{
-			Eigen::Matrix<Decimal, Eigen::Dynamic, 1> v(dimension_Nd, 1);
-			for (int i=0; i<dimension_Nd; ++i)
-				input_file_Nd >> v[i];
-			
-			if (input_file_Nd.good())
-				verts_Nd.push_back(v);
-
-			//std::cout << v.transpose() << std::endl;
-		}
-
-		std::cout << "Vertices Loaded Nd: " << verts_Nd.size() << std::endl;
-	}
-
-	if (verts_Nd.size() != verts_2d.size())
-	{
-		std::cerr << "Error: Vertex arrays do not have the same size. Abort" << std::endl;
+		std::cerr << "<Error> Vertex arrays do not have the same size. Abort" << std::endl;
 		return EXIT_FAILURE;
 	}
+
+
+	const int dimension_2d = ilamp.verts_2d.at(0).rows();	// = 2
+	const int dimension_Nd = ilamp.verts_Nd.at(0).rows();	// = N
 	
 
-
-	// for each vertex find nearest neighbours
-	const size_t numInput = verts_2d.size();
-	const size_t numQuery = numInput;
-
-	flann::Matrix<Decimal> dataset_2d(verts_2d.data()->data(), numInput, dimension_2d);
-	flann::Matrix<Decimal> query(verts_2d.data()->data(), numQuery, dimension_2d);
-
-	flann::Matrix<int> indices(new int[query.rows * numNeighbours], query.rows, numNeighbours);
-	flann::Matrix<Decimal> dists(new Decimal[query.rows * numNeighbours], query.rows, numNeighbours);
-
-	// construct an randomized kd-tree index using 4 kd-trees
-	flann::Index<flann::L2<Decimal>> index(dataset_2d, flann::KDTreeIndexParams(kdTreeCount));
-	index.buildIndex();
-
-	// do a knn search, using 128 checks
-	index.knnSearch(query, indices, dists, numNeighbours, flann::SearchParams(knnSearchChecks));	//flann::SearchParams(128));
+	//
+	// Build the kd-tree
+	//
+	ilamp.build_kdtree(kdTreeCount);
 
 
 	//
 	// Output info
 	// 
 	std::cout << std::fixed
-		<< "Dimension         : " << dimension_2d << std::endl
-		<< "Dimension         : " << dimension_Nd << std::endl
-		<< "NumNeighbours     : " << numNeighbours << std::endl
-		<< "KdTreeCount       : " << kdTreeCount << std::endl
-		<< "KnnSearchChecks   : " << knnSearchChecks << std::endl
-		<< "NumInput/NumQuery : " << numQuery << std::endl;
+		<< "<Info>  Dimension         : " << dimension_2d << std::endl
+		<< "<Info>  Dimension         : " << dimension_Nd << std::endl
+		<< "<Info>  NumNeighbours     : " << numNeighbours << std::endl
+		<< "<Info>  KdTreeCount       : " << kdTreeCount << std::endl
+		<< "<Info>  KnnSearchChecks   : " << knnSearchChecks << std::endl
+		<< std::endl;
 
-
-
-	// k = numNeighbours = indices.cols
-
-	//for (int i = 0; i < indices.rows; ++i)
-	//{
-	//	const Decimal qx = query[i][0];
-	//	const Decimal qy = query[i][1];
-	//	Eigen::Matrix<Decimal, 2, 1> p(qx, qy);
-	//
-	//	for (int j = 0; j < indices.cols; ++j)	// k
-	//	{
-	//		// resultant points = neighbours
-	//		const int index = indices[i][j];
-	//		const Decimal x = static_cast<Decimal>(dataset_2d[index][0]);
-	//		const Decimal y = static_cast<Decimal>(dataset_2d[index][1]);
-	//	}
-	//}
 
 	std::ofstream output_file(output_filename_Nd, std::ios::out);
 	std::ofstream output_file_dist(output_filename_dist_Nd, std::ios::out);
 
 
-	const int k = numNeighbours; // k = numNeighbours = indices.cols
+	const int k = numNeighbours; // k = numNeighbours
 
-	for (int main_index = 0; main_index < indices.rows; ++main_index)
-	//for (int main_index = 0; main_index < 1; ++main_index)
+	for (int main_index = 0; main_index < ilamp.verts_2d.size(); ++main_index)
 	{
-		Eigen::Matrix<Decimal, 2, 1> p(query[main_index][0], query[main_index][1]);	// p = first point
-
+		const auto& p = ilamp.verts_2d[main_index];
 		
-		std::vector<Eigen::Matrix<Decimal, Eigen::Dynamic, 1>> Xs;		// Xs = correspondent high dimensional instances of Ys
-		std::vector<Eigen::Matrix<Decimal, 2, 1>> Ys;					// Ys = subset with all k closest points to p
-
-		// eq 3
-		Decimal										alpha_sum	= 0;
-		Eigen::Matrix<Decimal, Eigen::Dynamic, 1>	alpha_i_x_i_sum = Eigen::Matrix<Decimal, Eigen::Dynamic, 1>().Zero(dimension_Nd, 1);
-		Eigen::Matrix<Decimal, 2, 1>				alpha_i_y_i_sum = Eigen::Matrix<Decimal, 2, 1>().Zero();
-
-
-
-		for (int j = 0; j < k; ++j)	// the first element is equal to p
-		{
-			// resultant points = neighbours
-			const int index = indices[main_index][j];
-
-			//Eigen::Matrix<Decimal, 2, 1> y_i(
-			//	static_cast<Decimal>(dataset_2d[index][0]),
-			//	static_cast<Decimal>(dataset_2d[index][1]));
-
-	
-			const auto& x_i = verts_Nd[index];
-			const auto& y_i = verts_2d[index];
-
-			
-			Xs.push_back(verts_Nd[index]);
-			Ys.push_back(verts_2d[index]);
-
-
-			// eq 2
-			// ###################### verificar no paper. A divisão pode ser por zero
-			Decimal squaredNorm = std::max(static_cast<Decimal>((y_i - p).squaredNorm()), static_cast<Decimal>(0.0001));
-			Decimal alpha_i = static_cast<Decimal>(1) / squaredNorm;
-			
-			// eq 3
-			alpha_sum += alpha_i;
-			alpha_i_x_i_sum += (alpha_i * x_i);
-			alpha_i_y_i_sum += (alpha_i * y_i);
-
-		}
-
-		// eq 3
-		Eigen::Matrix<Decimal, Eigen::Dynamic, 1>	x_tilde = alpha_i_x_i_sum / alpha_sum;
-		Eigen::Matrix<Decimal, 2, 1>				y_tilde = alpha_i_y_i_sum / alpha_sum;
-						
-		//std::cout << "x~    : " << x_tilde.transpose() << std::endl;
-		//std::cout << "y~    : " << y_tilde.transpose() << std::endl;
-		//std::cout << "alpha : " << alpha_sum << std::endl;
+		std::cout << "<Info>  Computing vertex: " << p.transpose() << std::endl;
 		
-		Eigen::Matrix<Decimal, Eigen::Dynamic, Eigen::Dynamic>	A(k, dimension_2d);
-		Eigen::Matrix<Decimal, Eigen::Dynamic, Eigen::Dynamic>	B(k, dimension_Nd);
-
-		for (int j = 0; j < k; ++j)	// the first element is equal to p
-		{
-			// resultant points = neighbours
-			const int index = indices[main_index][j];
-
-			const auto& x_i = verts_Nd[index];
-			const auto& y_i = verts_2d[index];
-
-			Decimal squaredNorm = std::max(static_cast<Decimal>((y_i - p).squaredNorm()), static_cast<Decimal>(0.0001));
-			Decimal alpha_i = static_cast<Decimal>(1) / squaredNorm;
-
-			// eq 4
-			const auto x_hat = x_i - x_tilde;
-			const auto y_hat = y_i - y_tilde;
-
-			// eq 6
-			A.row(j) = std::sqrt(alpha_i) * y_hat.transpose();
-			B.row(j) = std::sqrt(alpha_i) * x_hat.transpose();
-		}
+		const auto& q = ilamp.execute(p.x(), p.y());
 
 		//
-		// Compute SVD
+		// Write q to file 
 		//
-		const auto ATB = A.transpose() * B;
-		Eigen::JacobiSVD<Eigen::Matrix<Decimal, Eigen::Dynamic, Eigen::Dynamic>> svd;
-		//svd.compute(ATB, Eigen::ComputeFullU | Eigen::ComputeFullV);
-		svd.compute(ATB, Eigen::ComputeThinU | Eigen::ComputeThinV);
+		output_file << std::fixed << std::setprecision(2) << q.transpose() << std::endl;
+		
 
-		if (!svd.computeU() || !svd.computeV())
-		{
-			std::cerr << "<Error> Decomposition error" << std::endl;
-			return false;
-		}
-
-		//std::cout << "ATB : " << ATB.rows() << ' ' << ATB.cols() << std::endl;
-		//std::cout << "U   : " << svd.matrixU().rows() << ' ' << svd.matrixU().cols() << std::endl;
-		//std::cout << "V   : " << svd.matrixV().rows() << ' ' << svd.matrixV().cols() << std::endl;
-
-		const auto M = svd.matrixU() * svd.matrixV().transpose();
-		//std::cout << "M: " << M.rows() << ' ' << M.cols() << std::endl;
-
-		 
-		const auto q = (p - y_tilde).transpose() * M + x_tilde.transpose();
-		//std::cout << "q    : " << q.rows() << ' ' << q.cols() << std::endl << q << std::endl;
-		output_file << std::fixed << std::setprecision(2) << q << std::endl;
-
-
-		const auto& q_orig = verts_Nd[main_index];
-		const auto dist = (q.transpose() - q_orig).norm();
+		//
+		// Write file woth the distances between original q and resultant q
+		//
+		const auto& q_orig = ilamp.verts_Nd[main_index];
+		const auto dist = (q - q_orig).norm();
 		output_file_dist << dist << std::endl;
 	}
 
+	// 
+	// Close files
+	//
 	output_file.close();
 	output_file_dist.close();
 
-	delete[] indices.ptr();
-	delete[] dists.ptr();
+	std::cout << std::endl;
 
 	return EXIT_SUCCESS;
 }

@@ -54,6 +54,12 @@ int main(int argc, char* argv[])
 	// Open file for reading
 	//
 	std::ifstream input_file(input_filename, std::ios::in);
+	if (!input_file.is_open())
+	{
+		std::cout << "<Error> Could not load file : " << input_filename << std::endl;
+		return EXIT_FAILURE;
+	}
+
 
 	int line_count = 0;
 	while (!input_file.eof())
@@ -86,7 +92,10 @@ int main(int argc, char* argv[])
 		write_ply_file(output_filename.str(), coords);
 
 		++line_count;
+
+		std::cout << "<Info>  File lines processed: " << line_count << std::endl;
 	}
+
 
 	input_file.close();
 
