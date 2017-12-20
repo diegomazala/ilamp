@@ -7,6 +7,7 @@
 #include <fstream>
 #include <algorithm>
 #include <vector>
+#include <chrono>
 #include <flann/flann.hpp>
 #include <Eigen/Dense>
 
@@ -48,10 +49,10 @@ int main(int argc, char* argv[])
 	//std::string output_filename_Nd = "../../data/iris_out.5d";
 	//std::string output_filename_dist_Nd = "../../data/iris_out_dist.5d";
 
-	std::string input_filename_2d = "../../../../Data/Heads/heads.2d";
-	std::string input_filename_Nd = "../../../../Data/Heads/heads.nd";
-	std::string output_filename_Nd = "../../../../Data/Heads/heads_out.nd";
-	std::string output_filename_dist_Nd = "../../../../Data/Heads/heads.dist";
+	std::string input_filename_2d = "G:/Data/Heads/heads.2d";
+	std::string input_filename_Nd = "G:/Data/Heads/heads.nd";
+	std::string output_filename_Nd = "G:/Data/Heads/heads_out.nd";
+	std::string output_filename_dist_Nd = "G:/Data/Heads/heads.dist";
 
 	//std::string input_filename_2d = "../../../../Data/Primitives/primitives.2d";
 	//std::string input_filename_Nd = "../../../../Data/Primitives/primitives.nd";
@@ -75,12 +76,15 @@ int main(int argc, char* argv[])
 	//
 	// Import 2d file
 	// 
-	ilamp.load_data_2d(input_filename_2d);
+	
+	if (!ilamp.load_data_2d(input_filename_2d))
+		return EXIT_FAILURE;
 
 	//
 	// Import Nd file
 	// 
-	ilamp.load_data_Nd(input_filename_Nd);
+	if (!ilamp.load_data_Nd(input_filename_Nd))
+		return EXIT_FAILURE;
 
 
 	if (ilamp.verts_Nd.size() != ilamp.verts_2d.size())
@@ -123,8 +127,13 @@ int main(int argc, char* argv[])
 		const auto& p = ilamp.verts_2d[main_index];
 		
 		std::cout << "<Info>  Computing vertex: " << p.transpose() << std::endl;
+
+		auto start_time = std::chrono::system_clock::now();
 		
 		const auto& q = ilamp.execute(p.x(), p.y());
+
+		std::chrono::duration<double> elapsed_seconds = std::chrono::system_clock::now() - start_time;
+		std::cout << "<Info>  Elapsed Time: " << elapsed_seconds.count() << "s\n";
 
 		//
 		// Write q to file 

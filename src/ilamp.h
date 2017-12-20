@@ -28,6 +28,8 @@ public:
 	Eigen::Matrix<Type, Eigen::Dynamic, 1>
 		execute(Type x, Type y, uint16_t num_neighbours = 4, uint16_t knn_search_checks = 128);
 
+
+
 //protected:
 
 	std::vector<Eigen::Matrix<Type, 2, 1>> verts_2d;
@@ -37,6 +39,11 @@ public:
 	//flann::Index<flann::L2<Type>> kdtree;
 	std::unique_ptr<flann::Matrix<Type>> dataset_2d = nullptr;
 	std::unique_ptr<flann::Index<flann::L2<Type>>> kdtree = nullptr;
+
+	Type min_x = FLT_MAX;
+	Type max_x = FLT_MIN;
+	Type min_y = FLT_MAX;
+	Type max_y = FLT_MIN;
 };
 
 
@@ -44,18 +51,30 @@ public:
 template <typename Type>
 bool ILamp<Type>::load_data_2d(const std::string& filename)
 {
+	min_x = FLT_MAX;
+	max_x = FLT_MIN;
+	min_y = FLT_MAX;
+	max_y = FLT_MIN;
+
 	std::ifstream input_file_2d(filename, std::ios::in);
 	if (input_file_2d.is_open())
 	{
 		char c;
-		float x, y;
+		Type x, y;
 
 		while (!input_file_2d.eof())
 		{
 			//input_file_2d >> x >> c >> y;
 			input_file_2d >> x >> y;
 			if (input_file_2d.good())
+			{
 				verts_2d.push_back(Eigen::Matrix<Type, 2, 1>(x, y));
+
+				min_x = std::min(min_x, x);
+				min_y = std::min(min_y, y);
+				max_x = std::max(max_x, x);
+				max_y = std::max(max_y, y);
+			}
 
 			//std::cout << x << ' ' << y << std::endl;
 		}
@@ -110,11 +129,12 @@ bool ILamp<Type>::load_data_Nd(const std::string& filename)
 		}
 
 		std::cout << "<Info>  Vertices Loaded Nd: " << verts_Nd.size() << std::endl;
+		return true;
 	}
 	else
 	{
 		std::cerr << "<Error> Could not load Nd file: " << filename << "\nAbort." << std::endl;
-		return EXIT_FAILURE;
+		return false;
 	}
 }
 
