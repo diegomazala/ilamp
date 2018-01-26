@@ -61,6 +61,8 @@ public class ILamp : MonoBehaviour
     public string inputFileNameNd;
     public string outputFileNameNd;
 
+    public float ModelScaleFactor = 0.01f;
+
     public List<Vector2> vertices2d = new List<Vector2>();
 
     public Vector2 p;
@@ -69,6 +71,14 @@ public class ILamp : MonoBehaviour
 
     public MeshFilter[] baseMeshes;
 
+    public Vector2 MinCoords
+    {
+        get { return new Vector2(Plugin.ILamp_MinX(), Plugin.ILamp_MinY()); }
+    }
+    public Vector2 MaxCoords
+    {
+        get { return new Vector2(Plugin.ILamp_MaxX(), Plugin.ILamp_MaxY()); }
+    }
 
     void Start ()
     {
@@ -76,8 +86,22 @@ public class ILamp : MonoBehaviour
         customCulture.NumberFormat.NumberDecimalSeparator = ".";
         System.Threading.Thread.CurrentThread.CurrentCulture = customCulture;
 
-        Plugin.ILamp_LoadInputFiles(inputFileName2d, inputFileNameNd);
-        Plugin.ILamp_BuildKdTree(4);
+        if (!Plugin.ILamp_LoadInputFiles(inputFileName2d, inputFileNameNd))
+        {
+            Debug.LogError("Could not load input files");
+            Debug.LogError(inputFileName2d);
+            Debug.LogError(inputFileNameNd);
+            enabled = false;
+            return;
+        }
+
+
+        if (!Plugin.ILamp_BuildKdTree(4))
+        {
+            Debug.LogError("Could not build kd-tree");
+            enabled = false;
+            return;
+        }
 
         using (System.IO.TextReader reader = System.IO.File.OpenText(inputFileName2d))
         {
@@ -133,11 +157,12 @@ public class ILamp : MonoBehaviour
                 for (long v = 0; v < vertices.Length; ++v)
                 {
                     long i = v * 3;
-                    vertices[v] = new Vector3(q_data[i + 0], q_data[i + 1], q_data[i + 2]);
+                    vertices[v] = new Vector3(q_data[i + 0] * ModelScaleFactor, q_data[i + 1] * ModelScaleFactor, q_data[i + 2] * ModelScaleFactor);
                 }
 
                 templateMesh.mesh.vertices = vertices;
                 templateMesh.mesh.RecalculateBounds();
+                templateMesh.mesh.RecalculateNormals();
             }
         }
 
