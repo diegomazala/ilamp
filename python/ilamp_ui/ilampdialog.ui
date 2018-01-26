@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>IlampDialog</class>
- <widget class="QDialog" name="IlampDialog">
+ <class>ILampDialog</class>
+ <widget class="QDialog" name="ILampDialog">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -146,7 +146,7 @@
       </widget>
      </item>
      <item row="3" column="0">
-      <widget class="QLabel" name="filepathndLabel">
+      <widget class="QLabel" name="filepathNdLabel">
        <property name="minimumSize">
         <size>
          <width>71</width>
@@ -160,15 +160,15 @@
         </size>
        </property>
        <property name="text">
-        <string>File Path nd:</string>
+        <string>File Path Nd:</string>
        </property>
       </widget>
      </item>
      <item row="3" column="1">
-      <widget class="QLineEdit" name="filepathndLineEdit"/>
+      <widget class="QLineEdit" name="filepathNdLineEdit"/>
      </item>
      <item row="3" column="2">
-      <widget class="QPushButton" name="filepathndButton">
+      <widget class="QPushButton" name="filepathNdButton">
        <property name="minimumSize">
         <size>
          <width>31</width>
@@ -246,7 +246,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>accepted()</signal>
-   <receiver>IlampDialog</receiver>
+   <receiver>ILampDialog</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -262,7 +262,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>rejected()</signal>
-   <receiver>IlampDialog</receiver>
+   <receiver>ILampDialog</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -278,7 +278,7 @@
   <connection>
    <sender>projectNameButton</sender>
    <signal>clicked()</signal>
-   <receiver>IlampDialog</receiver>
+   <receiver>ILampDialog</receiver>
    <slot>onProjectNameClicked()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -294,7 +294,7 @@
   <connection>
    <sender>inputFolderButton</sender>
    <signal>clicked()</signal>
-   <receiver>IlampDialog</receiver>
+   <receiver>ILampDialog</receiver>
    <slot>onInputFolderClicked()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -310,7 +310,7 @@
   <connection>
    <sender>outputFolderButton</sender>
    <signal>clicked()</signal>
-   <receiver>IlampDialog</receiver>
+   <receiver>ILampDialog</receiver>
    <slot>onOutputFolderClicked()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -323,10 +323,44 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>filepath2dButton</sender>
+   <signal>clicked()</signal>
+   <receiver>ILampDialog</receiver>
+   <slot>onFilePath2dClicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>345</x>
+     <y>85</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>185</x>
+     <y>101</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>filepathNdButton</sender>
+   <signal>clicked()</signal>
+   <receiver>ILampDialog</receiver>
+   <slot>onFilePathNdClicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>345</x>
+     <y>116</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>185</x>
+     <y>101</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>onProjectNameClicked()</slot>
   <slot>onInputFolderClicked()</slot>
   <slot>onOutputFolderClicked()</slot>
+  <slot>onFilePath2dClicked()</slot>
+  <slot>onFilePathNdClicked()</slot>
  </slots>
 </ui>
