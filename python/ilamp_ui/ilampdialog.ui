@@ -1,0 +1,332 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>IlampDialog</class>
+ <widget class="QDialog" name="IlampDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>371</width>
+    <height>203</height>
+   </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>371</width>
+    <height>203</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>ILamp Project Dialog</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout_2">
+   <item row="0" column="0">
+    <layout class="QGridLayout" name="gridLayout">
+     <item row="0" column="0">
+      <widget class="QLabel" name="projectNameLabel">
+       <property name="minimumSize">
+        <size>
+         <width>71</width>
+         <height>21</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>71</width>
+         <height>21</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>Project Name:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1">
+      <widget class="QLineEdit" name="projectNameLineEdit"/>
+     </item>
+     <item row="0" column="2">
+      <widget class="QPushButton" name="projectNameButton">
+       <property name="minimumSize">
+        <size>
+         <width>31</width>
+         <height>23</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>31</width>
+         <height>23</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>...</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QLabel" name="inputFolderLabel">
+       <property name="minimumSize">
+        <size>
+         <width>71</width>
+         <height>21</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>71</width>
+         <height>21</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>Input Folder:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1">
+      <widget class="QLineEdit" name="inputFolderLineEdit"/>
+     </item>
+     <item row="1" column="2">
+      <widget class="QPushButton" name="inputFolderButton">
+       <property name="minimumSize">
+        <size>
+         <width>31</width>
+         <height>23</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>31</width>
+         <height>23</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>...</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="0">
+      <widget class="QLabel" name="filepath2dLabel">
+       <property name="minimumSize">
+        <size>
+         <width>71</width>
+         <height>21</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>71</width>
+         <height>21</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>File Path 2d:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="1">
+      <widget class="QLineEdit" name="filepath2dLineEdit"/>
+     </item>
+     <item row="2" column="2">
+      <widget class="QPushButton" name="filepath2dButton">
+       <property name="minimumSize">
+        <size>
+         <width>31</width>
+         <height>23</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>31</width>
+         <height>23</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>...</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="0">
+      <widget class="QLabel" name="filepathndLabel">
+       <property name="minimumSize">
+        <size>
+         <width>71</width>
+         <height>21</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>71</width>
+         <height>21</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>File Path nd:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="1">
+      <widget class="QLineEdit" name="filepathndLineEdit"/>
+     </item>
+     <item row="3" column="2">
+      <widget class="QPushButton" name="filepathndButton">
+       <property name="minimumSize">
+        <size>
+         <width>31</width>
+         <height>23</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>31</width>
+         <height>23</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>...</string>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="0">
+      <widget class="QLabel" name="outputFolderLabel">
+       <property name="minimumSize">
+        <size>
+         <width>71</width>
+         <height>21</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>71</width>
+         <height>21</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>Ouput Folder:</string>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="1">
+      <widget class="QLineEdit" name="outputFolderLineEdit"/>
+     </item>
+     <item row="4" column="2">
+      <widget class="QPushButton" name="outputFolderButton">
+       <property name="minimumSize">
+        <size>
+         <width>31</width>
+         <height>23</height>
+        </size>
+       </property>
+       <property name="maximumSize">
+        <size>
+         <width>31</width>
+         <height>23</height>
+        </size>
+       </property>
+       <property name="text">
+        <string>...</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
+   <item row="1" column="0">
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>accepted()</signal>
+   <receiver>IlampDialog</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>248</x>
+     <y>254</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>157</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>IlampDialog</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>316</x>
+     <y>260</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>286</x>
+     <y>274</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>projectNameButton</sender>
+   <signal>clicked()</signal>
+   <receiver>IlampDialog</receiver>
+   <slot>onProjectNameClicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>345</x>
+     <y>23</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>185</x>
+     <y>101</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>inputFolderButton</sender>
+   <signal>clicked()</signal>
+   <receiver>IlampDialog</receiver>
+   <slot>onInputFolderClicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>345</x>
+     <y>54</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>185</x>
+     <y>101</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>outputFolderButton</sender>
+   <signal>clicked()</signal>
+   <receiver>IlampDialog</receiver>
+   <slot>onOutputFolderClicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>345</x>
+     <y>147</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>185</x>
+     <y>101</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>onProjectNameClicked()</slot>
+  <slot>onInputFolderClicked()</slot>
+  <slot>onOutputFolderClicked()</slot>
+ </slots>
+</ui>
