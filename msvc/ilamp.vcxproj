@@ -15,6 +15,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\ilamp.h" />
+    <ClInclude Include="..\src\ilamp_project.h" />
+    <ClInclude Include="..\src\json.hpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{29D4B289-B012-4E4F-8695-CF13067DFCB5}</ProjectGuid>
