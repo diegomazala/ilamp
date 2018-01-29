@@ -15,9 +15,15 @@
     <ClCompile Include="..\src\3d2Nd.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\tinyobj.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\tinyply.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\tinyobj.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -1,7 +1,7 @@
 #include "ilamp.h"
 
 
-#include "ilamp.h"
+#include "ilamp_project.h"
 #include <iostream>
 #include <iomanip> 
 #include <fstream>
