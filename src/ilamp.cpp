@@ -1,7 +1,7 @@
 #include "ilamp.h"
 
 
-#include "ilamp.h"
+#include "ilamp_project.h"
 #include <iostream>
 #include <iomanip> 
 #include <fstream>
@@ -36,6 +36,10 @@ typedef float Decimal;
 
 int main(int argc, char* argv[])
 {
+	ilamp_project prj;
+	prj.test();
+	return 0 ;
+
 	std::cout
 		<< std::fixed << std::endl
 		<< "Usage            : ./<app.exe> <data_file_2d> <data_file_Nd> <number_of_neighbours> <kd_tree_count> <knn_search_checks>" << std::endl

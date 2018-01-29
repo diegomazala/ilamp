@@ -106,6 +106,14 @@ struct ilamp_project
 		i2 >> p4;
 		i2.close();
 		std::cout << ">>>>>>>>>>>>>>>>>>>>\n" << std::setw(4) << p4 << std::endl << std::endl;
+
+
+
+		ilamp_project py_prj;
+		std::ifstream py_ilp("PyProjectName.ilp");
+		py_ilp >> py_prj;
+		py_ilp.close();
+		std::cout << "=====================\n" << std::setw(4) << py_prj << std::endl << std::endl;
 	}
 };
 
