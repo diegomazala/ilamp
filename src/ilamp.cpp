@@ -74,6 +74,13 @@ int main(int argc, char* argv[])
 	// Set variables
 	//
 	const std::string& project_filename = cmd_parser.get<std::string>("project");
+	ilamp_project ilp_prj(project_filename);
+
+#if _DEBUG
+	std::cout << std::setw(4) << ilp_prj << std::endl << std::endl;
+#endif
+
+
 	Eigen::Vector2f query(cmd_parser.get<float>("query_x"), cmd_parser.get<float>("query_y"));
 
 
@@ -82,20 +89,7 @@ int main(int argc, char* argv[])
 	//
 	fs::path prj_path(project_filename);
 	const std::string prj_dir = prj_path.remove_filename().string();
-	std::stringstream output_dir;
-	output_dir << prj_dir << "/Output";
-	fs::create_directories(output_dir.str());
-
-
-
-	
-
-	ilamp_project ilp_prj(project_filename);
-
-#if _DEBUG
-	std::cout << std::setw(4) << ilp_prj << std::endl << std::endl;
-#endif
-
+	fs::create_directories(ilp_prj.outputFolder);
 
 	//
 	// Creating nd file
@@ -107,17 +101,7 @@ int main(int argc, char* argv[])
 	//
 	run_lamp(ilp_prj.filenameNd, ilp_prj.filename2d);
 
-
-
-	//
-	// Set output file name
-	//
-	std::string output_basename = fs::path(cmd_parser.get<std::string>("output3d")).replace_extension("").string();
-	std::stringstream output_file;
-	output_file << output_dir.str() << "/" << output_basename << '_' << query.x() << '_' << query.y() << ".ply";
-	const std::string output_filename = output_file.str();
-	const std::string template_filename = ilp_prj.inputFiles[0];
-
+		
 
 	ILamp<float> ilamp;
 
@@ -146,6 +130,15 @@ int main(int argc, char* argv[])
 	
 	if (cmd_parser.exist("test"))
 		query = ilamp.verts_2d.at(0);
+
+	//
+	// Set output file name
+	//
+	std::string output_basename = fs::path(cmd_parser.get<std::string>("output3d")).replace_extension("").string();
+	std::stringstream output_file;
+	output_file << ilp_prj.outputFolder << "/" << output_basename << '_' << query.x() << '_' << query.y() << ".ply";
+	const std::string output_filename = output_file.str();
+	const std::string template_filename = ilp_prj.inputFiles[0];
 
 	//
 	// Build the kd-tree

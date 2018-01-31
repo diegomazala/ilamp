@@ -18,7 +18,7 @@ class Project(JsonSerializable):
         self.FileName2d = "PyFilename.2d"
         self.FileNameNd = "PyFilename.nd"
         self.OutputFolder = "C:/tmp/"
-        self.InputFiles = ["pymod1.ply", "pymod2.ply", "pymod3.ply"]
+        self.InputFiles = []
         self.NumNeighbours = 4
         self.KdTreeCount = 4
         self.KnnSearchChecks = 128
@@ -36,7 +36,12 @@ class ILampDialog(QtWidgets.QDialog, Ui_ILampDialog):
 
 
     def onProjectNameClicked(self):
-        fileName, _ = QFileDialog.getSaveFileName(self, "Save Project Name", "ProjectName.ilp", "ILamp Project Files (*.ilp)")
+        fileName, _ = QFileDialog.getSaveFileName(
+            self,
+            "Save Project Name",
+            "G:/Data",
+            "ILamp Project Files (*.ilp)")
+
         if fileName:
             self.project.ProjectName = fileName
             self.projectNameLineEdit.setText(fileName)
@@ -48,7 +53,7 @@ class ILampDialog(QtWidgets.QDialog, Ui_ILampDialog):
             self.filepath2dLineEdit.setText(self.project.FileName2d)
             self.filepathNdLineEdit.setText(self.project.FileNameNd)
 
-            self.project.OutputFolder = os.path.dirname(fileName)
+            self.project.OutputFolder = os.path.dirname(fileName) + "/Output/"
             self.outputFolderLineEdit.setText(self.project.OutputFolder)
 
 
@@ -65,14 +70,23 @@ class ILampDialog(QtWidgets.QDialog, Ui_ILampDialog):
 
 
     def onFilePath2dClicked(self):
-        fileName, _ = QFileDialog.getSaveFileName(self, "QFileDialog.getSaveFileName()", "", "2d Project Files (*.2d)")
+        fileName, _ = QFileDialog.getSaveFileName(
+            self, "QFileDialog.getSaveFileName()",
+            self.project.FileName2d,
+            "2d Project Files (*.2d)")
+
         if fileName:
             self.project.FileName2d = fileName
             self.filepath2dLineEdit.setText(fileName)
 
 
     def onFilePathNdClicked(self):
-        fileName, _ = QFileDialog.getSaveFileName(self, "QFileDialog.getSaveFileName()", "", "Nd Project Files (*.nd)")
+        fileName, _ = QFileDialog.getSaveFileName(
+            self,
+            "QFileDialog.getSaveFileName()",
+            self.project.FileNameNd,
+            "Nd Project Files (*.nd)")
+
         if fileName:
             self.project.FileNameNd = fileName
             self.filepathNdLineEdit.setText(fileName)
@@ -81,11 +95,20 @@ class ILampDialog(QtWidgets.QDialog, Ui_ILampDialog):
     def onOutputFolderClicked(self):
         options = QtWidgets.QFileDialog.Options()
         options |= QFileDialog.ShowDirsOnly | QFileDialog.DontResolveSymlinks
-        folder = QtWidgets.QFileDialog.getExistingDirectory(self, "Select Output Folder", "/home", options=options)
+        folder = QtWidgets.QFileDialog.getExistingDirectory(
+            self,
+            "Select Output Folder",
+            self.project.OutputFolder,
+            options=options)
+
         if folder:
             self.project.OutputFolder = folder
             self.outputFolderLineEdit.setText(folder)
 
+    def onUpdateSettings(self):
+        self.project.FileName2d = self.filepath2dLineEdit.value()
+        self.project.FileNameNd = self.filepathNdLineEdit.value()
+        self.project.OutputFolder = self.outputFolderLineEdit.value()
 
     def accept(self):
         super(ILampDialog, self).accept()
@@ -93,6 +116,9 @@ class ILampDialog(QtWidgets.QDialog, Ui_ILampDialog):
         self.project.NumNeighbours = self.numNeighboursSpinBox.value()
         self.project.KdTreeCount = self.kdTreeCountSpinBox.value()
         self.project.KnnSearchChecks = self.knnSearchChecksSpinBox.value()
+
+        if not os.path.exists(self.project.OutputFolder):
+            os.makedirs(self.project.OutputFolder)
 
         if self.project.ProjectName:
             with open(self.project.ProjectName, 'w') as outfile:

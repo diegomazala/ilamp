@@ -11,8 +11,8 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_ILampDialog(object):
     def setupUi(self, ILampDialog):
         ILampDialog.setObjectName("ILampDialog")
-        ILampDialog.resize(371, 453)
-        ILampDialog.setMinimumSize(QtCore.QSize(371, 203))
+        ILampDialog.resize(430, 453)
+        ILampDialog.setMinimumSize(QtCore.QSize(430, 453))
         self.gridLayout_3 = QtWidgets.QGridLayout(ILampDialog)
         self.gridLayout_3.setObjectName("gridLayout_3")
         self.gridLayout = QtWidgets.QGridLayout()
@@ -80,6 +80,8 @@ class Ui_ILampDialog(object):
         self.outputFolderButton.setObjectName("outputFolderButton")
         self.gridLayout.addWidget(self.outputFolderButton, 4, 2, 1, 1)
         self.inputFilesTextEdit = QtWidgets.QTextEdit(ILampDialog)
+        self.inputFilesTextEdit.setEnabled(True)
+        self.inputFilesTextEdit.setReadOnly(True)
         self.inputFilesTextEdit.setObjectName("inputFilesTextEdit")
         self.gridLayout.addWidget(self.inputFilesTextEdit, 1, 1, 1, 1)
         self.gridLayout_3.addLayout(self.gridLayout, 0, 0, 1, 3)
@@ -137,6 +139,9 @@ class Ui_ILampDialog(object):
         self.filepathNdButton.clicked.connect(ILampDialog.onFilePathNdClicked)
         self.buttonBox.accepted.connect(ILampDialog.accept)
         self.buttonBox.rejected.connect(ILampDialog.reject)
+        self.filepath2dLineEdit.returnPressed.connect(ILampDialog.onUpdateSettings)
+        self.filepathNdLineEdit.returnPressed.connect(ILampDialog.onUpdateSettings)
+        self.outputFolderLineEdit.returnPressed.connect(ILampDialog.onUpdateSettings)
         QtCore.QMetaObject.connectSlotsByName(ILampDialog)
 
     def retranslateUi(self, ILampDialog):
@@ -150,7 +155,7 @@ class Ui_ILampDialog(object):
         self.filepath2dButton.setText(_translate("ILampDialog", "..."))
         self.filepathNdLabel.setText(_translate("ILampDialog", "File Path Nd:"))
         self.filepathNdButton.setText(_translate("ILampDialog", "..."))
-        self.outputFolderLabel.setText(_translate("ILampDialog", "Ouput Folder:"))
+        self.outputFolderLabel.setText(_translate("ILampDialog", "Output Folder:"))
         self.outputFolderButton.setText(_translate("ILampDialog", "..."))
         self.groupBox.setTitle(_translate("ILampDialog", "KdTree"))
         self.numNeighboursLabel.setText(_translate("ILampDialog", "Number of Neighbours:"))
