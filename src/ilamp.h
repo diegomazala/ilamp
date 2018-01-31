@@ -76,10 +76,13 @@ bool ILamp<Type>::load_data_2d(const std::string& filename)
 				max_y = std::max(max_y, y);
 			}
 
-			//std::cout << x << ' ' << y << std::endl;
+#if _DEBUG
+			std::cout << std::fixed << x << ' ' << y << std::endl;
+#endif
+			
 		}
 
-		std::cout << "<Info>  Vertices Loaded 2d: " << verts_2d.size() << std::endl;
+		std::cout << "<Info>  Arrays 2d Loaded  : " << verts_2d.size() << ", " << verts_2d[0].rows() << std::endl;
 		input_file_2d.close();
 		return true;
 	}
@@ -128,7 +131,7 @@ bool ILamp<Type>::load_data_Nd(const std::string& filename)
 			//std::cout << v.transpose() << std::endl;
 		}
 
-		std::cout << "<Info>  Vertices Loaded Nd: " << verts_Nd.size() << std::endl;
+		std::cout << "<Info>  Arrays Nd Loaded  : " << verts_Nd.size() << ", " << verts_Nd[0].rows() << std::endl;
 		return true;
 	}
 	else

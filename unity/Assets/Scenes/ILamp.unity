@@ -168,6 +168,59 @@ MeshFilter:
   m_PrefabParentObject: {fileID: 3300000, guid: 8ffc4e0f9c0b03e439b6aad4ca8bd27b,
     type: 3}
   m_PrefabInternal: {fileID: 31675574}
+--- !u!1 &83195808
+GameObject:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 83195810}
+  - component: {fileID: 83195809}
+  m_Layer: 0
+  m_Name: ILamp Copia
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 0
+--- !u!114 &83195809
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 83195808}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 56d46502f66e7fa4fa94133122f52038, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  inputFileName2d: C:/Users/diego/Google Drive/Data/Heads/heads_csharp.2d
+  inputFileNameNd: C:/Users/diego/Google Drive/Data/Heads/heads_csharp.nd
+  outputFileNameNd: C:/Users/diego/Google Drive/Data/Heads/heads_csharp.nd
+  ModelScaleFactor: 0.01
+  vertices2d: []
+  p: {x: -34.5914, y: 22.42081}
+  templateMesh: {fileID: 1325015996}
+  baseMeshes:
+  - {fileID: 31675576}
+  - {fileID: 2040379718}
+  - {fileID: 1706406617}
+  - {fileID: 610480365}
+  - {fileID: 1717820599}
+--- !u!4 &83195810
+Transform:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 83195808}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 6
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &214345374
 GameObject:
   m_ObjectHideFlags: 0
@@ -1120,9 +1173,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 56d46502f66e7fa4fa94133122f52038, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  inputFileName2d: C:/Users/diego/Google Drive/Data/Heads/heads_csharp.2d
-  inputFileNameNd: C:/Users/diego/Google Drive/Data/Heads/heads_csharp.nd
-  outputFileNameNd: C:/Users/diego/Google Drive/Data/Heads/heads_csharp.nd
+  inputFileName2d: F:/Projects/DSc/Data/Test/Heads.2d
+  inputFileNameNd: F:/Projects/DSc/Data/Test/Heads.nd
+  outputFileNameNd: F:/Projects/DSc/Data/Test/heads_csharp.nd
   ModelScaleFactor: 0.01
   vertices2d: []
   p: {x: -34.5914, y: 22.42081}

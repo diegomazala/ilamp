@@ -77,7 +77,7 @@
       <SubSystem>Console</SubSystem>
     </Link>
     <PostBuildEvent>
-      <Command>copy /Y $(TargetPath) $(SolutionDir)..\..\unity\ilamp\Assets\Plugins\x86_64\</Command>
+      <Command>copy /Y $(TargetPath) $(SolutionDir)..\unity\Assets\Plugins\x86_64\</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -102,7 +102,7 @@
       <SubSystem>Console</SubSystem>
     </Link>
     <PostBuildEvent>
-      <Command>copy /Y $(TargetPath) $(SolutionDir)..\..\unity\ilamp\Assets\Plugins\x86_64\</Command>
+      <Command>copy /Y $(TargetPath) $(SolutionDir)..\unity\Assets\Plugins\x86_64\</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -1,4 +1,5 @@
 import json
+import os
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtWidgets import QApplication, QWidget, QInputDialog, QLineEdit, QFileDialog
@@ -6,19 +7,19 @@ from ui_ilampdialog import Ui_ILampDialog
 
 class JsonSerializable(object):
     def toJson(self):
-        return json.dumps(self.__dict__)
+        return json.dumps(self.__dict__, indent=4)
     def __repr__(self):
         return self.toJson()
 
 
 class Project(JsonSerializable):
     def __init__(self):
-        self.ProjectName = "PyProjectName.ilp"
+        self.ProjectName = ""
         self.FileName2d = "PyFilename.2d"
         self.FileNameNd = "PyFilename.nd"
         self.OutputFolder = "C:/tmp/"
         self.InputFiles = ["pymod1.ply", "pymod2.ply", "pymod3.ply"]
-        self.NeighboursCount = 4
+        self.NumNeighbours = 4
         self.KdTreeCount = 4
         self.KnnSearchChecks = 128
 
@@ -35,19 +36,32 @@ class ILampDialog(QtWidgets.QDialog, Ui_ILampDialog):
 
 
     def onProjectNameClicked(self):
-        fileName, _ = QFileDialog.getSaveFileName(self, "QFileDialog.getSaveFileName()", "", "ILamp Project Files (*.ilp)")
+        fileName, _ = QFileDialog.getSaveFileName(self, "Save Project Name", "ProjectName.ilp", "ILamp Project Files (*.ilp)")
         if fileName:
             self.project.ProjectName = fileName
             self.projectNameLineEdit.setText(fileName)
 
+            base, ext = os.path.splitext(fileName)
 
-    def onInputFolderClicked(self):
+            self.project.FileName2d = base + ".2d"
+            self.project.FileNameNd = base + ".nd"
+            self.filepath2dLineEdit.setText(self.project.FileName2d)
+            self.filepathNdLineEdit.setText(self.project.FileNameNd)
+
+            self.project.OutputFolder = os.path.dirname(fileName)
+            self.outputFolderLineEdit.setText(self.project.OutputFolder)
+
+
+    def onInputFilesClicked(self):
         options = QtWidgets.QFileDialog.Options()
         files, _ = QtWidgets.QFileDialog.getOpenFileNames(self, "QFileDialog.getOpenFileNames()", "",
                                                           "PLY Files (*.ply);;Obj Files (*.obj);;All Files (*)",
                                                           options=options)
         if files:
-            self.inputFiles = files
+            self.project.InputFiles = files
+            self.inputFilesTextEdit.clear()
+            for f in files:
+                self.inputFilesTextEdit.append(f)
 
 
     def onFilePath2dClicked(self):
@@ -75,9 +89,14 @@ class ILampDialog(QtWidgets.QDialog, Ui_ILampDialog):
 
     def accept(self):
         super(ILampDialog, self).accept()
-        prj = Project()
-        with open(prj.ProjectName, 'w') as outfile:
-            outfile.write("%s" % prj.toJson())
+
+        self.project.NumNeighbours = self.numNeighboursSpinBox.value()
+        self.project.KdTreeCount = self.kdTreeCountSpinBox.value()
+        self.project.KnnSearchChecks = self.knnSearchChecksSpinBox.value()
+
+        if self.project.ProjectName:
+            with open(self.project.ProjectName, 'w') as outfile:
+                outfile.write("%s" % self.project.toJson())
 
 
     def reject(self):

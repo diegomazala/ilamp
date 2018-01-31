@@ -23,6 +23,7 @@
     <ClCompile Include="..\src\tinyply.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\src\ilamp_utils.h" />
     <ClInclude Include="..\src\tinyply.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

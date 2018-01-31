@@ -12,11 +12,15 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\ilamp.cpp" />
+    <ClCompile Include="..\src\tinyply.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\src\cmdline.h" />
     <ClInclude Include="..\src\ilamp.h" />
     <ClInclude Include="..\src\ilamp_project.h" />
+    <ClInclude Include="..\src\ilamp_utils.h" />
     <ClInclude Include="..\src\json.hpp" />
+    <ClInclude Include="..\src\tinyply.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{29D4B289-B012-4E4F-8695-CF13067DFCB5}</ProjectGuid>
@@ -70,6 +74,8 @@
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <DisableSpecificWarnings>4251;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <LanguageStandard>
+      </LanguageStandard>
     </ClCompile>
     <Link>
       <AdditionalDependencies>flann_cpp_s.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -90,6 +96,8 @@
       <DebugInformationFormat>None</DebugInformationFormat>
       <DisableSpecificWarnings>4251;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <LanguageStandard>
+      </LanguageStandard>
     </ClCompile>
     <Link>
       <AdditionalDependencies>flann_cpp_s.lib;%(AdditionalDependencies)</AdditionalDependencies>
