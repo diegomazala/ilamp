@@ -189,8 +189,6 @@ public class ILamp : MonoBehaviour
                     MeshRenderer source = baseMeshes[v % vertices2d.Count].GetComponent<MeshRenderer>();
                     if (target && source)
                         target.sharedMaterial = source.sharedMaterial;
-
-                    ExecuteIlamp();
                 }
                 ++v;
             }
