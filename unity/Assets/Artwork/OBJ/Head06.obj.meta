@@ -24,8 +24,8 @@ ModelImporter:
       name: defaultMat36
     second: {fileID: 2100000, guid: edf7d1d647e40ca4ea1a9247f66f4576, type: 2}
   materials:
-    importMaterials: 1
-    materialName: 0
+    importMaterials: 0
+    materialName: 1
     materialSearch: 1
     materialLocation: 0
   animations:

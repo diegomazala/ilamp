@@ -9,9 +9,6 @@ public class ILampUI : MonoBehaviour
     public UnityEngine.UI.Image thumbnailTemplate;
     public UnityEngine.UI.Image[] thumbnails;
 
-    bool initializedIlamp = false;
-
-	
 	public void Setup(ILamp _ilamp)
     {
         ilamp = _ilamp;
@@ -31,48 +28,35 @@ public class ILampUI : MonoBehaviour
         if (ilamp.vertices2d.Count < 1)
             return;
 
-        //if (thumbnails.Length != ilamp.vertices2d.Count)
-        //{
-        //    Debug.LogError("Number of thumbnails does not match vertex count: " + thumbnails.Length + " != " + ilamp.vertices2d.Count);
-        //    enabled = false;
-        //    return;
-        //}
-
         thumbnails = new UnityEngine.UI.Image[ilamp.vertices2d.Count];
-        
-
 
         for (int i = 0; i < thumbnails.Length; ++i)
         {
-            string thumbName = System.IO.Path.ChangeExtension(ilamp.project.InputFiles[i], "");
+            string thumbName = System.IO.Path.GetFileNameWithoutExtension(ilamp.project.InputFiles[i]);
 
             thumbnails[i] = Instantiate<UnityEngine.UI.Image>(thumbnailTemplate, this.transform);
             thumbnails[i].name = thumbName;
             Rect rect = thumbnails[i].rectTransform.rect;
-            //Debug.Log("prev: " + thumbnails[i].rectTransform.anchoredPosition);
+            
             Vector2 v = ilamp.vertices2d[i];
-            Vector2 pos = new Vector2( 
-                LinearInterpolation(v.x, ilamp.MinCoords.x, ilamp.MaxCoords.x, 0, Screen.width - rect.width / 2.0f),
-                LinearInterpolation(v.y, ilamp.MinCoords.y, ilamp.MaxCoords.y, 0, Screen.height - rect.height / 2.0f));
+            Vector2 pos = new Vector2(
+                ILamp.LinearInterpolation(v.x, ilamp.MinCoords.x, ilamp.MaxCoords.x, rect.width / 2.0f, Screen.width - rect.width),
+                ILamp.LinearInterpolation(v.y, ilamp.MinCoords.y, ilamp.MaxCoords.y, rect.height / 2.0f, Screen.height - rect.height));
 
             thumbnails[i].rectTransform.anchoredPosition = pos;
-            //Debug.Log("post: " + thumbnails[i].rectTransform.anchoredPosition);
+            thumbnails[i].sprite = Resources.Load<Sprite>(thumbName);
         }
 
-        initializedIlamp = true;
     }
 
-    void LoadThumbnail(string thumbName)
+    void Update()
     {
-
-    }
-
-    static public float LinearInterpolation(float x, float x0, float x1, float y0, float y1)
-    {
-        if ((x1 - x0) == 0)
+        if (Input.GetKeyDown(KeyCode.I))
         {
-            return (y0 + y1) / 2;
+            foreach (var t in thumbnails)
+                t.enabled = !t.enabled;
         }
-        return y0 + (x - x0) * (y1 - y0) / (x1 - x0);
     }
+
+    
 }

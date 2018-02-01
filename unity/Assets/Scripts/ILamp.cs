@@ -7,8 +7,7 @@ using System.Linq;
 
 public class ILamp : MonoBehaviour
 {
-
-    public const string DllName = "ilamp_dlld";
+    public const string DllName = "ilamp_dll";
 
     private class Plugin
     {
@@ -60,11 +59,12 @@ public class ILamp : MonoBehaviour
         public ushort KnnSearchChecks = 128;
     }
 
-
     private ILampUI ilampUI = null;
 
     private float[] q_data = null;
     private GCHandle q_handle;
+
+    public bool runLamp = true;
 
     public string projectFileName;
     public Project project = null;
@@ -78,6 +78,8 @@ public class ILamp : MonoBehaviour
     public MeshFilter templateMesh;
 
     public MeshFilter[] baseMeshes;
+
+    private bool controlKeyPressed = false;
 
     public Vector2 MinCoords
     {
@@ -103,15 +105,17 @@ public class ILamp : MonoBehaviour
 
         JsonUtility.FromJsonOverwrite(System.IO.File.ReadAllText(projectFileName), project);
 
-        BuildNdFile(project.FileNameNd, 1.0f/ModelScaleFactor);
-
-        if (!Plugin.ILamp_RunLamp(project.FileNameNd, project.FileName2d))
+        if (runLamp)
         {
-            Debug.LogError("Could not run lamp for " + projectFileName);
-            enabled = false;
-            return;
-        }
+            BuildNdFile(project.FileNameNd, 1.0f / ModelScaleFactor);
 
+            if (!Plugin.ILamp_RunLamp(project.FileNameNd, project.FileName2d))
+            {
+                Debug.LogError("Could not run lamp for " + projectFileName);
+                enabled = false;
+                return;
+            }
+        }
 
         if (!Plugin.ILamp_LoadInputFiles(project.FileName2d, project.FileNameNd))
         {
@@ -159,54 +163,41 @@ public class ILamp : MonoBehaviour
 
     void Update()
     {
+        if (Input.GetKeyDown(KeyCode.LeftControl))
+            controlKeyPressed = true;
+        else if (Input.GetKeyUp(KeyCode.LeftControl))
+            controlKeyPressed = false;
 
-        //computing p
+
+        if (controlKeyPressed)
         {
-            Vector2 p_norm = new Vector2(Input.mousePosition.x / Screen.width, Input.mousePosition.y / Screen.height);
-            Vector2 p_cartesian = new Vector2((p_norm.x - 0.5f) * 2.0f, (p_norm.y - 0.5f) * 2.0f);
+            p = new Vector2(
+                ILamp.LinearInterpolation(Input.mousePosition.x, 0, Screen.width, MinCoords.x, MaxCoords.x),
+                ILamp.LinearInterpolation(Input.mousePosition.y, 0, Screen.height, MinCoords.y, MaxCoords.y));
 
-            float p_width = Plugin.ILamp_MaxX() - Plugin.ILamp_MinX();
-            float p_height = Plugin.ILamp_MaxY() - Plugin.ILamp_MinY();
-
-            p = new Vector2(p_cartesian.x * p_width, p_cartesian.y * p_height);
-        }
-
-        if (Input.GetKeyDown(KeyCode.Space) || Input.GetKey(KeyCode.LeftControl))
-        {
             ExecuteIlamp();
         }
+        else
+        {
+            int v = 0;
+            for (var key = KeyCode.Alpha1; key <= KeyCode.Alpha9; ++key)
+            {
+                if (Input.GetKeyDown(key))
+                {
+                    p = vertices2d[v % vertices2d.Count];
+                    MeshRenderer target = templateMesh.GetComponent<MeshRenderer>();
+                    MeshRenderer source = baseMeshes[v % vertices2d.Count].GetComponent<MeshRenderer>();
+                    if (target && source)
+                        target.sharedMaterial = source.sharedMaterial;
 
-        if (Input.GetKeyDown(KeyCode.Alpha1))
-        {
-            p = vertices2d[0];
-            //ExecuteIlamp();
-        }
-        else if (Input.GetKeyDown(KeyCode.Alpha2))
-        {
-            p = vertices2d[1];
-            //ExecuteIlamp();
-        }
-        else if (Input.GetKeyDown(KeyCode.Alpha3))
-        {
-            p = vertices2d[2];
-            //ExecuteIlamp();
-        }
-        else if (Input.GetKeyDown(KeyCode.Alpha4))
-        {
-            p = vertices2d[3];
-            //ExecuteIlamp();
+                    ExecuteIlamp();
+                }
+                ++v;
+            }
         }
 
-        if (Input.GetKeyDown(KeyCode.Return))
+        if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.Space))
             ExecuteIlamp();
-
-
-
-        if (Input.GetKeyDown(KeyCode.E))
-        {
-            BuildNdFile(project.FileNameNd);
-        }
-
     }
 
     void ExecuteIlamp()
@@ -259,4 +250,13 @@ public class ILamp : MonoBehaviour
         }
     }
 
+
+    static public float LinearInterpolation(float x, float x0, float x1, float y0, float y1)
+    {
+        if ((x1 - x0) == 0)
+        {
+            return (y0 + y1) / 2;
+        }
+        return y0 + (x - x0) * (y1 - y0) / (x1 - x0);
+    }
 }

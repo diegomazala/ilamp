@@ -24,8 +24,8 @@ ModelImporter:
       name: fig02_lambert2SG
     second: {fileID: 2100000, guid: 80b356569d6727c449b4ad32965fb331, type: 2}
   materials:
-    importMaterials: 1
-    materialName: 0
+    importMaterials: 0
+    materialName: 1
     materialSearch: 1
     materialLocation: 0
   animations:
