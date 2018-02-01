@@ -43,7 +43,8 @@ void cmd_parser_build()
 	cmd_parser.add<float>("query_x", 'x', "Query point x", false, 0.0f);
 	cmd_parser.add<float>("query_y", 'y', "Query point y", false, 0.0f);
 	cmd_parser.add<std::string>("output3d", 'o', "Output file name (ply)", false, "Output.ply");
-	cmd_parser.add("test", 't', "Use first 2d vertex for testing");	// boolean sample
+	cmd_parser.add<int>("test", 't', "Use one of the 2d vertices as input", false, -1);	// boolean sample
+	cmd_parser.add("lamp", 'l', "Run lamp");
 	//cmd_parser.add<std::string>("help", '?', "");
 }
 
@@ -53,8 +54,16 @@ static void run_lamp(const std::string& filenameNd, const std::string& filename2
 	//
 	// Running lamp in order to generate 2d file from nd file
 	//
+	std::string lamp_script = std::getenv("ILAMP_LAMP_SCRIPT");
+
+	if (!fs::exists(lamp_script))
+	{
+		std::cerr << "Lamp python script not found" << std::endl;
+		return;
+	}
+
 	std::stringstream lamp_cmd;
-	lamp_cmd << "python ../../python/lamp.py " << filenameNd << " " << filename2d << " > lamp.log";
+	lamp_cmd << "python " << lamp_script << ' ' << filenameNd << ' ' << filename2d << " > lamp.log";
 	std::system(lamp_cmd.str().c_str());
 #if _DEBUG
 	std::cout << std::ifstream("lamp.log").rdbuf();
@@ -92,14 +101,21 @@ int main(int argc, char* argv[])
 	fs::create_directories(ilp_prj.outputFolder);
 
 	//
-	// Creating nd file
+	// If true, build a new nd file and run lamp for it
+	// Otherwise, use the existent file
 	//
-	build_nd_file(ilp_prj.inputFiles, ilp_prj.filenameNd);
+	if (cmd_parser.exist("lamp"))
+	{
+		//
+		// Creating nd file
+		//
+		build_nd_file(ilp_prj.inputFiles, ilp_prj.filenameNd);
 
-	//
-	// Run lamp
-	//
-	run_lamp(ilp_prj.filenameNd, ilp_prj.filename2d);
+		//
+		// Run lamp
+		//
+		run_lamp(ilp_prj.filenameNd, ilp_prj.filename2d);
+	}
 
 		
 
@@ -127,9 +143,9 @@ int main(int argc, char* argv[])
 
 	const int dimension_2d = ilamp.verts_2d.at(0).rows();	// = 2
 	const int dimension_Nd = ilamp.verts_Nd.at(0).rows();	// = N
-	
-	if (cmd_parser.exist("test"))
-		query = ilamp.verts_2d.at(0);
+	const int test_index = cmd_parser.get<int>("test");
+	if (test_index > -1 )
+		query = ilamp.verts_2d.at(test_index);
 
 	//
 	// Set output file name
@@ -160,9 +176,9 @@ int main(int argc, char* argv[])
 	std::chrono::duration<double> elapsed_seconds = std::chrono::system_clock::now() - start_time;
 	std::cout << "<Info>  Elapsed Time      : " << elapsed_seconds.count() << "s\n";
 	
-	if (cmd_parser.exist("test"))
+	if (test_index > -1)
 	{
-		const auto& q_orig = ilamp.verts_Nd.at(0);
+		const auto& q_orig = ilamp.verts_Nd.at(test_index);
 		const auto dist = (q - q_orig).norm();
 		std::cout << "<Info>  Distance Error    : " << dist << std::endl;
 	}

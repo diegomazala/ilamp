@@ -17,7 +17,7 @@ ModelImporter:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: Msh_HeadFigurante06_Lod0Mat
-    second: {fileID: 2100000, guid: a6a91eaba1f92fe499d04dec6b6ebdfe, type: 2}
+    second: {fileID: 2100000, guid: 0327d654aae6ba34da231a436c284e39, type: 2}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
@@ -73,7 +73,7 @@ ModelImporter:
   tangentSpace:
     normalSmoothAngle: 60
     normalImportMode: 0
-    tangentImportMode: 3
+    tangentImportMode: 2
     normalCalculationMode: 4
   importAnimation: 1
   copyAvatar: 0

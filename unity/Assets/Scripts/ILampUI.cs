@@ -6,23 +6,16 @@ public class ILampUI : MonoBehaviour
 {
 
     public ILamp ilamp = null;
+    public UnityEngine.UI.Image thumbnailTemplate;
     public UnityEngine.UI.Image[] thumbnails;
 
     bool initializedIlamp = false;
 
-    void Start ()
-    {
-        InitializeFromILamp();
-    }
-
-    void Update()
-    {
-        if (!initializedIlamp)
-            InitializeFromILamp();
-    }
 	
-	void InitializeFromILamp()
+	public void Setup(ILamp _ilamp)
     {
+        ilamp = _ilamp;
+
         if (ilamp == null)
         {
             ilamp = (ILamp)FindObjectOfType(typeof(ILamp));
@@ -38,16 +31,23 @@ public class ILampUI : MonoBehaviour
         if (ilamp.vertices2d.Count < 1)
             return;
 
-        if (thumbnails.Length != ilamp.vertices2d.Count)
-        {
-            Debug.LogError("Number of thumbnails does not match vertex count: " + thumbnails.Length + " != " + ilamp.vertices2d.Count);
-            enabled = false;
-            return;
-        }
+        //if (thumbnails.Length != ilamp.vertices2d.Count)
+        //{
+        //    Debug.LogError("Number of thumbnails does not match vertex count: " + thumbnails.Length + " != " + ilamp.vertices2d.Count);
+        //    enabled = false;
+        //    return;
+        //}
+
+        thumbnails = new UnityEngine.UI.Image[ilamp.vertices2d.Count];
+        
 
 
         for (int i = 0; i < thumbnails.Length; ++i)
         {
+            string thumbName = System.IO.Path.ChangeExtension(ilamp.project.InputFiles[i], "");
+
+            thumbnails[i] = Instantiate<UnityEngine.UI.Image>(thumbnailTemplate, this.transform);
+            thumbnails[i].name = thumbName;
             Rect rect = thumbnails[i].rectTransform.rect;
             //Debug.Log("prev: " + thumbnails[i].rectTransform.anchoredPosition);
             Vector2 v = ilamp.vertices2d[i];
@@ -60,6 +60,11 @@ public class ILampUI : MonoBehaviour
         }
 
         initializedIlamp = true;
+    }
+
+    void LoadThumbnail(string thumbName)
+    {
+
     }
 
     static public float LinearInterpolation(float x, float x0, float x1, float y0, float y1)

@@ -12,9 +12,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\ilamp_dll.cpp" />
+    <ClCompile Include="..\src\tinyply.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\ilamp.h" />
+    <ClInclude Include="..\src\ilamp_project.h" />
+    <ClInclude Include="..\src\tinyply.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{4F62DEFF-F6B7-49E8-A993-DA552D026729}</ProjectGuid>

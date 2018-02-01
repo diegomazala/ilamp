@@ -148,6 +148,51 @@ static bool write_ply_file(const std::string& output_filename, std::vector<float
 
 
 
+
+static bool write_ply_file(const std::string& output_filename, size_t verts_count, float* p_verts_array, float* p_normals_array, float* p_uv_array, int* p_faces_array)
+{
+	if (!p_verts_array)
+		return false;
+
+	try
+	{
+		//
+		// Write ply file
+		//
+		std::filebuf fb;
+		fb.open(output_filename, std::ios::out | std::ios::binary);
+		std::ostream outputStream(&fb);
+
+		tinyply::PlyFile ply_out_file;
+
+		ply_out_file.add_properties_to_element("vertex", { "x", "y", "z" }, std::vector<float>(p_verts_array, p_verts_array + verts_count * 3));
+
+		if (p_normals_array)
+			ply_out_file.add_properties_to_element("vertex", { "nx", "ny", "nz" }, std::vector<float>(p_normals_array, p_normals_array + verts_count * 3));
+		if (p_faces_array)
+			ply_out_file.add_properties_to_element("face", { "vertex_indices" }, std::vector<int>(p_faces_array, p_faces_array + verts_count * 3), 3, tinyply::PlyProperty::Type::UINT8);
+		if (p_uv_array)
+			ply_out_file.add_properties_to_element("face", { "texcoord" }, std::vector<float>(p_normals_array, p_normals_array + verts_count * 3), 6, tinyply::PlyProperty::Type::UINT8);
+
+		ply_out_file.write(outputStream, true);
+
+		fb.close();
+
+
+		std::cout << "<Info>  Ply file saved    : " << output_filename << std::endl;
+
+		return true;
+	}
+	catch (const std::exception & e)
+	{
+		std::cerr << "Caught exception: " << e.what() << std::endl;
+		return false;
+	}
+
+}
+
+
+
 bool replace_vertices(const std::string& source_filename, const std::string& target_filename, const std::string& output_filename)
 {
 	//
