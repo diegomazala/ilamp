@@ -6,5 +6,5 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/ILamp_Figurantes.unity
-    guid: f3e9c6c0acd239b458b095660667c2da
+    path: Assets/Scenes/ILamp_Figurantes_3.unity
+    guid: b6c220a5cdb0ce24c9a37d1b99595dc2

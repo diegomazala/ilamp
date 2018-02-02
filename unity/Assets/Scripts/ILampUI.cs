@@ -6,6 +6,7 @@ public class ILampUI : MonoBehaviour
 {
 
     public ILamp ilamp = null;
+    public Texture2D mouseTarget;
     public UnityEngine.UI.Image thumbnailTemplate;
     public UnityEngine.UI.Image[] thumbnails;
 
@@ -49,6 +50,7 @@ public class ILampUI : MonoBehaviour
 
     }
 
+
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.I))
@@ -58,5 +60,12 @@ public class ILampUI : MonoBehaviour
         }
     }
 
-    
+    public CursorMode cursorMode;
+    public void MouseTarget(bool on)
+    {
+        if (on)
+            Cursor.SetCursor(mouseTarget, Vector2.zero, cursorMode);
+        else
+            Cursor.SetCursor(null, Vector2.zero, cursorMode);
+    }
 }

@@ -75,6 +75,8 @@ public class ILamp : MonoBehaviour
 
     public Vector2 p;
 
+    public Material wireframe = null;
+
     public MeshFilter templateMesh;
 
     public MeshFilter[] baseMeshes;
@@ -164,9 +166,17 @@ public class ILamp : MonoBehaviour
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.LeftControl))
+        {
             controlKeyPressed = true;
+            if (ilampUI)
+                ilampUI.MouseTarget(controlKeyPressed);
+        }
         else if (Input.GetKeyUp(KeyCode.LeftControl))
+        {
             controlKeyPressed = false;
+            if (ilampUI)
+                ilampUI.MouseTarget(controlKeyPressed);
+        }
 
 
         if (controlKeyPressed)
@@ -179,20 +189,27 @@ public class ILamp : MonoBehaviour
         }
         else
         {
+            MeshRenderer target = templateMesh.GetComponent<MeshRenderer>();
             int v = 0;
             for (var key = KeyCode.Alpha1; key <= KeyCode.Alpha9; ++key)
             {
                 if (Input.GetKeyDown(key))
                 {
                     p = vertices2d[v % vertices2d.Count];
-                    MeshRenderer target = templateMesh.GetComponent<MeshRenderer>();
+                    
                     MeshRenderer source = baseMeshes[v % vertices2d.Count].GetComponent<MeshRenderer>();
                     if (target && source)
                         target.sharedMaterial = source.sharedMaterial;
                 }
                 ++v;
             }
+
+            if (Input.GetKeyDown(KeyCode.Alpha0))
+            {
+                target.sharedMaterial = wireframe;
+            }
         }
+
 
         if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.Space))
             ExecuteIlamp();

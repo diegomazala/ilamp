@@ -1,1 +1,1 @@
-python ilampdialog.ui 
+python .\ilampdialog.ui 
