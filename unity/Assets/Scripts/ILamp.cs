@@ -98,14 +98,10 @@ public class ILamp : MonoBehaviour
         customCulture.NumberFormat.NumberDecimalSeparator = ".";
         System.Threading.Thread.CurrentThread.CurrentCulture = customCulture;
 
-        if (!System.IO.File.Exists(projectFileName))
+        if (System.IO.File.Exists(projectFileName))
         {
-            Debug.LogError("Project file does not exist: " + projectFileName);
-            enabled = false;
-            return;
+            JsonUtility.FromJsonOverwrite(System.IO.File.ReadAllText(projectFileName), project);
         }
-
-        JsonUtility.FromJsonOverwrite(System.IO.File.ReadAllText(projectFileName), project);
 
         if (runLamp)
         {
@@ -219,7 +215,7 @@ public class ILamp : MonoBehaviour
     {
         Plugin.ILamp_RunILamp(p.x, p.y, project.NumNeighbours, project.KnnSearchChecks);
 
-        if (q_data == null)
+        if (q_data == null) // q_data.Count must be (3 * vertices.Length)
         {
             q_data = new float[Plugin.ILamp_QRows() * Plugin.ILamp_QCols()];
             q_handle = GCHandle.Alloc(q_data, GCHandleType.Pinned);

@@ -1,0 +1,14 @@
+{
+    "ProjectName": "F:/Projects/DSc/Code/ilamp.git/unity/Assets/Artwork/Spheres/Spheres.ilp",
+    "FileName2d": "F:/Projects/DSc/Code/ilamp.git/unity/Assets/Artwork/Spheres/Spheres.2d",
+    "FileNameNd": "F:/Projects/DSc/Code/ilamp.git/unity/Assets/Artwork/Spheres/Spheres.nd",
+    "OutputFolder": "F:/Projects/DSc/Code/ilamp.git/unity/Assets/Artwork/Spheres/Output/",
+    "InputFiles": [
+        "F:/Projects/DSc/Code/ilamp.git/unity/Assets/Artwork/Spheres/Sphere01.ply",
+        "F:/Projects/DSc/Code/ilamp.git/unity/Assets/Artwork/Spheres/Sphere02.ply",
+        "F:/Projects/DSc/Code/ilamp.git/unity/Assets/Artwork/Spheres/Sphere03.ply"
+    ],
+    "NumNeighbours": 2,
+    "KdTreeCount": 4,
+    "KnnSearchChecks": 128
+}
