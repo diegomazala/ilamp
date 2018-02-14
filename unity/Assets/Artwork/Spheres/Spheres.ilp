@@ -8,7 +8,7 @@
         "F:/Projects/DSc/Code/ilamp.git/unity/Assets/Artwork/Spheres/Sphere02.ply",
         "F:/Projects/DSc/Code/ilamp.git/unity/Assets/Artwork/Spheres/Sphere03.ply"
     ],
-    "NumNeighbours": 2,
-    "KdTreeCount": 4,
+    "NumNeighbours": 3,
+    "KdTreeCount": 3,
     "KnnSearchChecks": 128
 }

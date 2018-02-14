@@ -68,6 +68,9 @@ class ILampDialog(QtWidgets.QDialog, Ui_ILampDialog):
             for f in files:
                 self.inputFilesTextEdit.append(f)
 
+            self.numNeighboursSpinBox.setValue(len(files))
+            self.kdTreeCountSpinBox.setValue(len(files))
+
 
     def onFilePath2dClicked(self):
         fileName, _ = QFileDialog.getSaveFileName(
