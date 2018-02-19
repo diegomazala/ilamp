@@ -168,10 +168,16 @@ int main(int argc, char* argv[])
 	std::cout << "<Info>  Computing vertex  : " << query.transpose() << std::endl;
 	auto start_time = std::chrono::system_clock::now();
 	
-	const auto& q = ilamp.execute(		// 'query' is the 'p' in the paper
-		query.x(), query.y(), 
-		ilp_prj.numNeighbours, 
-		ilp_prj.knnSearchChecks);			
+	//const auto& q = ilamp.execute(		// 'query' is the 'p' in the paper
+	//	query.x(), query.y(), 
+	//	ilp_prj.numNeighbours, 
+	//	ilp_prj.knnSearchChecks);			
+
+	ilamp.execute(
+		query.x(), query.y(),
+		ilp_prj.numNeighbours,
+		ilp_prj.knnSearchChecks);
+
 
 	std::chrono::duration<double> elapsed_seconds = std::chrono::system_clock::now() - start_time;
 	std::cout << "<Info>  Elapsed Time      : " << elapsed_seconds.count() << "s\n";
@@ -179,14 +185,14 @@ int main(int argc, char* argv[])
 	if (test_index > -1)
 	{
 		const auto& q_orig = ilamp.verts_Nd.at(test_index);
-		const auto dist = (q - q_orig).norm();
+		const auto dist = (ilamp.q - q_orig).norm();
 		std::cout << "<Info>  Distance Error    : " << dist << std::endl;
 	}
 
 
 	write_ply_file(
 		output_filename, 
-		std::vector<float>(&q[0], q.data() + q.cols()*q.rows()), 
+		std::vector<float>(&ilamp.q[0], ilamp.q.data() + ilamp.q.cols()*ilamp.q.rows()), 
 		template_filename);
 
 

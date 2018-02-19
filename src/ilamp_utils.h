@@ -53,7 +53,7 @@ static void build_nd_file(const std::vector<std::string>& models_file_array, con
 
 
 
-static uint32_t write_ply_file(const std::string & filename, std::vector<float>& verts)
+static bool write_ply_file(const std::string & filename, std::vector<float>& verts)
 {
 	try
 	{
@@ -64,12 +64,12 @@ static uint32_t write_ply_file(const std::string & filename, std::vector<float>&
 		ply_file.add_properties_to_element("vertex", { "x", "y", "z" }, verts);
 		ply_file.write(ply_output_stream, true);
 		ply_fb.close();
-
+		return true;
 	}
 	catch (const std::exception & e)
 	{
 		std::cerr << "Caught exception: " << e.what() << std::endl;
-		return 0;
+		return false;
 	}
 }
 

@@ -139,7 +139,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 56d46502f66e7fa4fa94133122f52038, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  runLamp: 1
+  runLamp: 0
   projectFileName: G:/Data/Atores/Atores.ilp
   project:
     ProjectName: 
@@ -491,7 +491,7 @@ Prefab:
     - target: {fileID: 2300000, guid: eb18faeb7deac0142b7cb6afc4ffcde0, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 2100000, guid: a84d5d532ddaea5499cf848cf27cdc07, type: 2}
+      objectReference: {fileID: 2100000, guid: ac61bbe7c43f3d14a9e7c7d3732157b6, type: 2}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: eb18faeb7deac0142b7cb6afc4ffcde0, type: 3}
   m_IsPrefabParent: 0
@@ -541,7 +541,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ilamp: {fileID: 0}
-  mouseTarget: {fileID: 10300, guid: 0000000000000000f000000000000000, type: 0}
+  mouseTarget: {fileID: 2800000, guid: b85eae99f819b9b4da2cbcb677cf87d3, type: 3}
   thumbnailTemplate: {fileID: 114595837400331040, guid: 705d0dcddafe2794e88838763ab8412b,
     type: 2}
   thumbnails: []

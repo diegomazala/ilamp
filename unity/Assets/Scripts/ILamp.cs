@@ -18,10 +18,10 @@ public class ILamp : MonoBehaviour
         public static extern bool ILamp_LoadInputFiles(string filename_2d, string filename_Nd);
 
         [DllImport(DllName)]
-        public static extern bool ILamp_BuildKdTree(ushort kdtree_count);
+        public static extern void ILamp_BuildKdTree(ushort kdtree_count);
 
         [DllImport(DllName)]
-        public static extern void ILamp_RunILamp(float x, float y, ushort num_neighbours, ushort knn_search_checks);
+        public static extern bool ILamp_RunILamp(float x, float y, int num_neighbours, int knn_search_checks);
 
         [DllImport(DllName)]
         public static extern long ILamp_QRows();
@@ -121,14 +121,8 @@ public class ILamp : MonoBehaviour
             enabled = false;
             return;
         }
-        
-        if (!Plugin.ILamp_BuildKdTree(project.KdTreeCount))
-        {
-            Debug.LogError("Could not build kd-tree");
-            enabled = false;
-            return;
-        }
 
+        Plugin.ILamp_BuildKdTree(project.KdTreeCount);
 
 
         using (System.IO.TextReader reader = System.IO.File.OpenText(project.FileName2d))
@@ -145,6 +139,23 @@ public class ILamp : MonoBehaviour
 
             reader.Close();
         }
+
+
+        if (Plugin.ILamp_RunILamp(vertices2d[0].x, vertices2d[0].y, project.NumNeighbours, project.KnnSearchChecks))
+        {
+            if (q_data == null) // q_data.Count must be (3 * vertices.Length)
+            {
+                q_data = new float[Plugin.ILamp_QRows() * Plugin.ILamp_QCols()];
+                q_handle = GCHandle.Alloc(q_data, GCHandleType.Pinned);
+            }
+        }
+        else
+        {
+            Debug.LogError("Could not run ilamp : " + projectFileName);
+            enabled = false;
+            return;
+        }
+
 
 
         ilampUI = (ILampUI)FindObjectOfType(typeof(ILampUI));
@@ -175,13 +186,19 @@ public class ILamp : MonoBehaviour
         }
 
 
+
+
         if (controlKeyPressed)
         {
             p = new Vector2(
                 ILamp.LinearInterpolation(Input.mousePosition.x, 0, Screen.width, MinCoords.x, MaxCoords.x),
                 ILamp.LinearInterpolation(Input.mousePosition.y, 0, Screen.height, MinCoords.y, MaxCoords.y));
 
-            ExecuteIlamp();
+            if (p.x > Plugin.ILamp_MinX() && p.x < Plugin.ILamp_MaxX() &&
+                p.y > Plugin.ILamp_MinY() && p.y < Plugin.ILamp_MaxY())
+            {
+                ExecuteIlamp(p);
+            }
         }
         else
         {
@@ -208,18 +225,20 @@ public class ILamp : MonoBehaviour
 
 
         if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.Space))
-            ExecuteIlamp();
+            ExecuteIlamp(p);
+
     }
 
-    void ExecuteIlamp()
-    {
-        Plugin.ILamp_RunILamp(p.x, p.y, project.NumNeighbours, project.KnnSearchChecks);
+  
 
-        if (q_data == null) // q_data.Count must be (3 * vertices.Length)
+    void ExecuteIlamp(Vector2 _p)
+    {
+        if (!Plugin.ILamp_RunILamp(_p.x, _p.y, project.NumNeighbours, project.KnnSearchChecks))
         {
-            q_data = new float[Plugin.ILamp_QRows() * Plugin.ILamp_QCols()];
-            q_handle = GCHandle.Alloc(q_data, GCHandleType.Pinned);
+            Debug.LogError("Could not run ilamp : " + project.NumNeighbours + " " + project.KnnSearchChecks);
+            return;
         }
+
 
         Plugin.ILamp_CopyQ(q_handle.AddrOfPinnedObject());
 
@@ -237,6 +256,7 @@ public class ILamp : MonoBehaviour
             templateMesh.mesh.RecalculateBounds();
             templateMesh.mesh.RecalculateNormals();
         }
+
     }
 
 

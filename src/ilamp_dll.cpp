@@ -3,6 +3,7 @@
 #include "ilamp_utils.h"
 
 #include <vector>
+#include <fstream>
 #include <experimental/filesystem>
 namespace fs = std::experimental::filesystem;
 
@@ -12,8 +13,7 @@ namespace fs = std::experimental::filesystem;
 
 static std::unique_ptr<ILamp<float>> ilamp;
 static std::vector<float> output_verts;
-static Eigen::Matrix<float, Eigen::Dynamic, 1> q;
-
+static std::unique_ptr<std::ofstream> ilamp_log;
 
 
 DllExport void ILamp_BuildNdFile(const char* ilamp_project_filename)
@@ -51,13 +51,16 @@ DllExport bool ILamp_RunLamp(const char* input_filename_nd, const char* output_f
 DllExport bool ILamp_LoadInputFiles(const char* filename_2d, const char* filename_Nd)
 {
 	ilamp.reset(new ILamp<float>());
+	ilamp_log.reset(new std::ofstream("ilamp.log"));
+	
+	(*ilamp_log) << "Info : Ilamp dll initilized" << std::endl;
 
 	if (!(ilamp->load_data_2d(filename_2d) && ilamp->load_data_Nd(filename_Nd)))
 		return false;
 
 	if (ilamp->verts_Nd.size() != ilamp->verts_2d.size())
 	{
-		//std::cerr << "<Error> Vertex arrays do not have the same size. Abort" << std::endl;
+		(*ilamp_log) << "Error: <ILamp_LoadInputFiles> Vertex arrays do not have the same size. Abort" << std::endl;
 		return false;
 	}
 
@@ -68,62 +71,124 @@ DllExport bool ILamp_LoadInputFiles(const char* filename_2d, const char* filenam
 
 DllExport void ILamp_BuildKdTree(uint16_t kdtree_count)
 {
-	assert(ilamp);
-
-	ilamp->build_kdtree(kdtree_count);
+	if (!ilamp)
+	{
+		(*ilamp_log) << "Error: <ILamp_BuildKdTree> ilamp not initilized" << std::endl;
+		return;
+	}
+	
+	try
+	{
+		ilamp->build_kdtree(kdtree_count);
+	}
+	catch (const std::exception& ex)
+	{
+		(*ilamp_log) << ex.what() << std::endl;
+	}
 }
 
 
-DllExport void ILamp_RunILamp(float x, float y, uint16_t num_neighbours, uint16_t knn_search_checks)
+DllExport bool ILamp_RunILamp(float x, float y, int num_neighbours, int knn_search_checks)
 {
-	assert(ilamp);
+	if (!ilamp)
+	{
+		(*ilamp_log) << "Error: <ILamp_RunILamp> ilamp not initilized" << std::endl;
+		return false;
+	}
 
-	q = ilamp->execute(x, y, num_neighbours, knn_search_checks);
+	try
+	{
+		//(*ilamp_log) << "Info : <ILamp_RunILamp> " << x << ' ' << y << ' ' << num_neighbours << ' ' << knn_search_checks << std::endl;
+		ilamp->execute(x, y, num_neighbours, knn_search_checks);
+		return true;
+	}
+	catch (const std::exception& ex)
+	{
+		(*ilamp_log) << "Error: <ILamp_RunILamp> " << x << ' ' << y << ' ' << num_neighbours << ' ' << knn_search_checks << std::endl
+			<< ex.what() << std::endl;
+		return false;
+	}
 }
 
 DllExport size_t ILamp_QRows()
 {
-	return q.rows();
+	if (!ilamp)
+	{
+		(*ilamp_log) << "Error: <ILamp_QRows> ilamp not initilized" << std::endl;
+		return 0;
+	}
+	return ilamp->q.rows();
 }
 
 DllExport size_t ILamp_QCols()
 {
-	return q.cols();
+	if (!ilamp)
+	{
+		(*ilamp_log) << "Error: <ILamp_QCols> ilamp not initilized" << std::endl;
+		return 0;
+	}
+	return ilamp->q.cols();
 }
 
 
 DllExport void ILamp_CopyQ(void* p_array_float_N)
 {
+	if (!ilamp)
+	{
+		(*ilamp_log) << "Error: <ILamp_CopyQ> ilamp not initilized" << std::endl;
+		return;
+	}
+
 	float* p_array_float = (float*)p_array_float_N;
 
 	// safeguard - pointer must be not null
 	if (!p_array_float)
 		return;
 
-	size_t r = q.rows();
-	size_t c = q.cols();
-	size_t coords_count = q.rows() * q.cols();
+	size_t r = ilamp->q.rows();
+	size_t c = ilamp->q.cols();
+	size_t coords_count = ilamp->q.rows() * ilamp->q.cols();
 
-	std::memcpy(p_array_float, q.data(), coords_count * sizeof(float));
+	std::memcpy(p_array_float, ilamp->q.data(), coords_count * sizeof(float));
 }
 
 DllExport float ILamp_MinX()
 {
+	if (!ilamp)
+	{
+		(*ilamp_log) << "Error: <ILamp_MinX> ilamp not initilized" << std::endl;
+		return 0;
+	}
 	return ilamp->min_x;
 }
 
 DllExport float ILamp_MaxX()
 {
+	if (!ilamp)
+	{
+		(*ilamp_log) << "Error: <ILamp_MaxX> ilamp not initilized" << std::endl;
+		return 0;
+	}
 	return ilamp->max_x;
 }
 
 DllExport float ILamp_MinY()
 {
+	if (!ilamp)
+	{
+		(*ilamp_log) << "Error: <ILamp_MinY> ilamp not initilized" << std::endl;
+		return 0;
+	}
 	return ilamp->min_y;
 }
 
 DllExport float ILamp_MaxY()
 {
+	if (!ilamp)
+	{
+		(*ilamp_log) << "Error: <ILamp_MaxY> ilamp not initilized" << std::endl;
+		return 0;
+	}
 	return ilamp->max_y;
 }
 

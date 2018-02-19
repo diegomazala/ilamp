@@ -373,7 +373,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   ilamp: {fileID: 0}
-  mouseTarget: {fileID: 10300, guid: 0000000000000000f000000000000000, type: 0}
+  mouseTarget: {fileID: 2800000, guid: b85eae99f819b9b4da2cbcb677cf87d3, type: 3}
   thumbnailTemplate: {fileID: 114595837400331040, guid: 705d0dcddafe2794e88838763ab8412b,
     type: 2}
   thumbnails: []
@@ -467,6 +467,10 @@ Prefab:
       propertyPath: m_Name
       value: TemplateSphere
       objectReference: {fileID: 0}
+    - target: {fileID: 2300000, guid: 72d3f371973585d4f800a162c8e644c8, type: 3}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: ac61bbe7c43f3d14a9e7c7d3732157b6, type: 2}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 72d3f371973585d4f800a162c8e644c8, type: 3}
   m_IsPrefabParent: 0
