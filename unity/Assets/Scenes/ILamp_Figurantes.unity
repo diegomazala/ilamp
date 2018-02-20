@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.4511454, g: 0.49975932, b: 0.56766605, a: 1}
+  m_IndirectSpecularColor: {r: 0.4511454, g: 0.49975932, b: 0.5676661, a: 1}
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
@@ -141,11 +141,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 83195808}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 56d46502f66e7fa4fa94133122f52038, type: 3}
+  m_Script: {fileID: 11500000, guid: 0b9315528e08ec94da426325391f3486, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   runLamp: 0
-  projectFileName: G:/Data/Figurantes/Figurantes.ilp
+  ProjectName: 
+  projectFileName: G:\Data\Figurantes\Figurantes.ilp
   project:
     ProjectName: 
     FileName2d: 
@@ -157,8 +158,8 @@ MonoBehaviour:
     KnnSearchChecks: 128
   ModelScaleFactor: 0.01
   vertices2d: []
-  p: {x: -34.5914, y: 22.42081}
-  wireframe: {fileID: 2100000, guid: ac61bbe7c43f3d14a9e7c7d3732157b6, type: 2}
+  p: {x: 0, y: 0}
+  wireframe: {fileID: 2100000, guid: 045c574d57a6fcb4da21002baab89537, type: 2}
   templateMesh: {fileID: 566939222}
   baseMeshes:
   - {fileID: 1650574273}
@@ -246,7 +247,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 366381087}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 894f7ccaa2014454f98800af01ffefc1, type: 3}
+  m_Script: {fileID: 11500000, guid: d8bc1806c643f904582d4af25520a80a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!4 &366381089
@@ -445,7 +446,7 @@ Prefab:
     - target: {fileID: 2300000, guid: 3c2fac3b33fcdd94fb595ec045293f87, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 2100000, guid: ac61bbe7c43f3d14a9e7c7d3732157b6, type: 2}
+      objectReference: {fileID: 2100000, guid: 045c574d57a6fcb4da21002baab89537, type: 2}
     - target: {fileID: 100002, guid: 3c2fac3b33fcdd94fb595ec045293f87, type: 3}
       propertyPath: m_IsActive
       value: 1
@@ -457,10 +458,6 @@ Prefab:
 MeshFilter:
   m_PrefabParentObject: {fileID: 3300000, guid: 3c2fac3b33fcdd94fb595ec045293f87,
     type: 3}
-  m_PrefabInternal: {fileID: 566939221}
---- !u!4 &566939223 stripped
-Transform:
-  m_PrefabParentObject: {fileID: 400000, guid: 3c2fac3b33fcdd94fb595ec045293f87, type: 3}
   m_PrefabInternal: {fileID: 566939221}
 --- !u!33 &577100722 stripped
 MeshFilter:
@@ -567,12 +564,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 833386199}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dac45338ed896f348995423cb5a5c149, type: 3}
+  m_Script: {fileID: 11500000, guid: 444ff1f0183e814458b5421de2777f83, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ilamp: {fileID: 0}
-  mouseTarget: {fileID: 2800000, guid: b85eae99f819b9b4da2cbcb677cf87d3, type: 3}
-  thumbnailTemplate: {fileID: 114595837400331040, guid: 705d0dcddafe2794e88838763ab8412b,
+  ilamp: {fileID: 83195809}
+  mouseTarget: {fileID: 2800000, guid: 1d7904b6b5fb569448fcb6f2b3c371d1, type: 3}
+  thumbnailTemplate: {fileID: 114595837400331040, guid: 832d7aa9d4d8d0a47940e0f2c5065fe8,
     type: 2}
   thumbnails: []
   cursorMode: 0
@@ -864,20 +861,20 @@ MonoBehaviour:
   m_GameObject: {fileID: 1050604710}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b7d6e6ded9664e7469b34f03654a18f5, type: 3}
+  m_Script: {fileID: 11500000, guid: 3c0c77f56c472f14da20b0af7fb33b5d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  thetaSpeed: 500
-  phiSpeed: 240
+  thetaSpeed: 250
+  phiSpeed: 120
   moveSpeed: 10
-  zoomSpeed: 5
+  zoomSpeed: 30
   phiBoundMin: -89
   phiBoundMax: 89
   useMoveBounds: 1
   moveBounds: 100
   rotateSmoothing: 0.5
   moveSmoothing: 0.7
-  distance: 1.1
+  distance: 2
   paramInputBounds:
     serializedVersion: 2
     x: 0
@@ -885,8 +882,8 @@ MonoBehaviour:
     width: 1
     height: 1
   usePivotPoint: 1
-  pivotPoint: {x: 0, y: 1.65, z: 0}
-  pivotTransform: {fileID: 566939223}
+  pivotPoint: {x: 0, y: 2, z: 0}
+  pivotTransform: {fileID: 0}
   cameraKeyCode: 99
   cameraKeyOn: 1
 --- !u!1001 &1063656246
@@ -1202,7 +1199,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1951528531}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 01e4bd6f7e4aff845a1e853cbbcf4aaf, type: 3}
+  m_Script: {fileID: 11500000, guid: 5f247c25ad2efac4eadc89ddcc52d8b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   thetaSpeed: 250
