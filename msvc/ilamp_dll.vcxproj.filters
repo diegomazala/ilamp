@@ -18,6 +18,9 @@
     <ClInclude Include="..\src\tinyply.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\rbf_interpolation.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\ilamp_dll.cpp">
@@ -25,6 +28,9 @@
     </ClCompile>
     <ClCompile Include="..\src\tinyply.cpp">
       <Filter>Header Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\rbf_interpolation.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -209,3 +209,113 @@ DllExport void ILamp_WritePly(size_t verts_count, void* p_verts_array, void* p_n
 	write_ply_file("C:/tmp/mesh.ply", verts, "C:/Users/diego/Google Drive/Data/Test/Heads/Head01.ply");
 }
 
+
+#include "rbf_interpolation.hpp"
+DllExport void ILamp_RbfTest()
+{
+
+	if (ilamp->verts_Nd.size() != ilamp->verts_2d.size())
+	{
+		(*ilamp_log) << "Error: <ILamp_LoadInputFiles> Vertex arrays do not have the same size. Abort" << std::endl;
+	}
+
+	const auto& y = ilamp->verts_2d;
+	const auto& x = ilamp->verts_Nd;
+
+	std::size_t N = x.size();
+	std::size_t m = x[0].size();
+
+	Eigen::MatrixXd verts_2d(N, 2);
+	Eigen::MatrixXd verts_Nd(N, m);
+	
+	for (int i = 0; i < N; ++i)
+	{
+		verts_2d(i, 0) = y[i].x();
+		verts_2d(i, 1) = y[i].y();
+
+		for (std::size_t j = 0; j < verts_2d.cols(); ++j)
+		{
+			verts_Nd(i, j) = (double)x[i][j];
+		}
+	}
+
+
+	//auto coeff = rbfcreate(verts_2d, verts_Nd, 'RBFConstant');
+}
+
+float phi_function(float r)
+{
+	return 0;
+}
+
+DllExport void ILamp_RbfAlgorithm()
+{
+	if (ilamp->verts_Nd.size() != ilamp->verts_2d.size())
+	{
+		(*ilamp_log) << "Error: <ILamp_LoadInputFiles> Vertex arrays do not have the same size. Abort" << std::endl;
+	}
+	const auto& y = ilamp->verts_2d;
+	const auto& x = ilamp->verts_Nd;
+
+	//
+	// Queries
+	//
+	auto p = y[0];
+	auto q = x[0];
+	
+	std::size_t N = x.size();
+	std::size_t m = x[0].size();
+	Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> phi(N, N);
+	Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> b(N, m);
+
+	//
+	// b tem que ser (b(N, 1)
+	// o sistema será resolvido k vezes
+	//
+
+
+
+	// 
+	// Asssemble phi matrix
+	//
+	for (std::size_t i = 0; i < N; ++i)
+	{
+		for (std::size_t j = 0; j < N; ++j)
+		{
+			const auto phi_func = (y[j] - y[i]).norm();
+
+			phi(i, j) = phi(j, i) = phi_func;
+		}
+	}
+
+	// 
+	// Assemble b matrix
+	//
+	for (std::size_t i = 0; i < N; ++i)
+	{
+		for (std::size_t j = 0; j < m; ++j)
+		{
+			b(i, j) = x[i][j];
+		}
+	}
+
+	auto lambda = phi.lu().solve(b);
+
+	auto r = lambda.rows();	// 8
+	auto c = lambda.cols();	// 67k
+
+	
+	Eigen::Matrix<float, Eigen::Dynamic, 1> s_p(m);
+	for (std::size_t k = 0; k < m; ++k)
+	{
+		float sk_p = 0;
+		for (std::size_t i = 0; i < N; ++i)
+		{
+			float lki = lambda(i, k);
+			float phi = 1;
+
+			sk_p += lki * phi * (y[i] - p).norm();
+		}
+	}
+
+}

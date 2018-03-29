@@ -12,11 +12,13 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\ilamp_dll.cpp" />
+    <ClCompile Include="..\src\rbf_interpolation.cpp" />
     <ClCompile Include="..\src\tinyply.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\ilamp.h" />
     <ClInclude Include="..\src\ilamp_project.h" />
+    <ClInclude Include="..\src\rbf_interpolation.hpp" />
     <ClInclude Include="..\src\tinyply.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

@@ -7,7 +7,7 @@ using System.Linq;
 
 public class ILamp : MonoBehaviour
 {
-    public const string DllName = "ilamp_dll";
+    public const string DllName = "ilamp_dlld";
 
     private class Plugin
     {
@@ -44,6 +44,12 @@ public class ILamp : MonoBehaviour
         [DllImport(DllName)]
         public static extern float ILamp_MaxY();
 
+        [DllImport(DllName)]
+        public static extern void ILamp_RbfAlgorithm();
+
+        [DllImport(DllName)]
+        public static extern void ILamp_RbfTest();
+
     }
 
     [System.Serializable]
@@ -65,6 +71,8 @@ public class ILamp : MonoBehaviour
     private GCHandle q_handle;
 
     public bool runLamp = true;
+
+    public string ProjectName;
 
     public string projectFileName;
     public Project project = null;
@@ -183,6 +191,16 @@ public class ILamp : MonoBehaviour
             controlKeyPressed = false;
             if (ilampUI)
                 ilampUI.MouseTarget(controlKeyPressed);
+        }
+
+        if (Input.GetKeyDown(KeyCode.R))
+        {
+            Plugin.ILamp_RbfAlgorithm();
+        }
+
+        if (Input.GetKeyDown(KeyCode.T))
+        {
+            Plugin.ILamp_RbfTest();
         }
 
 
