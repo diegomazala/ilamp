@@ -1,39 +1,52 @@
-#include "rbf_interpolation.hpp"
+ï»¿#include "rbf_interpolation.h"
 
-MatrixXd rbfcreate(MatrixXd x,							//²ÉÑùµã×ø±ê,Ã¿Ò»ÐÐÊÇÒ»¸öÊý¾Ý
-	MatrixXd y,											//²ÉÑùµãÖµ,º¯ÊýÖµÊÇÒ»ÁÐ¶àÐÐ
-	MatrixXd RBFFunction(MatrixXd r, double const_num),	//²åÖµº¯Êý
-	double RBFConstant,									//²åÖµº¯Êý²ÎÊý
-	double RBFSmooth = 0)								//Æ½»¬²ÎÊý 0ÊÇ²»Æ½»¬
-	//ÇóRBF²åÖµ²ÎÊý
+
+Eigen::MatrixXd rbfcreate(
+	Eigen::MatrixXd x,							
+	Eigen::MatrixXd y,											
+	Eigen::MatrixXd RBFFunction(Eigen::MatrixXd r, double const_num),
+	double RBFConstant,									
+	double RBFSmooth = 0)								
+														
 {
+	std::cout << x.rows() << ' ' << x.cols() << std::endl;
+	std::cout << y.rows() << ' ' << y.cols() << std::endl;
+
 	int nXDim = x.cols();
 	int nYDim = y.cols();
 	int nXCount = x.rows();
 	int nYCount = y.rows();
 	if (nXCount != nYCount)
-		cerr << "x and y should have the same number of rows" << endl;
+		std::cerr << "x and y should have the same number of rows" << std::endl;
 	if (nYDim != 1)
-		cerr << "y should be n by 1 vector" << endl;
-	MatrixXd A;
+		std::cerr << "y should be n by 1 vector" << std::endl;
+	Eigen::MatrixXd A;
 	A = rbfAssemble(x, RBFFunction, RBFConstant, RBFSmooth);
-	MatrixXd b = MatrixXd::Zero(y.rows() + nXDim + 1, 1);
+
+	std::cout << A.rows() << ' ' << A.cols() << std::endl;
+
+	Eigen::MatrixXd b = Eigen::MatrixXd::Zero(y.rows() + nXDim + 1, 1);
+	std::cout << b.rows() << ' ' << b.cols() << std::endl;
 	b.topRows(y.rows()) = y;
-	MatrixXd rbfcoeff;
+	std::cout << b.rows() << ' ' << b.cols() << std::endl;
+	Eigen::MatrixXd rbfcoeff;
 	rbfcoeff = A.lu().solve(b);
+	std::cout << rbfcoeff.rows() << ' ' << rbfcoeff.cols() << std::endl;
 	return rbfcoeff;
 }
 
-MatrixXd rbfAssemble(MatrixXd x,						//²ÉÑùµã×ø±ê
-	MatrixXd RBFFunction(MatrixXd r, double const_num),	//²åÖµº¯Êý
-	double RBFConstant,									//²åÖµº¯Êý²ÎÊý
-	double RBFSmooth)									//Æ½»¬²ÎÊý
-	//¹¹ÔìÏµÊý¾ØÕó
+
+Eigen::MatrixXd rbfAssemble(
+	Eigen::MatrixXd x,						
+	Eigen::MatrixXd RBFFunction(Eigen::MatrixXd r, double const_num),
+	double RBFConstant,									
+	double RBFSmooth)									
+														
 {
-	int dim = x.cols();//Î¬¶ÈÊý
-	int n = x.rows();//²ÉÑùµãÊý
-	MatrixXd r = MatrixXd::Zero(n, n);
-	MatrixXd temp_A;
+	int dim = x.cols();
+	int n = x.rows();
+	Eigen::MatrixXd r = Eigen::MatrixXd::Zero(n, n);
+	Eigen::MatrixXd temp_A;
 	for (int i = 0; i < n; i++)
 	{
 		for (int j = 0; j < i; j++)
@@ -43,72 +56,88 @@ MatrixXd rbfAssemble(MatrixXd x,						//²ÉÑùµã×ø±ê
 		}
 	}
 	temp_A = RBFFunction(r, RBFConstant);
-	//Æ½»¬:Ê¹µÃ²ÉÑùµã²»ÔÙ¾«È·µÈÓÚ²ÉÑùÖµ
+
+	std::cout << "temp_A " << temp_A.rows() << ' ' << temp_A.cols() << std::endl;
+	
 	for (int i = 0; i < n; i++)
 	{
 		temp_A(i, i) = temp_A(i, i) - RBFSmooth;
 	}
-	MatrixXd P(x.rows(), x.cols() + 1);
-	P.leftCols(1) = MatrixXd::Ones(n, 1);
+	Eigen::MatrixXd P(x.rows(), x.cols() + 1);
+	P.leftCols(1) = Eigen::MatrixXd::Ones(n, 1);
 	P.rightCols(x.cols()) = x;
-	MatrixXd A = MatrixXd::Zero(temp_A.rows() + P.cols(), temp_A.cols() + P.cols());
+
+	std::cout << "P " << P.rows() << ' ' << P.cols() << std::endl;
+
+	Eigen::MatrixXd A = Eigen::MatrixXd::Zero(temp_A.rows() + P.cols(), temp_A.cols() + P.cols());
 	A.topLeftCorner(temp_A.rows(), temp_A.cols()) = temp_A;
 	A.topRightCorner(P.rows(), P.cols()) = P;
 	A.bottomLeftCorner(P.cols(), P.rows()) = P.transpose();
 	return A;
 }
 
-MatrixXd rbfphi_linear(MatrixXd r, double const_num)
+
+Eigen::MatrixXd rbfphi_linear(Eigen::MatrixXd r, double const_num)
 //Linear
 {
-	MatrixXd u(r.rows(), r.cols());
+	Eigen::MatrixXd u(r.rows(), r.cols());
 	u = r;
 	return u;
 }
-MatrixXd rbfphi_cubic(MatrixXd r, double const_num)
+
+
+Eigen::MatrixXd rbfphi_cubic(Eigen::MatrixXd r, double const_num)
 //Cubic
 {
-	MatrixXd u(r.rows(), r.cols());
+	Eigen::MatrixXd u(r.rows(), r.cols());
 	u = r.array().pow(3);
 	return u;
 }
-MatrixXd rbfphi_gaussian(MatrixXd r, double const_num)
+
+
+Eigen::MatrixXd rbfphi_gaussian(Eigen::MatrixXd r, double const_num)
 //Gaussian
 {
-	MatrixXd u(r.rows(), r.cols());
+	Eigen::MatrixXd u(r.rows(), r.cols());
 	u = (-0.5*r.array().square() / (const_num*const_num)).array().exp();
 	return u;
 }
-MatrixXd rbfphi_multiquadrics(MatrixXd r, double const_num)
+
+
+Eigen::MatrixXd rbfphi_multiquadrics(Eigen::MatrixXd r, double const_num)
 //Multiquadrics
 {
-	MatrixXd u(r.rows(), r.cols());
+	Eigen::MatrixXd u(r.rows(), r.cols());
 	u = (1.0 + r.array().square() / (const_num*const_num)).array().sqrt();
 	return u;
 }
-MatrixXd rbfphi_thinplate(MatrixXd r, double const_num)
+
+
+Eigen::MatrixXd rbfphi_thinplate(Eigen::MatrixXd r, double const_num)
 //Thinplate
 {
-	MatrixXd u(r.rows(), r.cols());
+	Eigen::MatrixXd u(r.rows(), r.cols());
 	u = (r.array().square()).cwiseProduct((r.array() + 1).log());
 	return u;
 }
 
-MatrixXd rbfinterp(MatrixXd nodes,						//²ÉÑùµã×ø±ê
-	MatrixXd rbfcoeff,									//RBF²åÖµ²ÎÊý
-	MatrixXd x,											//´ý²åÖµµã×ø±ê
-	MatrixXd RBFFunction(MatrixXd r, double const_num),	//²åÖµº¯Êý
-	double RBFConstant)									//²åÖµº¯Êý²ÎÊý
-//¼ÆËã´ý²åÖµµãµÄÖµ
+
+Eigen::MatrixXd rbfinterp(
+	Eigen::MatrixXd nodes,						
+	Eigen::MatrixXd rbfcoeff,									
+	Eigen::MatrixXd x,											
+	Eigen::MatrixXd RBFFunction(Eigen::MatrixXd r, double const_num),	
+	double RBFConstant)									
+														
 {
 	int dim = nodes.cols();
 	int n = nodes.rows();
 	int dimPoints = x.cols();
 	int nPoints = x.rows();
 	if (dim != dimPoints)
-		cerr << "x should have the same number of rows as an array used to create RBF interpolation" << endl;
-	MatrixXd r = MatrixXd::Zero(nPoints, n);
-	MatrixXd temp_A;
+		std::cerr << "x should have the same number of rows as an array used to create RBF interpolation" << std::endl;
+	Eigen::MatrixXd r = Eigen::MatrixXd::Zero(nPoints, n);
+	Eigen::MatrixXd temp_A;
 	for (int i = 0; i < nPoints; i++)
 	{
 		for (int j = 0; j < n; j++)
@@ -117,23 +146,26 @@ MatrixXd rbfinterp(MatrixXd nodes,						//²ÉÑùµã×ø±ê
 		}
 	}
 	temp_A = RBFFunction(r, RBFConstant);
-	MatrixXd P(x.rows(), x.cols() + 1);
-	P.leftCols(1) = MatrixXd::Ones(x.rows(), 1);
+	Eigen::MatrixXd P(x.rows(), x.cols() + 1);
+	P.leftCols(1) = Eigen::MatrixXd::Ones(x.rows(), 1);
 	P.rightCols(x.cols()) = x;
-	MatrixXd A(nPoints, n + x.cols() + 1);
+	Eigen::MatrixXd A(nPoints, n + x.cols() + 1);
 	A.topLeftCorner(temp_A.rows(), temp_A.cols()) = temp_A;
 	A.topRightCorner(P.rows(), P.cols()) = P;
-	MatrixXd f;
-	f = A*rbfcoeff;
+	Eigen::MatrixXd f;
+	f = A * rbfcoeff;
 	return f;
 }
 
-double rbfcheck(MatrixXd x, MatrixXd y, MatrixXd rbfcoeff,
-	MatrixXd RBFFunction(MatrixXd r, double const_num),
+
+double rbfcheck(
+	Eigen::MatrixXd x,
+	Eigen::MatrixXd y,
+	Eigen::MatrixXd rbfcoeff,
+	Eigen::MatrixXd RBFFunction(Eigen::MatrixXd r, double const_num),
 	double RBFConstant)
-	//¼ÆËã²ÉÑùµãµÄ²ÉÑùÖµºÍ²åÖµÖµµÄ×î´óÎó²îs
 {
-	MatrixXd S;
+	Eigen::MatrixXd S;
 	S = rbfinterp(x, rbfcoeff, x, RBFFunction, RBFConstant);
 	double maxdiff;
 	maxdiff = (S - y).cwiseAbs().maxCoeff();

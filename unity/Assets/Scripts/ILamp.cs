@@ -45,7 +45,7 @@ public class ILamp : MonoBehaviour
         public static extern float ILamp_MaxY();
 
         [DllImport(DllName)]
-        public static extern void ILamp_RbfAlgorithm();
+        public static extern void ILamp_RbfAlgorithm(System.IntPtr float_array);
 
         [DllImport(DllName)]
         public static extern void ILamp_RbfTest();
@@ -195,7 +195,21 @@ public class ILamp : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.R))
         {
-            Plugin.ILamp_RbfAlgorithm();
+            Plugin.ILamp_RbfAlgorithm(q_handle.AddrOfPinnedObject());
+            if (templateMesh)
+            {
+                Vector3[] vertices = templateMesh.mesh.vertices;
+
+                for (long v = 0; v < vertices.Length; ++v)
+                {
+                    long i = v * 3;
+                    vertices[v] = new Vector3(q_data[i + 0] * ModelScaleFactor, q_data[i + 1] * ModelScaleFactor, q_data[i + 2] * ModelScaleFactor);
+                }
+
+                templateMesh.mesh.vertices = vertices;
+                templateMesh.mesh.RecalculateBounds();
+                templateMesh.mesh.RecalculateNormals();
+            }
         }
 
         if (Input.GetKeyDown(KeyCode.T))

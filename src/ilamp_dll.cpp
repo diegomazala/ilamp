@@ -210,7 +210,7 @@ DllExport void ILamp_WritePly(size_t verts_count, void* p_verts_array, void* p_n
 }
 
 
-#include "rbf_interpolation.hpp"
+#include "rbf_interpolation.h"
 DllExport void ILamp_RbfTest()
 {
 
@@ -227,7 +227,7 @@ DllExport void ILamp_RbfTest()
 
 	Eigen::MatrixXd verts_2d(N, 2);
 	Eigen::MatrixXd verts_Nd(N, m);
-	
+
 	for (int i = 0; i < N; ++i)
 	{
 		verts_2d(i, 0) = y[i].x();
@@ -243,12 +243,14 @@ DllExport void ILamp_RbfTest()
 	//auto coeff = rbfcreate(verts_2d, verts_Nd, 'RBFConstant');
 }
 
+const float MATH_CONST_E = 1.30568f;
 float phi_function(float r)
 {
-	return 0;
+	//return std::sqrt(1.0f + std::pow(MATH_CONST_E, 2));
+	return 1;
 }
 
-DllExport void ILamp_RbfAlgorithm()
+DllExport void ILamp_RbfAlgorithm(void* p_array_float_N)
 {
 	if (ilamp->verts_Nd.size() != ilamp->verts_2d.size())
 	{
@@ -262,11 +264,13 @@ DllExport void ILamp_RbfAlgorithm()
 	//
 	auto p = y[0];
 	auto q = x[0];
-	
-	std::size_t N = x.size();
-	std::size_t m = x[0].size();
+
+	std::size_t N = x.size();		// rows
+	std::size_t m = x[0].size();	// cols
 	Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> phi(N, N);
-	Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> b(N, m);
+	Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> lambda(N, m);
+	Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> s(N, m);
+	
 
 	//
 	// b tem que ser (b(N, 1)
@@ -276,46 +280,90 @@ DllExport void ILamp_RbfAlgorithm()
 
 
 	// 
-	// Asssemble phi matrix
+	// Asssembling matrices
 	//
 	for (std::size_t i = 0; i < N; ++i)
 	{
+		//
+		// phi matrix
+		//
 		for (std::size_t j = 0; j < N; ++j)
 		{
 			const auto phi_func = (y[j] - y[i]).norm();
 
 			phi(i, j) = phi(j, i) = phi_func;
 		}
+
+		
+
 	}
+
+	//
+	// Solve the system m times to find lambda's
+	//
 
 	// 
-	// Assemble b matrix
+	// Assemble s matrix
 	//
-	for (std::size_t i = 0; i < N; ++i)
-	{
-		for (std::size_t j = 0; j < m; ++j)
-		{
-			b(i, j) = x[i][j];
-		}
-	}
-
-	auto lambda = phi.lu().solve(b);
-
-	auto r = lambda.rows();	// 8
-	auto c = lambda.cols();	// 67k
-
-	
-	Eigen::Matrix<float, Eigen::Dynamic, 1> s_p(m);
 	for (std::size_t k = 0; k < m; ++k)
 	{
-		float sk_p = 0;
+		Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> b(N, 1);
+
 		for (std::size_t i = 0; i < N; ++i)
 		{
-			float lki = lambda(i, k);
-			float phi = 1;
+			b(i, 0) = x[i][k];
+		}
 
-			sk_p += lki * phi * (y[i] - p).norm();
+#if 0
+		auto lambda_k = phi.lu().solve(b);
+		auto r = lambda_k.rows();	// 8
+		auto c = lambda_k.cols();	// 67k
+#else
+		lambda.col(k) = phi.lu().solve(b);
+#endif
+
+		// phi * lambda_k = b_k		( eq 6.3)
+	}
+
+
+	//std::ofstream lambda_file("C:\\Users\\diego\\Google Drive\\Data\\Cubes\\lambda.txt", std::ios::out);
+	//for (int i =0; i<N; ++i)
+	//	lambda_file << lambda.row(i) << std::endl;
+	//lambda_file.close();
+
+
+	for (std::size_t j = 0; j < N; ++j)
+	{
+		for (std::size_t k = 0; k < m; ++k)
+		{
+			float sum_i_N = 0.0f;
+			for (std::size_t i = 0; i < N; ++i)
+			{
+				auto r = (y[i] - y[j]).norm();
+				sum_i_N += lambda(i, k) * phi_function(r);
+			}
+			s(j, k) = sum_i_N;
 		}
 	}
+
+	
+
+
+	//std::vector<float> verts(s.row(0).data(), s.row(0).data() + s.row(0).size() * 3);
+	//write_ply_file("C:\\Users\\diego\\Google Drive\\Data\\Cubes\\lambda.ply", verts);
+
+
+
+	float* p_array_float = (float*)p_array_float_N;
+
+	// safeguard - pointer must be not null
+	if (!p_array_float)
+		return;
+
+	size_t r = ilamp->q.rows();
+	size_t c = ilamp->q.cols();
+	size_t coords_count = ilamp->q.rows() * ilamp->q.cols();
+
+	std::memcpy(p_array_float, s.row(0).data(), coords_count * sizeof(float));
 
 }

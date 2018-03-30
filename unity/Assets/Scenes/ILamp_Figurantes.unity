@@ -113,11 +113,6 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
---- !u!33 &69642100 stripped
-MeshFilter:
-  m_PrefabParentObject: {fileID: 3300000, guid: 3051876b1d151ec4ea7da722da5d019c,
-    type: 3}
-  m_PrefabInternal: {fileID: 417659139}
 --- !u!1 &83195808
 GameObject:
   m_ObjectHideFlags: 0
@@ -142,12 +137,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 83195808}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0b9315528e08ec94da426325391f3486, type: 3}
+  m_Script: {fileID: 11500000, guid: 56d46502f66e7fa4fa94133122f52038, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  runLamp: 0
+  runLamp: 1
   ProjectName: 
-  projectFileName: G:\Data\Figurantes\Figurantes.ilp
+  projectFileName: 
   project:
     ProjectName: 
     FileName2d: 
@@ -162,15 +157,7 @@ MonoBehaviour:
   p: {x: 0, y: 0}
   wireframe: {fileID: 2100000, guid: 045c574d57a6fcb4da21002baab89537, type: 2}
   templateMesh: {fileID: 566939222}
-  baseMeshes:
-  - {fileID: 1650574273}
-  - {fileID: 69642100}
-  - {fileID: 1898366454}
-  - {fileID: 1444104110}
-  - {fileID: 2049682589}
-  - {fileID: 1957742167}
-  - {fileID: 1005781007}
-  - {fileID: 577100722}
+  baseMeshes: []
 --- !u!4 &83195810
 Transform:
   m_ObjectHideFlags: 0
@@ -460,11 +447,6 @@ MeshFilter:
   m_PrefabParentObject: {fileID: 3300000, guid: 3c2fac3b33fcdd94fb595ec045293f87,
     type: 3}
   m_PrefabInternal: {fileID: 566939221}
---- !u!33 &577100722 stripped
-MeshFilter:
-  m_PrefabParentObject: {fileID: 3300000, guid: 746024323dc128c41aebd1362de077e2,
-    type: 3}
-  m_PrefabInternal: {fileID: 1010157210}
 --- !u!4 &610510614 stripped
 Transform:
   m_PrefabParentObject: {fileID: 400002, guid: f78719a39ffb3104c8659c4b1d4fd847, type: 3}
@@ -718,11 +700,6 @@ Prefab:
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: f78719a39ffb3104c8659c4b1d4fd847, type: 3}
   m_IsPrefabParent: 0
---- !u!33 &1005781007 stripped
-MeshFilter:
-  m_PrefabParentObject: {fileID: 3300000, guid: 1eeef9d9961878847b60247433ba7f46,
-    type: 3}
-  m_PrefabInternal: {fileID: 1456279780}
 --- !u!1001 &1010157210
 Prefab:
   m_ObjectHideFlags: 0
@@ -1054,11 +1031,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!33 &1444104110 stripped
-MeshFilter:
-  m_PrefabParentObject: {fileID: 3300000, guid: 6c57a950fe3deae40b926361fdc95248,
-    type: 3}
-  m_PrefabInternal: {fileID: 690000004}
 --- !u!1001 &1456279780
 Prefab:
   m_ObjectHideFlags: 0
@@ -1117,16 +1089,6 @@ Transform:
 Transform:
   m_PrefabParentObject: {fileID: 400002, guid: 903b1075307225d4dbd67d3baa292e54, type: 3}
   m_PrefabInternal: {fileID: 1063656246}
---- !u!33 &1650574273 stripped
-MeshFilter:
-  m_PrefabParentObject: {fileID: 3300000, guid: 3c2fac3b33fcdd94fb595ec045293f87,
-    type: 3}
-  m_PrefabInternal: {fileID: 1072900625}
---- !u!33 &1898366454 stripped
-MeshFilter:
-  m_PrefabParentObject: {fileID: 3300000, guid: fda248194479bf244b9802fae1358b7b,
-    type: 3}
-  m_PrefabInternal: {fileID: 391446388}
 --- !u!1 &1951528531
 GameObject:
   m_ObjectHideFlags: 0
@@ -1220,17 +1182,7 @@ MonoBehaviour:
   pivotTransform: {fileID: 0}
   lightKeyCode: 108
   lightKeyOn: 0
---- !u!33 &1957742167 stripped
-MeshFilter:
-  m_PrefabParentObject: {fileID: 3300000, guid: 903b1075307225d4dbd67d3baa292e54,
-    type: 3}
-  m_PrefabInternal: {fileID: 1063656246}
 --- !u!4 &2021966409 stripped
 Transform:
   m_PrefabParentObject: {fileID: 400002, guid: 1eeef9d9961878847b60247433ba7f46, type: 3}
   m_PrefabInternal: {fileID: 1456279780}
---- !u!33 &2049682589 stripped
-MeshFilter:
-  m_PrefabParentObject: {fileID: 3300000, guid: f78719a39ffb3104c8659c4b1d4fd847,
-    type: 3}
-  m_PrefabInternal: {fileID: 1001619582}
