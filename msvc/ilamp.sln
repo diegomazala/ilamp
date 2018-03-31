@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27130.2027
+VisualStudioVersion = 15.0.27130.2010
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ilamp", "ilamp.vcxproj", "{29D4B289-B012-4E4F-8695-CF13067DFCB5}"
 EndProject
@@ -14,6 +14,8 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "replace_vertices", "replace_vertices.vcxproj", "{217624E2-3239-4CC7-B19A-623B25158657}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "rbf_sample", "rbf_sample.vcxproj", "{04D2C4C9-4D97-4A11-ADC1-0F5CF6FD7E78}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "rbf_mpi", "rbf_mpi.vcxproj", "{32665FF0-E8D7-49AD-93BE-CF713D7CF968}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -71,6 +73,14 @@ Global
 		{04D2C4C9-4D97-4A11-ADC1-0F5CF6FD7E78}.Release|x64.Build.0 = Release|x64
 		{04D2C4C9-4D97-4A11-ADC1-0F5CF6FD7E78}.Release|x86.ActiveCfg = Release|Win32
 		{04D2C4C9-4D97-4A11-ADC1-0F5CF6FD7E78}.Release|x86.Build.0 = Release|Win32
+		{32665FF0-E8D7-49AD-93BE-CF713D7CF968}.Debug|x64.ActiveCfg = Debug|x64
+		{32665FF0-E8D7-49AD-93BE-CF713D7CF968}.Debug|x64.Build.0 = Debug|x64
+		{32665FF0-E8D7-49AD-93BE-CF713D7CF968}.Debug|x86.ActiveCfg = Debug|Win32
+		{32665FF0-E8D7-49AD-93BE-CF713D7CF968}.Debug|x86.Build.0 = Debug|Win32
+		{32665FF0-E8D7-49AD-93BE-CF713D7CF968}.Release|x64.ActiveCfg = Release|x64
+		{32665FF0-E8D7-49AD-93BE-CF713D7CF968}.Release|x64.Build.0 = Release|x64
+		{32665FF0-E8D7-49AD-93BE-CF713D7CF968}.Release|x86.ActiveCfg = Release|Win32
+		{32665FF0-E8D7-49AD-93BE-CF713D7CF968}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

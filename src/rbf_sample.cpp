@@ -97,7 +97,7 @@ void sample_test_2()
 
 int main(int argc, char *argv[])
 {
-	sample_test_2();
+	sample_test_1();
 
 	return EXIT_SUCCESS;
 }

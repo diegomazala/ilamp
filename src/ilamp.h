@@ -77,11 +77,10 @@ bool ILamp<Type>::load_data_2d(const std::string& filename)
 				min_y = std::min(min_y, y);
 				max_x = std::max(max_x, x);
 				max_y = std::max(max_y, y);
-			}
-
 #if _DEBUG
-			std::cout << std::fixed << x << ' ' << y << std::endl;
+				std::cout << "<Info>  Vertex 2d Loaded  : " << std::fixed << x << ' ' << y << std::endl;
 #endif
+			}
 			
 		}
 
@@ -291,7 +290,7 @@ ILamp<Type>::execute(Type x, Type y, uint16_t num_neighbours, uint16_t knn_searc
 		std::ofstream out("ilamp_execute.log");
 		out << "<Error> " << ex.what() << std::endl;
 	}
-}
+};
 
 
 

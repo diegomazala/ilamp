@@ -244,13 +244,14 @@ DllExport void ILamp_RbfTest()
 }
 
 const float MATH_CONST_E = 1.30568f;
-float phi_function(float r)
+float phi_function(float r, float c = 0.0f)
 {
+	return std::sqrt(std::pow(c, 2) + MATH_CONST_E * std::pow(r, 2));
 	//return std::sqrt(1.0f + std::pow(MATH_CONST_E, 2));
-	return 1;
+	//return r;
 }
 
-DllExport void ILamp_RbfAlgorithm(void* p_array_float_N)
+DllExport void ILamp_RbfAlgorithm(void* p_array_float_N, int model_index = 0)
 {
 	if (ilamp->verts_Nd.size() != ilamp->verts_2d.size())
 	{
@@ -268,7 +269,9 @@ DllExport void ILamp_RbfAlgorithm(void* p_array_float_N)
 	std::size_t N = x.size();		// rows
 	std::size_t m = x[0].size();	// cols
 	Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> phi(N, N);
+	Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> b(N, m);
 	Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> lambda(N, m);
+	Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> lambda_svd(N, m);
 	Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> s(N, m);
 	
 
@@ -287,49 +290,93 @@ DllExport void ILamp_RbfAlgorithm(void* p_array_float_N)
 		//
 		// phi matrix
 		//
-		for (std::size_t j = 0; j < N; ++j)
+		for (std::size_t j = i; j < N; ++j)
 		{
-			const auto phi_func = (y[j] - y[i]).norm();
-
-			phi(i, j) = phi(j, i) = phi_func;
+			phi(i, j) = phi(j, i) = phi_function((y[i] - y[j]).norm());
 		}
-
-		
-
 	}
 
-	//
-	// Solve the system m times to find lambda's
-	//
+	//std::ofstream matrix_phi_file("C:\\Users\\diego\\Google Drive\\Data\\Cubes\\matrix_phi.txt", std::ios::out);
+	//matrix_phi_file << phi;
+	//matrix_phi_file.close();
+
+
 
 	// 
 	// Assemble s matrix
 	//
-	for (std::size_t k = 0; k < m; ++k)
+	for (std::size_t i = 0; i < N; ++i)
 	{
-		Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> b(N, 1);
-
-		for (std::size_t i = 0; i < N; ++i)
+		for (std::size_t j = 0; j < m; ++j)
 		{
-			b(i, 0) = x[i][k];
+			b(i, j) = x[i][j];
 		}
 
-#if 0
-		auto lambda_k = phi.lu().solve(b);
-		auto r = lambda_k.rows();	// 8
-		auto c = lambda_k.cols();	// 67k
-#else
-		lambda.col(k) = phi.lu().solve(b);
-#endif
+//#if 0
+//		auto lambda_k = phi.lu().solve(b);
+//		auto r = lambda_k.rows();	
+//		auto c = lambda_k.cols();	
+//#else
+//		lambda.col(k) = phi.lu().solve(b);
+//#endif
 
 		// phi * lambda_k = b_k		( eq 6.3)
 	}
 
+	//std::ofstream matrix_b_file("C:\\Users\\diego\\Google Drive\\Data\\Cubes\\matrix_b.txt", std::ios::out);
+	//matrix_b_file << b;
+	//matrix_b_file.close();
+
+
+
+	//
+	// Solve the system m times to find lambda's
+	//
+	for (std::size_t k = 0; k < m; ++k)
+	{
+		// Ax = b
+		// phi * lambda = b
+		lambda.col(k) = phi.lu().solve(b.col(k));
+
+
+
+		//
+		// Compute SVD
+		//
+		const auto Ab = phi * b.col(k);
+		Eigen::JacobiSVD<Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic>> svd;
+		//svd.compute(ATB, Eigen::ComputeFullU | Eigen::ComputeFullV);
+		svd.compute(Ab, Eigen::ComputeThinU | Eigen::ComputeThinV);
+
+		if (!svd.computeU() || !svd.computeV())
+		{
+			//throw("<Error> Decomposition error");
+			std::ofstream out("C:\\Users\\diego\\Google Drive\\Data\\Cubes\\ilamp_rbf_svd.log");
+			out << "<Error> Decomposition error" << std::endl;
+			return;
+		}
+
+
+		//
+		// Compute M
+		//
+		const auto M = svd.matrixU() * svd.matrixV().transpose();
+		lambda_svd.col(k) = M;
+	}
+
+
+
+
+
+
 
 	//std::ofstream lambda_file("C:\\Users\\diego\\Google Drive\\Data\\Cubes\\lambda.txt", std::ios::out);
-	//for (int i =0; i<N; ++i)
-	//	lambda_file << lambda.row(i) << std::endl;
+	//lambda_file << lambda;
 	//lambda_file.close();
+
+	//std::ofstream lambda_file_svd("C:\\Users\\diego\\Google Drive\\Data\\Cubes\\lambda_svd.txt", std::ios::out);
+	//lambda_file_svd << lambda_svd;
+	//lambda_file_svd.close();
 
 
 	for (std::size_t j = 0; j < N; ++j)
@@ -340,17 +387,25 @@ DllExport void ILamp_RbfAlgorithm(void* p_array_float_N)
 			for (std::size_t i = 0; i < N; ++i)
 			{
 				auto r = (y[i] - y[j]).norm();
-				sum_i_N += lambda(i, k) * phi_function(r);
+				sum_i_N += lambda_svd(i, k) * phi_function(r);
 			}
 			s(j, k) = sum_i_N;
 		}
 	}
 
+	std::ofstream s_file("C:\\Users\\diego\\Google Drive\\Data\\Cubes\\s.txt", std::ios::out);
+	s_file << s.rows() << ' ' << s.cols() << std::endl;
+	s_file << s;
+	s_file.close();
+
+	std::ofstream x_file("C:\\Users\\diego\\Google Drive\\Data\\Cubes\\x.txt", std::ios::out);
 	
-
-
-	//std::vector<float> verts(s.row(0).data(), s.row(0).data() + s.row(0).size() * 3);
-	//write_ply_file("C:\\Users\\diego\\Google Drive\\Data\\Cubes\\lambda.ply", verts);
+	for (int i = 0; i < N; ++i)
+	{
+		x_file << x[i].rows() << ' ' << x[i].cols() << std::endl;
+		x_file << x[i].transpose();
+	}
+	x_file.close();
 
 
 
@@ -364,6 +419,6 @@ DllExport void ILamp_RbfAlgorithm(void* p_array_float_N)
 	size_t c = ilamp->q.cols();
 	size_t coords_count = ilamp->q.rows() * ilamp->q.cols();
 
-	std::memcpy(p_array_float, s.row(0).data(), coords_count * sizeof(float));
-
+	std::memcpy(p_array_float, s.row(model_index).data(), coords_count * sizeof(float));
+	//std::memcpy(p_array_float, x[model_index].data(), coords_count * sizeof(float));
 }
