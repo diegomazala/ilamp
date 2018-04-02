@@ -1,7 +1,6 @@
-#ifndef __RBF_MPI_H__
-#define __RBF_MPI_H__
+#ifndef __RBF_IMP_H__
+#define __RBF_IMP_H__
 
-#include "rbf_interpolation.h"
 #include <vector>
 
 const float MATH_CONST_e = 2.71828f;
@@ -27,25 +26,20 @@ public:
 
 
 template <typename Type>
-class RbfMpi
+class RbfImp : public Imp<Type>
 {
 public:
-	RbfMpi() {}
-	~RbfMpi() {}
+	RbfImp() {}
+	~RbfImp() {}
 
+	int model_index = 0;
 
-	Eigen::Matrix<Type, Eigen::Dynamic, Eigen::Dynamic> execute(
-		const std::vector<Eigen::Matrix<Type, 2, 1>>& verts_2d,
-		const std::vector<Eigen::Matrix<Type, Eigen::Dynamic, 1>>& verts_Nd,
-		int model_index)
+	Eigen::Matrix<Type, Eigen::Dynamic, Eigen::Dynamic> execute(Type px, Type py)
 	{
-
 		if (verts_Nd.size() != verts_2d.size())
 		{
 			std::cerr << "Error: Vertex arrays do not have the same size. Abort" << std::endl;
 		}
-
-
 
 		Eigen::Matrix<Type, Eigen::Dynamic, Eigen::Dynamic> y(verts_2d.size(), 2);
 		Eigen::Matrix<Type, Eigen::Dynamic, Eigen::Dynamic> x(verts_Nd.size(), verts_Nd[0].size());
@@ -111,6 +105,9 @@ public:
 			lambda.col(k) = phi.lu().solve(b.col(k));
 		}
 
+		
+		Eigen::Matrix<Type, 1, 2> p(px, py);
+
 		for (std::size_t j = 0; j < N; ++j)
 		{
 			for (std::size_t k = 0; k < m; ++k)
@@ -125,11 +122,13 @@ public:
 			}
 		}
 
-		return s.row(model_index);
+		this->q = s.row(model_index);
+
+		return this->q;
 	}
 
 };
 
 
 
-#endif // __RBF_MPI_H__
+#endif // __RBF_IMP_H__

@@ -1,7 +1,7 @@
 #include "ilamp.h"
 #include "ilamp_utils.h"
 #include "ilamp_project.h"
-#include "rbf_mpi.h"
+#include "rbf_imp.h"
 #include "cmdline.h"
 
 
@@ -119,34 +119,33 @@ int main(int argc, char* argv[])
 	}
 
 		
-
-	ILamp<float> ilamp;
+	RbfImp<float> rbf_imp;
 
 	//
 	// Import 2d file
 	// 
-	if (!ilamp.load_data_2d(ilp_prj.filename2d))
+	if (!rbf_imp.load_data_2d(ilp_prj.filename2d))
 		return EXIT_FAILURE;
 
 	//
 	// Import Nd file
 	// 
-	if (!ilamp.load_data_Nd(ilp_prj.filenameNd))
+	if (!rbf_imp.load_data_Nd(ilp_prj.filenameNd))
 		return EXIT_FAILURE;
 
 
-	if (ilamp.verts_Nd.size() != ilamp.verts_2d.size())
+	if (rbf_imp.verts_Nd.size() != rbf_imp.verts_2d.size())
 	{
 		std::cerr << "<Error> Vertex arrays do not have the same size. Abort" << std::endl;
 		return EXIT_FAILURE;
 	}
 
 
-	const int dimension_2d = ilamp.verts_2d.at(0).rows();	// = 2
-	const int dimension_Nd = ilamp.verts_Nd.at(0).rows();	// = N
+	const int dimension_2d = rbf_imp.verts_2d.at(0).rows();	// = 2
+	const int dimension_Nd = rbf_imp.verts_Nd.at(0).rows();	// = N
 	const int test_index = cmd_parser.get<int>("test");
 	if (test_index > -1 )
-		query = ilamp.verts_2d.at(test_index);
+		query = rbf_imp.verts_2d.at(test_index);
 
 	//
 	// Set output file name
@@ -164,8 +163,9 @@ int main(int argc, char* argv[])
 	//std::cout << "<Info>  Computing vertex  : " << query.transpose() << std::endl;
 	auto start_time = std::chrono::system_clock::now();
 	
-	RbfMpi<float> rbf_mpi;
-	auto q = rbf_mpi.execute(ilamp.verts_2d, ilamp.verts_Nd, test_index);
+	rbf_imp.model_index = test_index;
+
+	rbf_imp.execute(query.x(), query.y());
 
 	
 
@@ -175,15 +175,15 @@ int main(int argc, char* argv[])
 
 	if (test_index > -1)
 	{
-		const auto& q_orig = ilamp.verts_Nd.at(test_index);
-		const auto dist = (q.transpose() - q_orig).norm();
+		const auto& q_orig = rbf_imp.verts_Nd.at(test_index);
+		const auto dist = (rbf_imp.q - q_orig).norm();
 		std::cout << "<Info>  Distance Error    : " << dist << std::endl;
 	}
 
 
 	write_ply_file(
 		output_filename, 
-		std::vector<float>(q.data(), q.data() + q.cols() * q.rows()), 
+		std::vector<float>(rbf_imp.q.data(), rbf_imp.q.data() + rbf_imp.q.cols() * rbf_imp.q.rows()),
 		template_filename);
 
 

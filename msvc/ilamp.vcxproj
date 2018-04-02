@@ -20,6 +20,7 @@
     <ClInclude Include="..\src\ilamp_project.h" />
     <ClInclude Include="..\src\ilamp_utils.h" />
     <ClInclude Include="..\src\json.hpp" />
+    <ClInclude Include="..\src\imp.h" />
     <ClInclude Include="..\src\tinyply.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

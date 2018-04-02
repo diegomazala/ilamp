@@ -19,18 +19,17 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\src\rbf_interpolation.cpp" />
-    <ClCompile Include="..\src\rbf_mpi_main.cpp" />
+    <ClCompile Include="..\src\rbf_imp_main.cpp" />
     <ClCompile Include="..\src\tinyply.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\src\rbf_interpolation.h" />
+    <ClInclude Include="..\src\rbf_imp.h" />
     <ClInclude Include="..\src\tinyply.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{32665FF0-E8D7-49AD-93BE-CF713D7CF968}</ProjectGuid>
-    <RootNamespace>rbf_mpi</RootNamespace>
-    <ProjectName>rbf_mpi</ProjectName>
+    <RootNamespace>rbf_imp</RootNamespace>
+    <ProjectName>rbf_imp</ProjectName>
     <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />

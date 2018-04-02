@@ -159,7 +159,10 @@ int main(int argc, char* argv[])
 	//
 	// Build the kd-tree
 	//
-	ilamp.build_kdtree(ilp_prj.kdTreeCount);
+	ilamp.build_kdtree(
+		ilp_prj.kdTreeCount,
+		ilp_prj.numNeighbours,
+		ilp_prj.knnSearchChecks);
 
 
 	//
@@ -173,10 +176,7 @@ int main(int argc, char* argv[])
 	//	ilp_prj.numNeighbours, 
 	//	ilp_prj.knnSearchChecks);			
 
-	ilamp.execute(
-		query.x(), query.y(),
-		ilp_prj.numNeighbours,
-		ilp_prj.knnSearchChecks);
+	ilamp.execute(query.x(), query.y());
 
 
 	std::chrono::duration<double> elapsed_seconds = std::chrono::system_clock::now() - start_time;
