@@ -156,6 +156,10 @@ int main(int argc, char* argv[])
 	const std::string output_filename = output_file.str();
 	const std::string template_filename = ilp_prj.inputFiles[0];
 
+	//
+	// Build RBF
+	//
+	rbf_imp.build();
 
 	//
 	// Computing rbf mpi
@@ -163,8 +167,6 @@ int main(int argc, char* argv[])
 	//std::cout << "<Info>  Computing vertex  : " << query.transpose() << std::endl;
 	auto start_time = std::chrono::system_clock::now();
 	
-	rbf_imp.model_index = test_index;
-
 	rbf_imp.execute(query.x(), query.y());
 
 	

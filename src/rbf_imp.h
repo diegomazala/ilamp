@@ -32,17 +32,16 @@ public:
 	RbfImp() {}
 	~RbfImp() {}
 
-	int model_index = 0;
 
-	Eigen::Matrix<Type, Eigen::Dynamic, Eigen::Dynamic> execute(Type px, Type py)
+	void build()
 	{
 		if (verts_Nd.size() != verts_2d.size())
 		{
 			std::cerr << "Error: Vertex arrays do not have the same size. Abort" << std::endl;
 		}
 
-		Eigen::Matrix<Type, Eigen::Dynamic, Eigen::Dynamic> y(verts_2d.size(), 2);
-		Eigen::Matrix<Type, Eigen::Dynamic, Eigen::Dynamic> x(verts_Nd.size(), verts_Nd[0].size());
+		y = Eigen::Matrix<Type, Eigen::Dynamic, Eigen::Dynamic>(verts_2d.size(), 2);
+		x = Eigen::Matrix<Type, Eigen::Dynamic, Eigen::Dynamic>(verts_Nd.size(), verts_Nd[0].size());
 
 		for (std::size_t i = 0; i < y.rows(); ++i)
 		{
@@ -57,13 +56,11 @@ public:
 		std::size_t N = x.rows();	// rows
 		std::size_t m = x.cols();	// cols
 
-		
-		Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> phi(N, N);
-		Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> b(N, m);
-		Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> lambda(N, m);
-		Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> lambda_svd(N, m);
-		Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> s(N, m);
 
+		phi = Eigen::Matrix<Type, Eigen::Dynamic, Eigen::Dynamic>(N, N);
+		lambda = Eigen::Matrix<Type, Eigen::Dynamic, Eigen::Dynamic>(N, m);
+		const Eigen::Matrix<Type, Eigen::Dynamic, Eigen::Dynamic>& b = x;
+		
 
 
 		// 
@@ -81,20 +78,6 @@ public:
 			}
 		}
 
-
-		// 
-		// Assemble b matrix
-		//
-		for (std::size_t i = 0; i < N; ++i)
-		{
-			for (std::size_t j = 0; j < m; ++j)
-			{
-				b(i, j) = x(i, j);
-			}
-
-		}
-
-
 		//
 		// Solve the system m times to find lambda's
 		//
@@ -105,14 +88,45 @@ public:
 			lambda.col(k) = phi.lu().solve(b.col(k));
 		}
 
+	}
+
+
+
+	Eigen::Matrix<Type, Eigen::Dynamic, Eigen::Dynamic> execute(Type px, Type py)
+	{
+		const std::size_t N = x.rows();
+		const std::size_t m = x.cols();
 		
 		Eigen::Matrix<Type, 1, 2> p(px, py);
 
+		
+		//
+		// Computing s_p
+		//
+		this->q = Eigen::Matrix<Type, Eigen::Dynamic, Eigen::Dynamic>(m, 1);
+		for (std::size_t k = 0; k < m; ++k)
+		{
+			Type sum_i_N = 0.0f;
+			for (std::size_t i = 0; i < N; ++i)
+			{
+				auto r = (y.row(i) - p).norm();
+				sum_i_N += lambda(i, k) * RbfFunction<Type>::multiquadrics(r);
+			}
+			this->q(k) = sum_i_N;
+		}
+		return this->q;
+
+
+#if 0	
+		// 
+		// Computing s for all rbf centers (y)
+		//
+		Eigen::Matrix<Type, Eigen::Dynamic, Eigen::Dynamic> s(N, m);
 		for (std::size_t j = 0; j < N; ++j)
 		{
 			for (std::size_t k = 0; k < m; ++k)
 			{
-				float sum_i_N = 0.0f;
+				Type sum_i_N = 0.0f;
 				for (std::size_t i = 0; i < N; ++i)
 				{
 					auto r = (y.row(i) - y.row(j)).norm();
@@ -121,12 +135,15 @@ public:
 				s(j, k) = sum_i_N;
 			}
 		}
-
 		this->q = s.row(model_index);
+#endif
 
-		return this->q;
 	}
 
+	Eigen::Matrix<Type, Eigen::Dynamic, Eigen::Dynamic> y;
+	Eigen::Matrix<Type, Eigen::Dynamic, Eigen::Dynamic> x;
+	Eigen::Matrix<Type, Eigen::Dynamic, Eigen::Dynamic> phi;
+	Eigen::Matrix<Type, Eigen::Dynamic, Eigen::Dynamic> lambda;
 };
 
 

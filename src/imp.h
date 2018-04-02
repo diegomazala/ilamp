@@ -18,8 +18,8 @@ public:
 	Imp(){}
 	~Imp() {}
 
-	bool load_data_2d(const std::string& filename);
-	bool load_data_Nd(const std::string& filename);
+	virtual bool load_data_2d(const std::string& filename);
+	virtual bool load_data_Nd(const std::string& filename);
 
 	virtual Eigen::Matrix<Type, Eigen::Dynamic, Eigen::Dynamic> execute(Type px, Type py) = 0;
 
