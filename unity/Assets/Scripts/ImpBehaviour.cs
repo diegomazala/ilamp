@@ -178,7 +178,7 @@ public class ImpBehaviour : MonoBehaviour
             if (p.x > ImpPlugin.Imp_MinX() && p.x < ImpPlugin.Imp_MaxX() &&
                 p.y > ImpPlugin.Imp_MinY() && p.y < ImpPlugin.Imp_MaxY())
             {
-                ExecuteIlamp(p);
+                Execute(p);
             }
         }
         else
@@ -206,19 +206,18 @@ public class ImpBehaviour : MonoBehaviour
 
 
         if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.Space))
-            ExecuteIlamp(p);
+            Execute(p);
 
     }
 
 
-    void ExecuteIlamp(Vector2 _p)
+    void Execute(Vector2 _p)
     {
         if (!ImpPlugin.Imp_Execute(_p.x, _p.y))
         {
             Debug.LogError("Could not execute imp : " + _p.ToString());
             return;
         }
-
 
         ImpPlugin.Imp_CopyQ(q_handle.AddrOfPinnedObject());
 
