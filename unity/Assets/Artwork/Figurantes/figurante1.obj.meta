@@ -1,28 +1,30 @@
 fileFormatVersion: 2
-guid: 3c2fac3b33fcdd94fb595ec045293f87
-timeCreated: 1517435436
-licenseType: Free
+guid: 3ada8767ba9b21a4cb933b81cf6651f9
+timeCreated: 1522794215
+licenseType: Pro
 ModelImporter:
   serializedVersion: 22
   fileIDToRecycleName:
-    100000: default
-    100002: //RootNode
-    400000: default
-    400002: //RootNode
-    2300000: default
-    3300000: default
-    4300000: default
+    100000: //RootNode
+    100002: figurante1:Mesh
+    400000: //RootNode
+    400002: figurante1:Mesh
+    2100000: initialShadingGroup
+    2100002: figurante1_MeshMat
+    2300000: figurante1:Mesh
+    3300000: figurante1:Mesh
+    4300000: figurante1:Mesh
   externalObjects:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
-      name: defaultMat
-    second: {fileID: 2100000, guid: 12f1e576bcde6a748a822386dc4ad24b, type: 2}
+      name: figurante1_MeshMat
+    second: {fileID: 2100000, guid: 045c574d57a6fcb4da21002baab89537, type: 2}
   materials:
-    importMaterials: 0
+    importMaterials: 1
     materialName: 0
     materialSearch: 1
-    materialLocation: 0
+    materialLocation: 1
   animations:
     legacyGenerateAnimations: 4
     bakeSimulation: 0
@@ -50,16 +52,18 @@ ModelImporter:
     globalScale: 0.01
     meshCompression: 0
     addColliders: 0
-    importVisibility: 0
-    importBlendShapes: 0
-    importCameras: 0
-    importLights: 0
+    importVisibility: 1
+    importBlendShapes: 1
+    importCameras: 1
+    importLights: 1
     swapUVChannels: 0
     generateSecondaryUV: 0
     useFileUnits: 1
-    optimizeMeshForGPU: 0
+    optimizeMeshForGPU: 1
     keepQuads: 0
     weldVertices: 1
+    preserveHierarchy: 0
+    indexFormat: 0
     secondaryUVAngleDistortion: 8
     secondaryUVAreaDistortion: 15.000001
     secondaryUVHardAngle: 88
