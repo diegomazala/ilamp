@@ -2,23 +2,23 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ILampUI : MonoBehaviour
+public class ImpUI : MonoBehaviour
 {
-
-    public ILamp ilamp = null;
+    public ImpBehaviour imp = null;
     public Texture2D mouseTarget;
     public UnityEngine.UI.Image thumbnailTemplate;
-    public UnityEngine.UI.Image[] thumbnails;
+    public UnityEngine.Sprite[] sprites;
+    private UnityEngine.UI.Image[] thumbnails;
 
-	public void Setup(ILamp _ilamp)
+    public void Setup(ImpBehaviour _ilamp)
     {
-        ilamp = _ilamp;
+        imp = _ilamp;
 
-        if (ilamp == null)
+        if (imp == null)
         {
-            ilamp = (ILamp)FindObjectOfType(typeof(ILamp));
+            imp = (ImpBehaviour)FindObjectOfType(typeof(ImpBehaviour));
 
-            if (ilamp == null)
+            if (imp == null)
             {
                 Debug.LogError("Could not find ilamp object");
                 enabled = false;
@@ -26,26 +26,24 @@ public class ILampUI : MonoBehaviour
             }
         }
 
-        if (ilamp.vertices2d.Count < 1)
+        if (imp.vertices2d.Count < 1)
             return;
 
-        thumbnails = new UnityEngine.UI.Image[ilamp.vertices2d.Count];
+        thumbnails = new UnityEngine.UI.Image[sprites.Length];
 
         for (int i = 0; i < thumbnails.Length; ++i)
         {
-            string thumbName = System.IO.Path.GetFileNameWithoutExtension(ilamp.project.InputFiles[i]);
-
             thumbnails[i] = Instantiate<UnityEngine.UI.Image>(thumbnailTemplate, this.transform);
-            thumbnails[i].name = thumbName;
+            thumbnails[i].name = sprites[i].name;
+            thumbnails[i].sprite = sprites[i];
             Rect rect = thumbnails[i].rectTransform.rect;
             
-            Vector2 v = ilamp.vertices2d[i];
+            Vector2 v = imp.vertices2d[i];
             Vector2 pos = new Vector2(
-                ILamp.LinearInterpolation(v.x, ilamp.MinCoords.x, ilamp.MaxCoords.x, rect.width / 2.0f, Screen.width - rect.width),
-                ILamp.LinearInterpolation(v.y, ilamp.MinCoords.y, ilamp.MaxCoords.y, rect.height / 2.0f, Screen.height - rect.height));
+                ImpPlugin.LinearInterpolation(v.x, imp.MinCoords.x, imp.MaxCoords.x, rect.width / 2.0f, Screen.width - rect.width),
+                ImpPlugin.LinearInterpolation(v.y, imp.MinCoords.y, imp.MaxCoords.y, rect.height / 2.0f, Screen.height - rect.height));
 
             thumbnails[i].rectTransform.anchoredPosition = pos;
-            thumbnails[i].sprite = Resources.Load<Sprite>(thumbName);
         }
 
     }

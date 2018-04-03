@@ -159,10 +159,12 @@ int main(int argc, char* argv[])
 	//
 	// Build the kd-tree
 	//
-	ilamp.build_kdtree(
+	ilamp.set_kdtree(
 		ilp_prj.kdTreeCount,
 		ilp_prj.numNeighbours,
 		ilp_prj.knnSearchChecks);
+	//
+	ilamp.build();
 
 
 	//

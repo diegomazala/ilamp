@@ -48,6 +48,7 @@ DllExport bool ILamp_RunLamp(const char* input_filename_nd, const char* output_f
 	return true;
 }
 
+
 DllExport bool ILamp_LoadInputFiles(const char* filename_2d, const char* filename_Nd)
 {
 	ilamp.reset(new ILamp<float>());
@@ -69,17 +70,28 @@ DllExport bool ILamp_LoadInputFiles(const char* filename_2d, const char* filenam
 
 
 
-DllExport void ILamp_BuildKdTree(uint16_t kdtree_count)
+DllExport void ILamp_SetKdTree(uint16_t _kdtree_count, uint16_t _num_neighbours, uint16_t _knn_search_checks)
 {
 	if (!ilamp)
 	{
-		(*ilamp_log) << "Error: <ILamp_BuildKdTree> ilamp not initilized" << std::endl;
+		(*ilamp_log) << "Error: <ILamp_SetKdTree> ilamp not initilized" << std::endl;
 		return;
 	}
 	
+	ilamp->set_kdtree(_kdtree_count, _num_neighbours, _knn_search_checks);
+}
+
+DllExport void ILamp_Build()
+{
+	if (!ilamp)
+	{
+		(*ilamp_log) << "Error: <ILamp_Build> ilamp not initilized" << std::endl;
+		return;
+	}
+
 	try
 	{
-		ilamp->build_kdtree(kdtree_count);
+		ilamp->build();
 	}
 	catch (const std::exception& ex)
 	{
@@ -88,7 +100,7 @@ DllExport void ILamp_BuildKdTree(uint16_t kdtree_count)
 }
 
 
-DllExport bool ILamp_RunILamp(float x, float y, int num_neighbours, int knn_search_checks)
+DllExport bool ILamp_Execute(float x, float y)
 {
 	if (!ilamp)
 	{
@@ -98,13 +110,12 @@ DllExport bool ILamp_RunILamp(float x, float y, int num_neighbours, int knn_sear
 
 	try
 	{
-		//(*ilamp_log) << "Info : <ILamp_RunILamp> " << x << ' ' << y << ' ' << num_neighbours << ' ' << knn_search_checks << std::endl;
-		ilamp->execute(x, y, num_neighbours, knn_search_checks);
+		ilamp->execute(x, y);
 		return true;
 	}
 	catch (const std::exception& ex)
 	{
-		(*ilamp_log) << "Error: <ILamp_RunILamp> " << x << ' ' << y << ' ' << num_neighbours << ' ' << knn_search_checks << std::endl
+		(*ilamp_log) << "Error: <ILamp_RunILamp> " << x << ' ' << y << std::endl
 			<< ex.what() << std::endl;
 		return false;
 	}
@@ -190,22 +201,5 @@ DllExport float ILamp_MaxY()
 		return 0;
 	}
 	return ilamp->max_y;
-}
-
-DllExport void ILamp_WritePly(size_t verts_count, void* p_verts_array, void* p_normals_array, void* p_uv_array, void* p_faces_array)
-{
-	float* p_verts_float = (float*)p_verts_array;
-	float* p_normals_float = (float*)p_normals_array;
-	float* p_uv_float = (float*)p_uv_array;
-	int* p_faces_float = (int*)p_faces_array;
-
-	// safeguard - pointer must be not null
-	if (!p_verts_float)
-		return;
-
-	std::vector<float> verts(p_verts_float, p_verts_float + verts_count * 3);
-
-	write_ply_file("C:/tmp/point_cloud.ply", verts);
-	write_ply_file("C:/tmp/mesh.ply", verts, "C:/Users/diego/Google Drive/Data/Test/Heads/Head01.ply");
 }
 
