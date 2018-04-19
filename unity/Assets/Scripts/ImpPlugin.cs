@@ -24,7 +24,10 @@ public class ImpPlugin
     public static extern bool Imp_LoadInputFiles(string filename_2d, string filename_Nd);
 
     [DllImport(DllName)]
-    public static extern void Imp_ILamp_SetKdTree(ushort kdtree_count, ushort num_neighbours, ushort knn_search_checks);
+    public static extern void Imp_ILamp_Setup(ushort kdtree_count, ushort num_neighbours, ushort knn_search_checks);
+
+    [DllImport(DllName)]
+    public static extern void Imp_Rbf_Setup(ushort function_type_enum, float constant);
 
     [DllImport(DllName)]
     public static extern bool Imp_Build();

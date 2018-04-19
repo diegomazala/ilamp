@@ -31,30 +31,6 @@ DllExport void Imp_Initialize_Rbf()
 }
 
 
-DllExport bool Imp_ExecuteLamp(const char* input_filename_nd, const char* output_filename_2d)
-{
-	//
-	// Running lamp in order to generate 2d file from nd file
-	//
-	std::string lamp_script = std::getenv("ILAMP_LAMP_SCRIPT");
-
-	if (!fs::exists(lamp_script))
-	{
-		std::cerr << "Lamp python script not found" << std::endl;
-		return false;
-	}
-
-	std::stringstream lamp_cmd;
-	lamp_cmd << "python " << lamp_script << ' ' << input_filename_nd << ' ' << output_filename_2d << " > lamp.log";
-	std::system(lamp_cmd.str().c_str());
-#if _DEBUG
-	std::cout << std::ifstream("lamp.log").rdbuf();
-#endif
-
-	return true;
-}
-
-
 
 DllExport bool Imp_LoadInputFiles(const char* filename_2d, const char* filename_Nd)
 {
@@ -83,7 +59,7 @@ DllExport bool Imp_LoadInputFiles(const char* filename_2d, const char* filename_
 
 
 
-DllExport void Imp_ILamp_SetKdTree(uint16_t _kdtree_count, uint16_t _num_neighbours, uint16_t _knn_search_checks)
+DllExport void Imp_ILamp_Setup(uint16_t _kdtree_count, uint16_t _num_neighbours, uint16_t _knn_search_checks)
 {
 	auto ilamp_ptr = (ILamp<float>*)(imp_ptr.get());
 
@@ -95,6 +71,22 @@ DllExport void Imp_ILamp_SetKdTree(uint16_t _kdtree_count, uint16_t _num_neighbo
 	
 	ilamp_ptr->set_kdtree(_kdtree_count, _num_neighbours, _knn_search_checks);
 }
+
+
+DllExport void Imp_Rbf_Setup(uint8_t function, float constant)
+{
+	auto rbf_ptr = (RbfImp<float>*)(imp_ptr.get());
+
+	if (!rbf_ptr)
+	{
+		(*imp_log) << "Error: <Imp_ILamp_SetKdTree> ilamp not initilized" << std::endl;
+		return;
+	}
+
+	rbf_ptr->setup(RbfFunctionEnum(function), constant);
+}
+
+
 
 DllExport bool Imp_Build()
 {
@@ -222,3 +214,26 @@ DllExport float Imp_MaxY()
 	return imp_ptr->max_y;
 }
 
+
+DllExport bool Imp_ExecuteLamp(const char* input_filename_nd, const char* output_filename_2d)
+{
+	//
+	// Running lamp in order to generate 2d file from nd file
+	//
+	std::string lamp_script = std::getenv("ILAMP_LAMP_SCRIPT");
+
+	if (!fs::exists(lamp_script))
+	{
+		std::cerr << "Lamp python script not found" << std::endl;
+		return false;
+	}
+
+	std::stringstream lamp_cmd;
+	lamp_cmd << "python " << lamp_script << ' ' << input_filename_nd << ' ' << output_filename_2d << " > lamp.log";
+	std::system(lamp_cmd.str().c_str());
+#if _DEBUG
+	std::cout << std::ifstream("lamp.log").rdbuf();
+#endif
+
+	return true;
+}

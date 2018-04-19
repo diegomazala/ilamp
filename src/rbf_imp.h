@@ -6,6 +6,15 @@
 const float MATH_CONST_e = 2.71828f;
 const float MATH_CONST_E = 1.30568f;
 
+
+enum class RbfFunctionEnum : uint8_t
+{
+	Linear,
+	Gaussian,
+	Multiquadrics,
+	InvMultiquadrics
+};
+
 template <typename Type>
 class RbfFunction
 {
@@ -29,8 +38,28 @@ template <typename Type>
 class RbfImp : public Imp<Type>
 {
 public:
+	Type functionConstant = 0;
+	Type function;
+	Eigen::Matrix<Type, Eigen::Dynamic, Eigen::Dynamic> y;
+	Eigen::Matrix<Type, Eigen::Dynamic, Eigen::Dynamic> x;
+	Eigen::Matrix<Type, Eigen::Dynamic, Eigen::Dynamic> phi;
+	Eigen::Matrix<Type, Eigen::Dynamic, Eigen::Dynamic> lambda;
+
+public:
 	RbfImp() {}
 	~RbfImp() {}
+
+
+
+	void setup(RbfFunctionEnum function_type, Type constant)
+	{
+		switch (function_type)
+		{
+		case RbfFunctionEnum::Multiquadrics: break;
+		case RbfFunctionEnum::Gaussian: break;
+		}
+		functionConstant = constant;
+	}
 
 
 	void build()
@@ -74,7 +103,7 @@ public:
 			for (std::size_t j = i; j < N; ++j)
 			{
 				auto r = (y.row(i) - y.row(j)).norm();
-				phi(i, j) = phi(j, i) = RbfFunction<Type>::multiquadrics(r);
+				phi(i, j) = phi(j, i) = RbfFunction<Type>::multiquadrics(r, functionConstant);
 			}
 		}
 
@@ -110,7 +139,7 @@ public:
 			for (std::size_t i = 0; i < N; ++i)
 			{
 				auto r = (y.row(i) - p).norm();
-				sum_i_N += lambda(i, k) * RbfFunction<Type>::multiquadrics(r);
+				sum_i_N += lambda(i, k) * RbfFunction<Type>::multiquadrics(r, functionConstant);
 			}
 			this->q(k) = sum_i_N;
 		}
@@ -140,10 +169,7 @@ public:
 
 	}
 
-	Eigen::Matrix<Type, Eigen::Dynamic, Eigen::Dynamic> y;
-	Eigen::Matrix<Type, Eigen::Dynamic, Eigen::Dynamic> x;
-	Eigen::Matrix<Type, Eigen::Dynamic, Eigen::Dynamic> phi;
-	Eigen::Matrix<Type, Eigen::Dynamic, Eigen::Dynamic> lambda;
+	
 };
 
 

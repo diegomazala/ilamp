@@ -7,6 +7,14 @@ using System.Linq;
 
 public class ImpBehaviour : MonoBehaviour
 {
+    public enum RbfFunctionEnum
+    {
+        Linear,
+        Gaussian,
+        Multiquadrics,
+        InvMultiquadrics
+    }
+
     public enum ImpTypeEnum
     {
         ILamp,
@@ -34,6 +42,14 @@ public class ImpBehaviour : MonoBehaviour
         public ushort KnnSearchChecks = 128;
     }
     public ILampConfig ILampParams;
+
+    [System.Serializable]
+    public class RbfConfig
+    {
+        public RbfFunctionEnum Function = RbfFunctionEnum.Multiquadrics;
+        public float Constant;
+    }
+    public RbfConfig RbfParams;
 
 
 
@@ -66,11 +82,12 @@ public class ImpBehaviour : MonoBehaviour
         if (ImpType == ImpTypeEnum.ILamp)
         {
             ImpPlugin.Imp_Initialize_ILamp();
-            ImpPlugin.Imp_ILamp_SetKdTree(ILampParams.KdTreeCount, ILampParams.NumNeighbours, ILampParams.KnnSearchChecks);
+            ImpPlugin.Imp_ILamp_Setup(ILampParams.KdTreeCount, ILampParams.NumNeighbours, ILampParams.KnnSearchChecks);
         }
         else
         {
             ImpPlugin.Imp_Initialize_Rbf();
+            ImpPlugin.Imp_Rbf_Setup((ushort)(RbfParams.Function), RbfParams.Constant);
         }
 
 
