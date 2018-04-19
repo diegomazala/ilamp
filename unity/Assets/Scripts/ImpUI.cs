@@ -4,29 +4,14 @@ using UnityEngine;
 
 public class ImpUI : MonoBehaviour
 {
-    public ImpBehaviour imp = null;
     public Texture2D mouseTarget;
     public UnityEngine.UI.Image thumbnailTemplate;
     public UnityEngine.Sprite[] sprites;
     private UnityEngine.UI.Image[] thumbnails;
 
-    public void Setup(ImpBehaviour _ilamp)
+    public void Setup(List<Vector2> Vertices2d, Vector2 MinCoords, Vector2 MaxCoords)
     {
-        imp = _ilamp;
-
-        if (imp == null)
-        {
-            imp = (ImpBehaviour)FindObjectOfType(typeof(ImpBehaviour));
-
-            if (imp == null)
-            {
-                Debug.LogError("Could not find ilamp object");
-                enabled = false;
-                return;
-            }
-        }
-
-        if (imp.vertices2d.Count < 1)
+        if (Vertices2d.Count < 1)
             return;
 
         thumbnails = new UnityEngine.UI.Image[sprites.Length];
@@ -38,10 +23,10 @@ public class ImpUI : MonoBehaviour
             thumbnails[i].sprite = sprites[i];
             Rect rect = thumbnails[i].rectTransform.rect;
             
-            Vector2 v = imp.vertices2d[i];
+            Vector2 v = Vertices2d[i];
             Vector2 pos = new Vector2(
-                ImpPlugin.LinearInterpolation(v.x, imp.MinCoords.x, imp.MaxCoords.x, rect.width / 2.0f, Screen.width - rect.width),
-                ImpPlugin.LinearInterpolation(v.y, imp.MinCoords.y, imp.MaxCoords.y, rect.height / 2.0f, Screen.height - rect.height));
+                ImpPlugin.LinearInterpolation(v.x, MinCoords.x, MaxCoords.x, rect.width / 2.0f, Screen.width - rect.width),
+                ImpPlugin.LinearInterpolation(v.y, MinCoords.y, MaxCoords.y, rect.height / 2.0f, Screen.height - rect.height));
 
             thumbnails[i].rectTransform.anchoredPosition = pos;
         }

@@ -1,5 +1,6 @@
 #include "pca_image.h"
 #include <iostream>
+#include <chrono>
 #include <experimental/filesystem>
 namespace fs = std::experimental::filesystem;
 
@@ -7,19 +8,6 @@ namespace fs = std::experimental::filesystem;
 
 
 
-static cv::Mat toGrayscale(cv::InputArray _src) 
-{
-	cv::Mat src = _src.getMat();
-	// only allow one channel
-	if (src.channels() != 1) 
-	{
-		CV_Error(cv::Error::StsBadArg, "Only Matrices with one channel are supported");
-	}
-	// create and return normalized image
-	cv::Mat dst;
-	cv::normalize(_src, dst, 0, 255, cv::NORM_MINMAX, CV_8UC1);
-	return dst;
-}
 
 struct params
 {
@@ -44,7 +32,7 @@ static void onTrackbar(int pos, void* ptr)
 	cv::Mat point = p->pca.project(p->data.row(0));
 	cv::Mat reconstruction = p->pca.backProject(point);
 	reconstruction = reconstruction.reshape(p->ch, p->rows);
-	reconstruction = toGrayscale(reconstruction);
+	reconstruction = PcaImage::toGrayscale(reconstruction);
 	cv::imshow(p->winName, reconstruction);
 	std::cout << "done!   # of principal components: " << p->pca.eigenvectors.rows << std::endl;
 }
@@ -55,6 +43,8 @@ static void onTrackbar(int pos, void* ptr)
 int main(int argc, char** argv)
 {
 	PcaImage pca_img;
+	auto start_time = std::chrono::system_clock::now();
+	std::chrono::duration<double> elapsed_seconds = std::chrono::system_clock::now() - start_time;
 
 	cv::CommandLineParser parser(argc, argv, "{@input||image list}{@output||pca filename}{help h||show help message}");
 	if (parser.has("help"))
@@ -80,6 +70,7 @@ int main(int argc, char** argv)
 
 	// vector to hold the images
 	// Read in the data. This can fail if not valid
+	start_time = std::chrono::system_clock::now();
 	try 
 	{
 		pca_img.loadImages(imgList);
@@ -87,8 +78,10 @@ int main(int argc, char** argv)
 	catch (cv::Exception& e) 
 	{
 		std::cerr << "Error opening file \"" << imgList << "\". Reason: " << e.msg << std::endl;
-		exit(1);
+		return EXIT_FAILURE;
 	}
+	elapsed_seconds = std::chrono::system_clock::now() - start_time;
+	std::cout << "<Info>  Loading images    : " << elapsed_seconds.count() << "s\n";
 
 	const int num_channels = pca_img.images[0].channels();
 	const int num_rows = pca_img.images[0].rows;
@@ -101,21 +94,53 @@ int main(int argc, char** argv)
 	}
 
 	// Reshape and stack images into a rowMatrix
-	pca_img.formatImagesForPCA();
+	start_time = std::chrono::system_clock::now();
+	{
+		pca_img.formatImagesForPCA();
+	}
+	elapsed_seconds = std::chrono::system_clock::now() - start_time;
+	std::cout << "<Info>  Format for PCA    : " << elapsed_seconds.count() << "s\n";
 
-	pca_img.run();
+	start_time = std::chrono::system_clock::now();
+	{
+		pca_img.run();
+	}
+	elapsed_seconds = std::chrono::system_clock::now() - start_time;
+	std::cout << "<Info>  Run PCA           : " << elapsed_seconds.count() << "s\n";
 
-	pca_img.save(outputFilename);
+	start_time = std::chrono::system_clock::now();
+	{
+		pca_img.save(outputFilename);
+	}
+	elapsed_seconds = std::chrono::system_clock::now() - start_time;
+	std::cout << "<Info>  Save Projection   : " << elapsed_seconds.count() << "s\n";
 
+#if 0
+	start_time = std::chrono::system_clock::now();
 	cv::Mat point = pca_img.pca->project(pca_img.data.row(0)); // project into the eigenspace, thus the image becomes a "point"
+	elapsed_seconds = std::chrono::system_clock::now() - start_time;
+	std::cout << "<Info>  Projection        : " << elapsed_seconds.count() << "s\n";
+
+	start_time = std::chrono::system_clock::now();
 	cv::Mat reconstruction = pca_img.pca->backProject(point); // re-create the image from the "point"
 	reconstruction = reconstruction.reshape(num_channels, num_rows); // reshape from a row vector into image shape
-	reconstruction = toGrayscale(reconstruction); // re-scale for displaying purposes
+	reconstruction = PcaImage::toGrayscale(reconstruction); // re-scale for displaying purposes
+	elapsed_seconds = std::chrono::system_clock::now() - start_time;
+	std::cout << "<Info>  Back projection   : " << elapsed_seconds.count() << "s\n";
+#else
+	start_time = std::chrono::system_clock::now();
+	cv::Mat reconstruction;
+	pca_img.backProject(pca_img.projection.row(0), reconstruction);
+	elapsed_seconds = std::chrono::system_clock::now() - start_time;
+	std::cout << "<Info>  Back projection   : " << elapsed_seconds.count() << "s\n";
+#endif
 	
-	cv::Mat mean = pca_img.pca->mean.clone();
-	mean = mean.reshape(num_channels, num_rows); // reshape from a row vector into image shape
-	mean = toGrayscale(mean); // re-scale for displaying purposes
-	
+	//cv::imwrite("G:/Data/Figurantes/Textures/_data_clone.jpg", data_clone);
+	//cv::imwrite("G:/Data/Figurantes/Textures/_reconstruction.jpg", reconstruction);
+
+	//cv::Mat mean = pca_img.pca->mean.clone();
+	//mean = mean.reshape(num_channels, num_rows); // reshape from a row vector into image shape
+	//mean = PcaImage::toGrayscale(mean); // re-scale for displaying purposes
 	//cv::imwrite("../data/heads/pca_mean.jpg", mean);
 
 	// init highgui window

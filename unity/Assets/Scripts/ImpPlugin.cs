@@ -9,7 +9,7 @@ using System.Linq;
 
 public class ImpPlugin
 {
-    public const string DllName = "imp";
+    public const string DllName = "impd";
 
     [DllImport(DllName)]
     public static extern void Imp_Initialize_ILamp();
@@ -55,6 +55,12 @@ public class ImpPlugin
 
     [DllImport(DllName)]
     public static extern float Imp_MaxY();
+
+    [DllImport(DllName)]
+    public static extern bool Imp_ExecutePcaImages(string input_image_list_file, string output_file);
+
+    [DllImport(DllName)]
+    public static extern bool Imp_BackProjectImageExecute(float x, float y);
 
 
     static public float LinearInterpolation(float x, float x0, float x1, float y0, float y1)

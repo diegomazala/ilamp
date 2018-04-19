@@ -157,7 +157,7 @@ public class ImpBehaviour : MonoBehaviour
         
         impUI = (ImpUI)FindObjectOfType(typeof(ImpUI));
         if (impUI)
-            impUI.Setup(this);
+            impUI.Setup(vertices2d, MinCoords, MaxCoords);
 
     }
 

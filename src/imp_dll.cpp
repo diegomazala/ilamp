@@ -1,5 +1,6 @@
 #include "ilamp.h"
 #include "rbf_imp.h"
+#include "pca_image.h"
 
 #include <vector>
 #include <fstream>
@@ -12,6 +13,7 @@ namespace fs = std::experimental::filesystem;
 
 static std::unique_ptr<Imp<float>> imp_ptr;
 static std::unique_ptr<std::ofstream> imp_log;
+static std::unique_ptr<PcaImage> pca_img_ptr;
 
 
 
@@ -236,4 +238,70 @@ DllExport bool Imp_ExecuteLamp(const char* input_filename_nd, const char* output
 #endif
 
 	return true;
+}
+
+
+
+DllExport bool Imp_ExecutePcaImages(const char* input_image_list_file, const char* output_file)
+{
+	pca_img_ptr.reset(new PcaImage());
+
+	std::string inputImageList(input_image_list_file);
+	std::string outputFilename;
+	if (output_file)
+	{
+		outputFilename = output_file;
+	}
+	else
+	{
+		outputFilename = fs::path(inputImageList).replace_extension(".pca").string();
+	}
+
+	// vector to hold the images
+	// Read in the data. This can fail if not valid
+	try
+	{
+		pca_img_ptr->loadImages(inputImageList);
+
+		// Quit if there are not enough images for this demo.
+		if (pca_img_ptr->images.size() <= 1)
+		{
+			std::string error_message = "This demo needs at least 2 images to work. Please add more images to your data set!";
+			throw(error_message);
+		}
+
+		// Reshape and stack images into a rowMatrix
+		pca_img_ptr->formatImagesForPCA();
+		pca_img_ptr->run();
+		pca_img_ptr->save(outputFilename);
+	}
+	catch (cv::Exception& e)
+	{
+		std::cerr << "Error: Could not exeute pca images \"" << inputImageList << "\". Reason: " << e.msg << std::endl;
+		return false;
+	}
+
+	return true;
+}
+
+
+DllExport bool Imp_BackProjectImageExecute(float x, float y)
+{
+	if (!imp_ptr)
+	{
+		(*imp_log) << "Error: <Imp_Execute> ilamp not initilized" << std::endl;
+		return false;
+	}
+
+	try
+	{
+		pca_img_ptr->backProject(imp_ptr->q.data());
+		return true;
+	}
+	catch (const std::exception& ex)
+	{
+		(*imp_log) << "Error: <ILamp_RunILamp> " << x << ' ' << y << std::endl
+			<< ex.what() << std::endl;
+		return false;
+	}
 }

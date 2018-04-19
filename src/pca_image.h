@@ -30,9 +30,15 @@ public:
 		return true;
 	}
 
+
 	void run()
 	{
 		pca.reset(new cv::PCA(data, cv::Mat(), cv::PCA::DATA_AS_ROW));
+		projection = cv::Mat(data.rows, data.rows, data.type());
+		for (int i = 0; i < data.rows; ++i)
+		{
+			pca->project(data.row(i), projection.row(i));
+		}
 	}
 
 
@@ -52,16 +58,58 @@ public:
 	}
 
 
+	void backProject(const cv::Mat& point, cv::Mat& output)
+	{
+		output = pca->backProject(point); // re-create the image from the "point"
+		output = output.reshape(images[0].channels(), images[0].rows); // reshape from a row vector into image shape
+		output = toGrayscale(output); // re-scale for displaying purposes
+	}
+
+	void backProject(float* point_array)
+	{
+		auto cols = projection.cols;
+		auto t = projection.type();
+		cv::Mat point(1, projection.cols, CV_32F, point_array);
+		cv::Mat output = pca->backProject(point); // re-create the image from the "point"
+		output = output.reshape(images[0].channels(), images[0].rows); // reshape from a row vector into image shape
+		output = toGrayscale(output); // re-scale for displaying purposes
+		cv::imwrite("G:/Data/Figurantes/Textures/_output.jpg", output);
+	}
+
+
+	void mean(cv::Mat& mean_image)
+	{
+		mean_image = pca->mean.clone();
+		mean_image = mean_image.reshape(images[0].channels(), images[0].rows); // reshape from a row vector into image shape
+		mean_image = toGrayscale(mean_image); // re-scale for displaying purposes
+	}
+
+
+	static cv::Mat toGrayscale(cv::InputArray _src)
+	{
+		cv::Mat src = _src.getMat();
+		// only allow one channel
+		if (src.channels() != 1)
+		{
+			CV_Error(cv::Error::StsBadArg, "Only Matrices with one channel are supported");
+		}
+		// create and return normalized image
+		cv::Mat dst;
+		cv::normalize(_src, dst, 0, 255, cv::NORM_MINMAX, CV_8UC1);
+		return dst;
+	}
+
+
+
 	void save(const std::string& filename)
 	{
 		std::ofstream pca_file(filename, std::ios::out);
 		//pca_file << pca->eigenvalues << std::endl << std::endl;
-		for (int i = 0; i < data.rows; ++i)
+		for (int i = 0; i < projection.rows; ++i)
 		{
-			const cv::Mat& point = pca->project(data.row(i)); // project into the eigenspace, thus the image becomes a "point"
-			for (int j = 0; j < point.cols; ++j)
+			for (int j = 0; j < projection.cols; ++j)
 			{
-				pca_file << std::fixed << point.at<float>(j) << ' ';
+				pca_file << std::fixed << projection.at<float>(i, j) << ' ';
 			}
 			pca_file << std::endl;
 		}
@@ -71,9 +119,12 @@ public:
 
 	std::vector<cv::Mat> images;
 	cv::Mat data;
+	cv::Mat projection;
 	std::unique_ptr<cv::PCA> pca;
 
 };
+
+
 
 
 
