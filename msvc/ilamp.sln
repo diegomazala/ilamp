@@ -19,6 +19,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "rbf_imp", "rbf_imp.vcxproj"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "imp", "imp.vcxproj", "{A2EED107-E762-485A-96D0-768B7BB14CCF}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "pca_image", "pca_image.vcxproj", "{4C68111D-BFE3-4201-8DF3-A4DB3C411C28}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -89,6 +91,12 @@ Global
 		{A2EED107-E762-485A-96D0-768B7BB14CCF}.Release|x64.ActiveCfg = Release|x64
 		{A2EED107-E762-485A-96D0-768B7BB14CCF}.Release|x64.Build.0 = Release|x64
 		{A2EED107-E762-485A-96D0-768B7BB14CCF}.Release|x86.ActiveCfg = Release|x64
+		{4C68111D-BFE3-4201-8DF3-A4DB3C411C28}.Debug|x64.ActiveCfg = Debug|x64
+		{4C68111D-BFE3-4201-8DF3-A4DB3C411C28}.Debug|x64.Build.0 = Debug|x64
+		{4C68111D-BFE3-4201-8DF3-A4DB3C411C28}.Debug|x86.ActiveCfg = Debug|x64
+		{4C68111D-BFE3-4201-8DF3-A4DB3C411C28}.Release|x64.ActiveCfg = Release|x64
+		{4C68111D-BFE3-4201-8DF3-A4DB3C411C28}.Release|x64.Build.0 = Release|x64
+		{4C68111D-BFE3-4201-8DF3-A4DB3C411C28}.Release|x86.ActiveCfg = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
