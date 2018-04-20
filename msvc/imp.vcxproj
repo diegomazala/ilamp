@@ -14,9 +14,22 @@
     <ClInclude Include="..\src\ilamp.h" />
     <ClInclude Include="..\src\imp.h" />
     <ClInclude Include="..\src\rbf_imp.h" />
+    <ClInclude Include="..\src\Unity\IUnityGraphics.h" />
+    <ClInclude Include="..\src\Unity\IUnityGraphicsD3D11.h" />
+    <ClInclude Include="..\src\Unity\IUnityGraphicsD3D12.h" />
+    <ClInclude Include="..\src\Unity\IUnityInterface.h" />
+    <ClInclude Include="..\src\Unity\PlatformBase.h" />
+    <ClInclude Include="..\src\Unity\RenderAPI.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\imp_dll.cpp" />
+    <ClCompile Include="..\src\Unity\RenderAPI.cpp" />
+    <ClCompile Include="..\src\Unity\RenderAPI_D3D11.cpp" />
+    <ClCompile Include="..\src\Unity\RenderAPI_D3D12.cpp" />
+    <ClCompile Include="..\src\Unity\RenderingPlugin.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\src\Unity\RenderingPlugin.def" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{A2EED107-E762-485A-96D0-768B7BB14CCF}</ProjectGuid>

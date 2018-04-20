@@ -7,6 +7,9 @@
     <Filter Include="Source Files">
       <UniqueIdentifier>{9142cfd7-3181-4fb8-8126-4d3047fd5d41}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Unity">
+      <UniqueIdentifier>{4632e46c-efc8-41ea-9d12-7ab1ccb48e2f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\ilamp.h">
@@ -18,10 +21,45 @@
     <ClInclude Include="..\src\rbf_imp.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\Unity\IUnityGraphics.h">
+      <Filter>Unity</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Unity\IUnityGraphicsD3D11.h">
+      <Filter>Unity</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Unity\IUnityGraphicsD3D12.h">
+      <Filter>Unity</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Unity\IUnityInterface.h">
+      <Filter>Unity</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Unity\PlatformBase.h">
+      <Filter>Unity</Filter>
+    </ClInclude>
+    <ClInclude Include="..\src\Unity\RenderAPI.h">
+      <Filter>Unity</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\imp_dll.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\src\Unity\RenderAPI.cpp">
+      <Filter>Unity</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Unity\RenderAPI_D3D11.cpp">
+      <Filter>Unity</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Unity\RenderAPI_D3D12.cpp">
+      <Filter>Unity</Filter>
+    </ClCompile>
+    <ClCompile Include="..\src\Unity\RenderingPlugin.cpp">
+      <Filter>Unity</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\src\Unity\RenderingPlugin.def">
+      <Filter>Unity</Filter>
+    </None>
   </ItemGroup>
 </Project>
