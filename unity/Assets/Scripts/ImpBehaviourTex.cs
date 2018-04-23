@@ -58,6 +58,8 @@ public class ImpBehaviourTex : MonoBehaviour
 
     private bool controlKeyPressed = false;
 
+    public Material material;
+
 
     public Vector2 MinCoords
     {
@@ -70,7 +72,14 @@ public class ImpBehaviourTex : MonoBehaviour
 
 
 
-    void Start ()
+    IEnumerator Start ()
+    {
+        StartImp();
+        CreateTextureAndPassToPlugin();
+        yield return StartCoroutine("CallPluginAtEndOfFrames");
+    }
+
+    void StartImp()
     {
         if (ImpType == ImpTypeEnum.ILamp)
         {
@@ -133,8 +142,6 @@ public class ImpBehaviourTex : MonoBehaviour
 
             reader.Close();
         }
-
-        
 
 
 
@@ -221,5 +228,37 @@ public class ImpBehaviourTex : MonoBehaviour
 
     }
 
+    private void CreateTextureAndPassToPlugin()
+    {
+        // Create a texture
+        Texture2D tex = new Texture2D(256, 256, TextureFormat.ARGB32, false);
+        //Texture2D tex = new Texture2D(256, 256, TextureFormat.RGB24, false);
+        // Set point filtering just so we can see the pixels clearly
+        tex.filterMode = FilterMode.Point;
+        // Call Apply() so it's actually uploaded to the GPU
+        tex.Apply();
 
+        // Set texture onto our material
+        material.mainTexture = tex;
+
+        // Pass texture pointer to the plugin
+        int channels = (tex.format == TextureFormat.ARGB32) ? 4 : 3;
+        ImpPlugin.SetTextureFromUnity(tex.GetNativeTexturePtr(), tex.width, tex.height, channels);
+    }
+
+
+    private IEnumerator CallPluginAtEndOfFrames()
+    {
+        while (true)
+        {
+            // Wait until all frame rendering is done
+            yield return new WaitForEndOfFrame();
+
+            // Issue a plugin event with arbitrary integer identifier.
+            // The plugin can distinguish between different
+            // things it needs to do based on this ID.
+            // For our simple plugin, it does not matter which ID we pass here.
+            GL.IssuePluginEvent(ImpPlugin.GetRenderEventFunc(), 1);
+        }
+    }
 }

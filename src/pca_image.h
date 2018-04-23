@@ -65,15 +65,29 @@ public:
 		output = toGrayscale(output); // re-scale for displaying purposes
 	}
 
+	void backProject(float* point_array, cv::Mat& output)
+	{
+		cv::Mat point(1, projection.cols, CV_32F, point_array);
+		output = pca->backProject(point); // re-create the image from the "point"
+		output = output.reshape(images[0].channels(), images[0].rows); // reshape from a row vector into image shape
+		output = toGrayscale(output); // re-scale for displaying purposes
+		//cv::imwrite("G:/Data/Figurantes/Textures/_output.jpg", output);
+	}
+
+	void backProject(int index, cv::Mat& output)
+	{
+		output = pca->backProject(projection.row(index)); // re-create the image from the "point"
+		output = output.reshape(images[0].channels(), images[0].rows); // reshape from a row vector into image shape
+		output = toGrayscale(output); // re-scale for displaying purposes
+	}
+
 	void backProject(float* point_array)
 	{
-		auto cols = projection.cols;
-		auto t = projection.type();
 		cv::Mat point(1, projection.cols, CV_32F, point_array);
 		cv::Mat output = pca->backProject(point); // re-create the image from the "point"
 		output = output.reshape(images[0].channels(), images[0].rows); // reshape from a row vector into image shape
 		output = toGrayscale(output); // re-scale for displaying purposes
-		cv::imwrite("G:/Data/Figurantes/Textures/_output.jpg", output);
+		//cv::imwrite("G:/Data/Figurantes/Textures/_output.jpg", output);
 	}
 
 

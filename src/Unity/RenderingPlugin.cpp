@@ -7,6 +7,8 @@
 #include <math.h>
 #include <vector>
 
+#include "../imp_dll.h"
+
 
 // --------------------------------------------------------------------------
 // SetTimeFromUnity, an example function we export which is called by one of the scripts.
@@ -23,8 +25,9 @@ extern "C" void UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API SetTimeFromUnity (flo
 static void* g_TextureHandle = NULL;
 static int   g_TextureWidth  = 0;
 static int   g_TextureHeight = 0;
+static int   g_TextureChannels = 0;
 
-extern "C" void UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API SetTextureFromUnity(void* textureHandle, int w, int h)
+extern "C" void UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API SetTextureFromUnity(void* textureHandle, int w, int h, int channels)
 {
 	// A script calls this at initialization time; just remember the texture pointer here.
 	// Will update texture pixels each frame from the plugin rendering event (texture update
@@ -32,8 +35,9 @@ extern "C" void UNITY_INTERFACE_EXPORT UNITY_INTERFACE_API SetTextureFromUnity(v
 	g_TextureHandle = textureHandle;
 	g_TextureWidth = w;
 	g_TextureHeight = h;
-}
+	g_TextureChannels = channels;
 
+}
 
 // --------------------------------------------------------------------------
 // SetMeshBuffersFromUnity, an example function we export which is called by one of the scripts.
@@ -198,43 +202,41 @@ static void ModifyTexturePixels()
 	void* textureHandle = g_TextureHandle;
 	int width = g_TextureWidth;
 	int height = g_TextureHeight;
+	int channels = g_TextureChannels;
 	if (!textureHandle)
 		return;
 
 	int textureRowPitch;
-	void* textureDataPtr = s_CurrentAPI->BeginModifyTexture(textureHandle, width, height, &textureRowPitch);
+	void* textureDataPtr = s_CurrentAPI->BeginModifyTexture(textureHandle, width, height, channels, &textureRowPitch);
 	if (!textureDataPtr)
 		return;
 
 	const float t = g_Time * 4.0f;
 
 	unsigned char* dst = (unsigned char*)textureDataPtr;
+
+	cv::Mat& img = Imp_BackProjectedImage();
+
+	if (img.empty())
+		return;
+
 	for (int y = 0; y < height; ++y)
 	{
 		unsigned char* ptr = dst;
 		for (int x = 0; x < width; ++x)
 		{
-			// Simple "plasma effect": several combined sine waves
-			int vv = int(
-				(127.0f + (127.0f * sinf(x / 7.0f + t))) +
-				(127.0f + (127.0f * sinf(y / 5.0f - t))) +
-				(127.0f + (127.0f * sinf((x + y) / 6.0f - t))) +
-				(127.0f + (127.0f * sinf(sqrtf(float(x*x + y*y)) / 4.0f - t)))
-				) / 4;
-
 			// Write the texture pixel
-			ptr[0] = vv;
-			ptr[1] = vv;
-			ptr[2] = vv;
-			ptr[3] = vv;
+			for (int c = 0; c < channels; ++c)
+				ptr[c] = img.at<uchar>(height - y, x);
 
 			// To next pixel (our pixels are 4 bpp)
-			ptr += 4;
+			ptr += channels;
 		}
 
 		// To next image row
 		dst += textureRowPitch;
 	}
+
 
 	s_CurrentAPI->EndModifyTexture(textureHandle, width, height, textureRowPitch, textureDataPtr);
 }
@@ -283,9 +285,9 @@ static void UNITY_INTERFACE_API OnRenderEvent(int eventID)
 	if (s_CurrentAPI == NULL)
 		return;
 
-	DrawColoredTriangle();
+	//DrawColoredTriangle();
 	ModifyTexturePixels();
-	ModifyVertexBuffer();
+	//ModifyVertexBuffer();
 }
 
 

@@ -27,7 +27,7 @@ public class UseRenderingPlugin : MonoBehaviour
 #else
 	[DllImport (ImpPlugin.DllName)]
 #endif
-	private static extern void SetTextureFromUnity(System.IntPtr texture, int w, int h);
+	private static extern void SetTextureFromUnity(System.IntPtr texture, int w, int h, int channels);
 
 	// We'll pass native pointer to the mesh vertex buffer.
 	// Also passing source unmodified mesh data.
@@ -63,18 +63,20 @@ public class UseRenderingPlugin : MonoBehaviour
 
 	private void CreateTextureAndPassToPlugin()
 	{
-		// Create a texture
-		Texture2D tex = new Texture2D(256,256,TextureFormat.ARGB32,false);
-		// Set point filtering just so we can see the pixels clearly
-		tex.filterMode = FilterMode.Point;
+        // Create a texture
+        Texture2D tex = new Texture2D(256, 256, TextureFormat.ARGB32, false);
+        //Texture2D tex = new Texture2D(4096, 4096, TextureFormat.RGB24, false);
+        // Set point filtering just so we can see the pixels clearly
+        tex.filterMode = FilterMode.Point;
 		// Call Apply() so it's actually uploaded to the GPU
 		tex.Apply();
 
 		// Set texture onto our material
 		GetComponent<Renderer>().material.mainTexture = tex;
 
-		// Pass texture pointer to the plugin
-		SetTextureFromUnity (tex.GetNativeTexturePtr(), tex.width, tex.height);
+        // Pass texture pointer to the plugin
+        int channels = (tex.format == TextureFormat.ARGB32) ? 4 : 3;
+		SetTextureFromUnity (tex.GetNativeTexturePtr(), tex.width, tex.height, channels);
 	}
 
 	private void SendMeshBuffersToPlugin ()

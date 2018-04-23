@@ -133,6 +133,19 @@ int main(int argc, char** argv)
 	pca_img.backProject(pca_img.projection.row(0), reconstruction);
 	elapsed_seconds = std::chrono::system_clock::now() - start_time;
 	std::cout << "<Info>  Back projection   : " << elapsed_seconds.count() << "s\n";
+	cv::imwrite("G:/Data/Figurantes/Textures/back_projection_0.jpg", reconstruction);
+	pca_img.backProject(pca_img.projection.row(1), reconstruction);
+	elapsed_seconds = std::chrono::system_clock::now() - start_time;
+	std::cout << "<Info>  Back projection   : " << elapsed_seconds.count() << "s\n";
+	cv::imwrite("G:/Data/Figurantes/Textures/back_projection_1.jpg", reconstruction);
+	pca_img.backProject(pca_img.projection.row(2), reconstruction);
+	elapsed_seconds = std::chrono::system_clock::now() - start_time;
+	std::cout << "<Info>  Back projection   : " << elapsed_seconds.count() << "s\n";
+	cv::imwrite("G:/Data/Figurantes/Textures/back_projection_2.jpg", reconstruction);
+	pca_img.backProject(pca_img.projection.row(3), reconstruction);
+	elapsed_seconds = std::chrono::system_clock::now() - start_time;
+	std::cout << "<Info>  Back projection   : " << elapsed_seconds.count() << "s\n";
+	cv::imwrite("G:/Data/Figurantes/Textures/back_projection_3.jpg", reconstruction);
 #endif
 	
 	//cv::imwrite("G:/Data/Figurantes/Textures/_data_clone.jpg", data_clone);

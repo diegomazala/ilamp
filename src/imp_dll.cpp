@@ -1,3 +1,4 @@
+#include "imp_dll.h"
 #include "ilamp.h"
 #include "rbf_imp.h"
 #include "pca_image.h"
@@ -7,13 +8,14 @@
 #include <experimental/filesystem>
 namespace fs = std::experimental::filesystem;
 
-#define DllExport extern "C" __declspec (dllexport)
 
 
 
 static std::unique_ptr<Imp<float>> imp_ptr;
 static std::unique_ptr<std::ofstream> imp_log;
 static std::unique_ptr<PcaImage> pca_img_ptr;
+
+static cv::Mat backProjectedImage;
 
 
 
@@ -152,6 +154,19 @@ DllExport size_t Imp_QCols()
 	return imp_ptr->q.cols();
 }
 
+DllExport void* Imp_GetQ()
+{
+	if (!imp_ptr)
+	{
+		(*imp_log) << "Error: <Imp_CopyQ> ilamp not initilized" << std::endl;
+		return nullptr;
+	}
+	else
+	{
+		//return imp_ptr->q.data();
+		return pca_img_ptr->images[0].data;
+	}
+}
 
 DllExport bool Imp_CopyQ(void* p_array_float_N)
 {
@@ -266,8 +281,8 @@ DllExport bool Imp_ExecutePcaImages(const char* input_image_list_file, const cha
 		// Quit if there are not enough images for this demo.
 		if (pca_img_ptr->images.size() <= 1)
 		{
-			std::string error_message = "This demo needs at least 2 images to work. Please add more images to your data set!";
-			throw(error_message);
+			std::cerr << "Error: This demo needs at least 2 images to work. Please add more images to your data set!" << std::endl;
+			return false;
 		}
 
 		// Reshape and stack images into a rowMatrix
@@ -295,13 +310,48 @@ DllExport bool Imp_BackProjectImageExecute(float x, float y)
 
 	try
 	{
-		pca_img_ptr->backProject(imp_ptr->q.data());
+		pca_img_ptr->backProject(imp_ptr->q.data(), backProjectedImage);
 		return true;
 	}
 	catch (const std::exception& ex)
 	{
-		(*imp_log) << "Error: <ILamp_RunILamp> " << x << ' ' << y << std::endl
+		(*imp_log) << "Error: <Imp_BackProjectImageExecute> " << x << ' ' << y << std::endl
 			<< ex.what() << std::endl;
 		return false;
 	}
+}
+
+
+
+DllExport bool Imp_BackProjectFile()
+{
+	if (!imp_ptr)
+	{
+		(*imp_log) << "Error: <Imp_Execute> ilamp not initilized" << std::endl;
+		return false;
+	}
+
+	try
+	{
+		for (int i = 0; i < pca_img_ptr->projection.rows; ++i)
+		{
+			pca_img_ptr->backProject(i, backProjectedImage);
+			std::stringstream str;
+			str << "G:/Data/Figurantes/Textures/back_projection___" << i << ".jpg";
+			cv::imwrite(str.str(), backProjectedImage);
+		}
+		return true;
+	}
+	catch (const std::exception& ex)
+	{
+		(*imp_log) << "Error: <Imp_BackProjectFile> " << std::endl
+			<< ex.what() << std::endl;
+		return false;
+	}
+}
+
+
+DllExport cv::Mat& Imp_BackProjectedImage()
+{
+	return backProjectedImage;
 }

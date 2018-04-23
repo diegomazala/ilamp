@@ -9,7 +9,7 @@ using System.Linq;
 
 public class ImpPlugin
 {
-    public const string DllName = "impd";
+    public const string DllName = "imp";
 
     [DllImport(DllName)]
     public static extern void Imp_Initialize_ILamp();
@@ -61,6 +61,15 @@ public class ImpPlugin
 
     [DllImport(DllName)]
     public static extern bool Imp_BackProjectImageExecute(float x, float y);
+
+    [DllImport(DllName)]
+    public static extern bool Imp_BackProjectFile();
+
+    [DllImport(ImpPlugin.DllName)]
+    public static extern void SetTextureFromUnity(System.IntPtr texture, int w, int h, int channels);
+
+    [DllImport(ImpPlugin.DllName)]
+    public static extern System.IntPtr GetRenderEventFunc();
 
 
     static public float LinearInterpolation(float x, float x0, float x1, float y0, float y1)

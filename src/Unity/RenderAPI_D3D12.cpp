@@ -23,7 +23,7 @@ public:
 
 	virtual void DrawSimpleTriangles(const float worldMatrix[16], int triangleCount, const void* verticesFloat3Byte4);
 
-	virtual void* BeginModifyTexture(void* textureHandle, int textureWidth, int textureHeight, int* outRowPitch);
+	virtual void* BeginModifyTexture(void* textureHandle, int textureWidth, int textureHeight, int channels, int* outRowPitch);
 	virtual void EndModifyTexture(void* textureHandle, int textureWidth, int textureHeight, int rowPitch, void* dataPtr);
 
 	virtual void* BeginModifyVertexBuffer(void* bufferHandle, size_t* outBufferSize);
@@ -163,7 +163,7 @@ void RenderAPI_D3D12::DrawSimpleTriangles(const float worldMatrix[16], int trian
 }
 
 
-void* RenderAPI_D3D12::BeginModifyTexture(void* textureHandle, int textureWidth, int textureHeight, int* outRowPitch)
+void* RenderAPI_D3D12::BeginModifyTexture(void* textureHandle, int textureWidth, int textureHeight, int channels, int* outRowPitch)
 {
 	ID3D12Fence* fence = s_D3D12->GetFrameFence();
 
@@ -179,7 +179,7 @@ void* RenderAPI_D3D12::BeginModifyTexture(void* textureHandle, int textureWidth,
 	s_D3D12CmdList->Reset(s_D3D12CmdAlloc, nullptr);
 
 	// Fill data
-	const UINT64 kDataSize = textureWidth * textureHeight * 4;
+	const UINT64 kDataSize = textureWidth * textureHeight * channels;
 	ID3D12Resource* upload = GetUploadResource(kDataSize);
 	void* mapped = NULL;
 	upload->Map(0, NULL, &mapped);
