@@ -1,0 +1,178 @@
+fileFormatVersion: 2
+guid: 9c0bc908159e38e409b2e63e71d5f04f
+timeCreated: 1524767149
+licenseType: Pro
+ModelImporter:
+  serializedVersion: 22
+  fileIDToRecycleName:
+    100000: figurante1
+    100002: figurante1_smooth
+    100004: figurante2
+    100006: figurante2_smooth
+    100008: figurante3
+    100010: figurante3_smooth
+    100012: figurante4
+    100014: figurante4_smooth
+    100016: figurante5
+    100018: figurante5_smooth
+    100020: figurante6
+    100022: figurante6_smooth
+    100024: figurante7
+    100026: figurante7_smooth
+    100028: figurante8
+    100030: figurante8_smooth
+    100032: //RootNode
+    400000: figurante1
+    400002: figurante1_smooth
+    400004: figurante2
+    400006: figurante2_smooth
+    400008: figurante3
+    400010: figurante3_smooth
+    400012: figurante4
+    400014: figurante4_smooth
+    400016: figurante5
+    400018: figurante5_smooth
+    400020: figurante6
+    400022: figurante6_smooth
+    400024: figurante7
+    400026: figurante7_smooth
+    400028: figurante8
+    400030: figurante8_smooth
+    400032: //RootNode
+    2100000: No Name
+    2100002: material_0.008
+    2100004: material_0.006
+    2100006: material_0.005
+    2100008: material_0.004
+    2100010: material_0.003
+    2100012: material_0.002
+    2100014: material_0.001
+    2100016: material_0
+    2300000: figurante1
+    2300002: figurante2
+    2300004: figurante2_smooth
+    2300006: figurante3
+    2300008: figurante3_smooth
+    2300010: figurante4
+    2300012: figurante4_smooth
+    2300014: figurante5
+    2300016: figurante5_smooth
+    2300018: figurante6
+    2300020: figurante6_smooth
+    2300022: figurante7
+    2300024: figurante7_smooth
+    2300026: figurante8
+    2300028: figurante8_smooth
+    3300000: figurante1
+    3300002: figurante2
+    3300004: figurante2_smooth
+    3300006: figurante3
+    3300008: figurante3_smooth
+    3300010: figurante4
+    3300012: figurante4_smooth
+    3300014: figurante5
+    3300016: figurante5_smooth
+    3300018: figurante6
+    3300020: figurante6_smooth
+    3300022: figurante7
+    3300024: figurante7_smooth
+    3300026: figurante8
+    3300028: figurante8_smooth
+    4300000: figurante8
+    4300002: figurante7
+    4300004: figurante6
+    4300006: figurante5
+    4300008: figurante4
+    4300010: figurante3
+    4300012: figurante2
+    4300014: figurante1
+    4300016: figurante8_smooth
+    4300018: figurante7_smooth
+    4300020: figurante6_smooth
+    4300022: figurante5_smooth
+    4300024: figurante4_smooth
+    4300026: figurante3_smooth
+    4300028: figurante2_smooth
+    4300030: figurante1_smooth
+    9500000: //RootNode
+    13700000: figurante1_smooth
+  externalObjects: {}
+  materials:
+    importMaterials: 0
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 1
+    motionNodeName: 
+    rigImportErrors: 
+    rigImportWarnings: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations: []
+    isReadable: 1
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 0.01
+    meshCompression: 0
+    addColliders: 0
+    importVisibility: 1
+    importBlendShapes: 1
+    importCameras: 1
+    importLights: 1
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    optimizeMeshForGPU: 1
+    keepQuads: 0
+    weldVertices: 1
+    preserveHierarchy: 0
+    indexFormat: 0
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 4
+  importAnimation: 0
+  copyAvatar: 0
+  humanDescription:
+    serializedVersion: 2
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    rootMotionBoneName: 
+    rootMotionBoneRotation: {x: 0, y: 0, z: 0, w: 1}
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  animationType: 2
+  humanoidOversampling: 1
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
