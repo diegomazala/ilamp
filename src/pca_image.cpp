@@ -115,7 +115,28 @@ int main(int argc, char** argv)
 	elapsed_seconds = std::chrono::system_clock::now() - start_time;
 	std::cout << "<Info>  Save Projection   : " << elapsed_seconds.count() << "s\n";
 
-#if 0
+
+	std::cout << pca_img.pca->eigenvectors.rows << ' ' << pca_img.pca->eigenvectors.cols << std::endl;
+	std::cout << pca_img.pca->eigenvalues.rows << ' ' << pca_img.pca->eigenvalues.cols << std::endl;
+	std::cout << pca_img.data.rows << ' ' << pca_img.data.cols << std::endl;
+	std::cout << pca_img.images[0].rows << ' ' << pca_img.images[0].cols << std::endl;
+
+
+	start_time = std::chrono::system_clock::now();
+
+	int rows = pca_img.projection.rows;
+	for (int i = 0; i < rows; ++i)
+	{
+		cv::Mat tmp = pca_img.pca->backProject(pca_img.projection.row(i));
+		tmp = tmp.reshape(pca_img.images[0].channels(), pca_img.images[0].rows); // reshape from a row vector into image shape
+		tmp = PcaImage::toGrayscale(tmp); // re-scale for displaying purposes
+		std::stringstream ss;
+		ss << "G:/Data/Figurantes/Textures/back_projected_" << i << ".jpg";
+		cv::imwrite(ss.str(), tmp);
+	}
+
+	return EXIT_SUCCESS;
+
 	start_time = std::chrono::system_clock::now();
 	cv::Mat point = pca_img.pca->project(pca_img.data.row(0)); // project into the eigenspace, thus the image becomes a "point"
 	elapsed_seconds = std::chrono::system_clock::now() - start_time;
@@ -127,26 +148,7 @@ int main(int argc, char** argv)
 	reconstruction = PcaImage::toGrayscale(reconstruction); // re-scale for displaying purposes
 	elapsed_seconds = std::chrono::system_clock::now() - start_time;
 	std::cout << "<Info>  Back projection   : " << elapsed_seconds.count() << "s\n";
-#else
-	start_time = std::chrono::system_clock::now();
-	cv::Mat reconstruction;
-	pca_img.backProject(pca_img.projection.row(0), reconstruction);
-	elapsed_seconds = std::chrono::system_clock::now() - start_time;
-	std::cout << "<Info>  Back projection   : " << elapsed_seconds.count() << "s\n";
-	cv::imwrite("G:/Data/Figurantes/Textures/back_projection_0.jpg", reconstruction);
-	pca_img.backProject(pca_img.projection.row(1), reconstruction);
-	elapsed_seconds = std::chrono::system_clock::now() - start_time;
-	std::cout << "<Info>  Back projection   : " << elapsed_seconds.count() << "s\n";
-	cv::imwrite("G:/Data/Figurantes/Textures/back_projection_1.jpg", reconstruction);
-	pca_img.backProject(pca_img.projection.row(2), reconstruction);
-	elapsed_seconds = std::chrono::system_clock::now() - start_time;
-	std::cout << "<Info>  Back projection   : " << elapsed_seconds.count() << "s\n";
-	cv::imwrite("G:/Data/Figurantes/Textures/back_projection_2.jpg", reconstruction);
-	pca_img.backProject(pca_img.projection.row(3), reconstruction);
-	elapsed_seconds = std::chrono::system_clock::now() - start_time;
-	std::cout << "<Info>  Back projection   : " << elapsed_seconds.count() << "s\n";
-	cv::imwrite("G:/Data/Figurantes/Textures/back_projection_3.jpg", reconstruction);
-#endif
+
 	
 	//cv::imwrite("G:/Data/Figurantes/Textures/_data_clone.jpg", data_clone);
 	//cv::imwrite("G:/Data/Figurantes/Textures/_reconstruction.jpg", reconstruction);

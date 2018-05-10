@@ -103,5 +103,49 @@ public class ImpPlugin
         }
     }
 
+    static public bool BuildNdDetailsFile(MeshFilter[] baseMeshes, MeshFilter[] laplaceMeshes, string outputFileNameNd, float scale = 100)
+    {
+        using (System.IO.StreamWriter writer = new System.IO.StreamWriter(outputFileNameNd))
+        {
+            System.Globalization.CultureInfo customCulture = (System.Globalization.CultureInfo)System.Threading.Thread.CurrentThread.CurrentCulture.Clone();
+            customCulture.NumberFormat.NumberDecimalSeparator = ".";
+            System.Threading.Thread.CurrentThread.CurrentCulture = customCulture;
+
+            if (baseMeshes.Length != laplaceMeshes.Length)
+            {
+                Debug.LogError("Number of baseMeshes and laplaceMeshes does not match");
+                return false;
+            }
+
+            int meshCount = baseMeshes.Length; 
+
+            for (int i = 0; i < meshCount; ++i)
+            {
+                if (baseMeshes[i].mesh.vertexCount != laplaceMeshes[i].mesh.vertexCount)
+                {
+                    Debug.LogError("Number of vertices does not match: " + baseMeshes[i].mesh.name + ", " + laplaceMeshes[i].mesh.name);
+                    return false;
+                }
+            }
+
+            for (int i = 0; i < meshCount; ++i)
+            {
+                Vector3[] originalVerts = baseMeshes[i].mesh.vertices;
+                Vector3[] laplaceVerts = laplaceMeshes[i].mesh.vertices;
+                int vertCount = originalVerts.Length;
+
+                for (int j = 0; j < vertCount; ++j)
+                {
+                    var v = (originalVerts[j] - laplaceVerts[j]) * scale;
+                    writer.Write(v.x.ToString("0.####") + ' ' + v.y.ToString("0.####") + ' ' + v.z.ToString("0.####") + ' ');
+                }
+                
+                writer.WriteLine();
+            }
+
+            return true;
+        }
+    }
+
 }
 

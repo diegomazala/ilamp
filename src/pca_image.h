@@ -21,7 +21,6 @@ public:
 			CV_Error(cv::Error::StsBadArg, error_message);
 			return false;
 		}
-
 		std::string line;
 		while (getline(file, line))
 		{

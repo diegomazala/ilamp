@@ -11,16 +11,16 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\src\3d2Nd.cpp" />
+    <ClCompile Include="..\src\detail_displace.cpp" />
     <ClCompile Include="..\src\tinyply.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\src\tinyply.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{7F6AD3AC-ECD7-45D1-B86B-AE468B9AC4D5}</ProjectGuid>
-    <RootNamespace>3d2Nd</RootNamespace>
-    <ProjectName>3d2Nd</ProjectName>
+    <ProjectGuid>{CE093A10-A683-4946-AC07-DAEB8AAA9A38}</ProjectGuid>
+    <RootNamespace>detail_displace</RootNamespace>
+    <ProjectName>detail_displace</ProjectName>
     <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
