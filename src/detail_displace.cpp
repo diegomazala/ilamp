@@ -11,50 +11,17 @@ namespace fs = std::experimental::filesystem;
 
 
 
-bool read_ply_file(const std::string & filename)
-{
-	try
-	{
-		// 
-		// Read source ply file
-		//
-		std::ifstream ss(filename, std::ios::binary);
-		tinyply::PlyFile file(ss);
-		std::vector<float> verts;
-		std::vector<float> norms;
-		std::vector<uint8_t> colors;
-		std::vector<uint32_t> faces;
-		std::vector<float> uvCoords;
-
-		uint32_t vertexCount, normalCount, colorCount, faceCount, faceTexcoordCount, faceColorCount;
-		vertexCount = normalCount = colorCount = faceCount = faceTexcoordCount = faceColorCount = 0;
-
-		vertexCount = file.request_properties_from_element("vertex", { "x", "y", "z" }, verts);
-		normalCount = file.request_properties_from_element("vertex", { "nx", "ny", "nz" }, norms);
-		colorCount = file.request_properties_from_element("vertex", { "red", "green", "blue", "alpha" }, colors);
-
-		faceCount = file.request_properties_from_element("face", { "vertex_indices" }, faces, 3);
-		faceTexcoordCount = file.request_properties_from_element("face", { "texcoord" }, uvCoords, 6);
-
-		file.read(ss);
-	}
-	catch (const std::exception & e)
-	{
-		std::cerr << "Caught exception: " << e.what() << std::endl;
-		return 0;
-	}
-}
-
-
 
 cmdline::parser cmd_parser;
 void cmd_parser_build()
 {
+	cmd_parser.add("normals", 'n', "Compute normals difference");
 	cmd_parser.add<std::string>("template", 't', "Original mesh file (ply)", true);
 	cmd_parser.add<std::string>("filtered_in", 'i', "Input mesh filtered (ply)", true);
 	cmd_parser.add<std::string>("filtered_out", 'o', "Output mesh filtered (ply)", true);
 	cmd_parser.add<std::string>("result", 'r', "Result mesh combined", true, "result.ply");
 }
+
 
 int main(int argc, char* argv[])
 {
@@ -72,6 +39,7 @@ int main(int argc, char* argv[])
 	const std::string& filtered_in_filename = cmd_parser.get<std::string>("filtered_in");
 	const std::string& filtered_out_filename = cmd_parser.get<std::string>("filtered_out");
 	const std::string& result_filename = cmd_parser.get<std::string>("result");
+	bool use_normals = cmd_parser.exist("normals");
 
 	std::vector<float> verts_template, verts_in;
 	std::vector<float> norms_template, norms_in;
@@ -99,6 +67,9 @@ int main(int argc, char* argv[])
 		std::cerr << "Error: Could not load " << template_filename << ". " << e.what() << std::endl;
 		return EXIT_FAILURE;
 	}
+
+
+	use_normals = (use_normals && !norms_template.empty());
 
 
 	// 
@@ -152,26 +123,53 @@ int main(int argc, char* argv[])
 	}
 
 
-	auto it_temp = verts_template.cbegin();
-	auto it_in = verts_in.cbegin();
-	auto it_out = verts_out.begin();
+	auto it_vert_template = verts_template.cbegin();
+	auto it_vert_in = verts_in.cbegin();
+	auto it_vert_out = verts_out.begin();
 
-	std::vector<float> verts_displace(verts_out.size()), norms(norms_out.size());
-	auto it_disp = verts_displace.begin();
+
+	std::vector<float> verts_displace(verts_out.size()), norms_displace(norms_template.size());
+	auto it_vert_disp = verts_displace.begin();
+	
 
 	//
 	// Computing displaced vertices
 	//
-	for (; 
-		it_temp != verts_template.end() && 
-		it_in != verts_in.end() && 
-		it_out != verts_out.end(); 
-		++it_temp, ++it_in, ++it_out, ++it_disp)
+	if (use_normals && norms_displace.size() > 0)
 	{
-		(*it_disp) = (*it_temp) - (*it_in);
-		(*it_out) = (*it_out) + (*it_disp);
-	}
+		auto it_norm_template = norms_template.begin();
+		auto it_norm_in = norms_in.begin();
+		auto it_norm_out = norms_out.begin();
+		auto it_norm_disp = norms_displace.begin();
 
+		for (;
+			it_vert_template != verts_template.end();
+			++it_vert_template, ++it_vert_in, ++it_vert_out, ++it_vert_disp, ++it_norm_disp)
+		{
+#if 0	// V2
+			(*it_vert_disp) = (*it_vert_template) - (*it_vert_in);
+			(*it_vert_out) = (*it_vert_out) + (*it_vert_disp);
+			
+			(*it_norm_disp) = (*it_norm_template) - (*it_norm_in);
+			(*it_norm_out) = (*it_norm_out) + (*it_norm_disp);
+#else	// V3
+			(*it_vert_disp) = (*it_vert_template) - (*it_vert_in);
+			(*it_vert_out) = (*it_norm_out) + (*it_vert_disp) - (*it_norm_template);
+#endif
+		}
+	}
+	else // V1 -> norms_template
+	{
+		for (;
+			it_vert_template != verts_template.end() &&
+			it_vert_in != verts_in.end() &&
+			it_vert_out != verts_out.end();
+			++it_vert_template, ++it_vert_in, ++it_vert_out, ++it_vert_disp)
+		{
+			(*it_vert_disp) = (*it_vert_template) - (*it_vert_in);
+			(*it_vert_out) = (*it_vert_out) + (*it_vert_disp);
+		}
+	}
 
 
 	//
@@ -186,8 +184,13 @@ int main(int argc, char* argv[])
 		tinyply::PlyFile ply_out_file;
 
 		ply_out_file.add_properties_to_element("vertex", { "x", "y", "z" }, verts_out);
-		if (!norms.empty())
+#if 1
+		if (!norms_out.empty())
 			ply_out_file.add_properties_to_element("vertex", { "nx", "ny", "nz" }, norms_out);
+#else
+		if (!norms_template.empty())
+			ply_out_file.add_properties_to_element("vertex", { "nx", "ny", "nz" }, norms_template);
+#endif
 		if (!colors_out.empty())
 			ply_out_file.add_properties_to_element("vertex", { "red", "green", "blue", "alpha" }, colors_out);
 		if (!faces_out.empty())
