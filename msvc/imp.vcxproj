@@ -13,6 +13,7 @@
   <ItemGroup>
     <ClInclude Include="..\src\ilamp.h" />
     <ClInclude Include="..\src\imp.h" />
+    <ClInclude Include="..\src\imp_dll.h" />
     <ClInclude Include="..\src\rbf_imp.h" />
     <ClInclude Include="..\src\Unity\IUnityGraphics.h" />
     <ClInclude Include="..\src\Unity\IUnityGraphicsD3D11.h" />
@@ -35,7 +36,7 @@
     <ProjectGuid>{A2EED107-E762-485A-96D0-768B7BB14CCF}</ProjectGuid>
     <RootNamespace>imp</RootNamespace>
     <ProjectName>imp</ProjectName>
-    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0.17134.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">

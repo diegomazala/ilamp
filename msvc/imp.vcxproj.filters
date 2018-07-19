@@ -39,6 +39,9 @@
     <ClInclude Include="..\src\Unity\RenderAPI.h">
       <Filter>Unity</Filter>
     </ClInclude>
+    <ClInclude Include="..\src\imp_dll.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\imp_dll.cpp">
