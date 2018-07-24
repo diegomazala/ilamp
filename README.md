@@ -20,5 +20,11 @@ Also, for this script to work, you have to install mppy package into you python 
 * Template Mesh: The template model that will receive the resultant mesh
 
 ## Video (click on the image)
+
 * Video extracted from Unity scene Imp_Figurantes
 [![Video](https://github.com/diegomazala/ilamp/blob/master/doc/ilamp_video_frame.png?raw=true)](https://vimeo.com/281491144)
+
+* Video extracted from Unity scene Imp_Cubes 
+[![Video](https://github.com/diegomazala/ilamp/blob/master/doc/ilamp_cubes_video_frame.png?raw=true)](https://github.com/diegomazala/ilamp/blob/master/doc/imp_cube.mp4?raw=true)
+
+
