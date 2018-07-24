@@ -8,6 +8,7 @@ You must set an environment variable called ILAMP_LAMP_SCRIPT. This variable poi
 Also, for this script to work, you have to install mppy package into you python distribution. More information in https://github.com/thiagohenriquef/mppy
 
 ## ILamp Unity Component
+[![Cubes](https://github.com/diegomazala/ilamp/blob/master/doc/imp_cube.gif?raw=true)]
 
 ![Unity Component](https://github.com/diegomazala/ilamp/blob/master/doc/imp_unity_behaviour.png?raw=true)
 
@@ -19,12 +20,11 @@ Also, for this script to work, you have to install mppy package into you python 
 * Wireframe: A material to show polygons of the mesh
 * Template Mesh: The template model that will receive the resultant mesh
 
+
 ## Video (click on the image)
 
 * Video extracted from Unity scene Imp_Figurantes
 [![Video](https://github.com/diegomazala/ilamp/blob/master/doc/ilamp_video_frame.png?raw=true)](https://vimeo.com/281491144)
 
-* Video extracted from Unity scene Imp_Cubes 
-[![Video](https://github.com/diegomazala/ilamp/blob/master/doc/ilamp_cubes_video_frame.png?raw=true)](https://github.com/diegomazala/ilamp/blob/master/doc/imp_cube.mp4?raw=true)
 
 
