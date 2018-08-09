@@ -191,7 +191,7 @@ namespace tinyply
 		std::vector<PlyProperty> properties;
 	};
 
-	inline int find_element(const std::string key, std::vector<PlyElement> & list)
+	inline size_t find_element(const std::string key, std::vector<PlyElement> & list)
 	{
 		for (size_t i = 0; i < list.size(); ++i)
 		{

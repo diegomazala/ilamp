@@ -4,14 +4,13 @@
 #include "rbf_imp.h"
 #include "cmdline.h"
 
-
+	
 #include <iostream>
 #include <iomanip> 
 #include <fstream>
 #include <algorithm>
 #include <vector>
 #include <chrono>
-#include <flann/flann.hpp>
 #include <Eigen/Dense>
 
 #include <experimental/filesystem>
