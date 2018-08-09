@@ -4,6 +4,12 @@ cmake_minimum_required (VERSION 2.6)
 
 project (ilamp)
 
+
+#set(CMAKE_CXX_STANDARD 14)
+#set(CMAKE_CXX_STANDARD_REQUIRED ON)
+#set(CMAKE_CXX_EXTENSIONS OFF)
+
+
 set(FLANN_LIBRARY
 	flann_cpp_s.lib
 	)
@@ -17,12 +23,14 @@ set(FLANN_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/3rdparty/flann/include/)
 add_executable(3d2Nd 
 	src/3d2Nd.cpp 
 	src/tinyply.cpp 
-	src/tinyply.h)	
+	src/tinyply.h)
+target_compile_features(3d2Nd PRIVATE cxx_std_17)
 
 add_executable(detail_displace 
 	src/detail_displace.cpp 
 	src/tinyply.cpp 
 	src/tinyply.h)
+target_compile_features(detail_displace PRIVATE cxx_std_17)
 	
 add_executable(nd2ply 
 	src/nd2ply.cpp 
@@ -56,18 +64,18 @@ add_executable(replace_vertices
 	
 
 
-add_library(ilamp_dll SHARED
-	src/ilamp_dll.cpp 
-	src/ilamp.h
-	src/ilamp_project.h
-	src/rbf_interpolation.h
-	src/rbf_interpolation.cpp
-	src/tinyply.cpp
-	src/tinyply.h
-)
+#add_library(ilamp_dll SHARED
+#	src/ilamp_dll.cpp 
+#	src/ilamp.h
+#	src/ilamp_project.h
+#	src/rbf_interpolation.h
+#	src/rbf_interpolation.cpp
+#	src/tinyply.cpp
+#	src/tinyply.h
+#)
 
-target_include_directories (ilamp_dll PUBLIC $ENV{EIGEN3_INCLUDE_DIR} ${FLANN_INCLUDE_DIR})
-target_link_libraries(ilamp_dll ${FLANN_LIBRARY_DIR}${FLANN_LIBRARY})
+#target_include_directories (ilamp_dll PUBLIC $ENV{EIGEN3_INCLUDE_DIR} ${FLANN_INCLUDE_DIR})
+#target_link_libraries(ilamp_dll ${FLANN_LIBRARY_DIR}${FLANN_LIBRARY})
 
 
 
@@ -95,22 +103,22 @@ set(IMP_SOURCE_FILES
 	src/imp_dll.cpp
 )
 
-find_package( OpenCV REQUIRED )
+#find_package( OpenCV REQUIRED )
 
-add_library(imp SHARED
-	${UNITY_SOURCE_FILES}
-	${IMP_HEADER_FILES}
-	${IMP_SOURCE_FILES}
-)
-target_include_directories (imp PUBLIC 
-	${OpenCV_INCLUDE_DIRS} 
-	$ENV{EIGEN3_INCLUDE_DIR} 
-	${FLANN_INCLUDE_DIR}
-)
+#add_library(imp SHARED
+#	${UNITY_SOURCE_FILES}
+#	${IMP_HEADER_FILES}
+#	${IMP_SOURCE_FILES}
+#)
+#target_include_directories (imp PUBLIC 
+#	${OpenCV_INCLUDE_DIRS} 
+#	$ENV{EIGEN3_INCLUDE_DIR} 
+#	${FLANN_INCLUDE_DIR}
+#)
 
-target_link_libraries(imp 
-	${FLANN_LIBRARY_DIR}${FLANN_LIBRARY}
-	${OpenCV_LIBS}
-)
+#target_link_libraries(imp 
+#	${FLANN_LIBRARY_DIR}${FLANN_LIBRARY}
+#	${OpenCV_LIBS}
+#)
 
 source_group("Unity"	FILES ${UNITY_SOURCE_FILES})
