@@ -62,7 +62,7 @@ int main(int argc, char* argv[])
 
 		if (target_vertexCount != vertexCount)
 		{
-			throw(std::exception("Vertex count does not match"));
+			throw std::runtime_error("Vertex count does not match");
 		}
 
 

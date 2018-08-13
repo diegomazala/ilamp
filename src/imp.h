@@ -3,6 +3,7 @@
 
 
 #include <iostream>
+#include <limits>
 #include <fstream>
 #include <algorithm>
 #include <vector>
@@ -16,10 +17,10 @@ class Imp
 {
 public:
 	
-	Type min_x = FLT_MAX;
-	Type max_x = FLT_MIN;
-	Type min_y = FLT_MAX;
-	Type max_y = FLT_MIN;
+	Type min_x = std::numeric_limits<float>::max();
+	Type max_x = std::numeric_limits<float>::max();
+	Type min_y = std::numeric_limits<float>::min();
+	Type max_y = std::numeric_limits<float>::min();
 	std::vector<Eigen::Matrix<Type, 2, 1>>				verts_2d;
 	std::vector<Eigen::Matrix<Type, Eigen::Dynamic, 1>> verts_Nd;
 	Eigen::Matrix<Type, Eigen::Dynamic, 1>				q;
@@ -36,10 +37,10 @@ public:
 	
 	virtual bool load_data_2d(const std::string& filename)
 	{
-		min_x = FLT_MAX;
-		max_x = FLT_MIN;
-		min_y = FLT_MAX;
-		max_y = FLT_MIN;
+		min_x = std::numeric_limits<float>::min();
+		max_x = std::numeric_limits<float>::max();
+		min_y = std::numeric_limits<float>::min();
+		max_y = std::numeric_limits<float>::max();
 
 		std::ifstream input_file_2d(filename, std::ios::in);
 		if (input_file_2d.is_open())
@@ -92,8 +93,8 @@ public:
 				std::string line;
 				std::getline(input_file_Nd, line);
 				std::istringstream tokenStream(line);
-				//for (std::string each; std::getline(tokenStream, std::string(), ','); dimension_Nd++){}
-				for (std::string each; std::getline(tokenStream, std::string(), ' '); dimension_Nd++) {}
+				std::string str;
+				for (std::string each; std::getline(tokenStream, str, ' '); dimension_Nd++) {}
 				input_file_Nd.clear();                 // clear fail and eof bits
 				input_file_Nd.seekg(0, std::ios::beg); // back to the start!
 			}

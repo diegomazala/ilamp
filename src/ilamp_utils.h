@@ -32,7 +32,7 @@ static void build_nd_file(const std::vector<std::string>& models_file_array, con
 {
 	std::ofstream output_file(output_filename, std::ios::out);
 
-	for each (const std::string& filename in models_file_array)
+	for (const std::string& filename : models_file_array)
 	{
 #if _DEBUG
 		std::cout << filename << std::endl;
@@ -106,7 +106,7 @@ static bool write_ply_file(const std::string& output_filename, std::vector<float
 
 		if (target_verts.size() != verts.size())
 		{
-			throw(std::exception("Vertex count does not match", verts.size()));
+			throw std::runtime_error("Vertex count does not match");
 		}
 
 

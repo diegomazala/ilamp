@@ -5,9 +5,11 @@ cmake_minimum_required (VERSION 2.6)
 project (ilamp)
 
 
-#set(CMAKE_CXX_STANDARD 14)
-#set(CMAKE_CXX_STANDARD_REQUIRED ON)
-#set(CMAKE_CXX_EXTENSIONS OFF)
+find_package( Eigen3 REQUIRED )
+if( NOT EIGEN3_INCLUDE_DIR )
+    set( EIGEN3_INCLUDE_DIR "$ENV{EIGEN3_INCLUDE_DIR}" )
+endif()
+
 
 
 set(FLANN_LIBRARY
@@ -19,23 +21,27 @@ set(FLANN_INCLUDE_DIR ${CMAKE_SOURCE_DIR}/3rdparty/flann/include/)
 
 
 
-
 add_executable(3d2Nd 
 	src/3d2Nd.cpp 
 	src/tinyply.cpp 
 	src/tinyply.h)
 target_compile_features(3d2Nd PRIVATE cxx_std_17)
+target_link_libraries(3d2Nd PRIVATE $<$<AND:$<CXX_COMPILER_ID:GNU>,$<VERSION_LESS:$<CXX_COMPILER_VERSION>,9.0>>:stdc++fs>)
+
 
 add_executable(detail_displace 
 	src/detail_displace.cpp 
 	src/tinyply.cpp 
 	src/tinyply.h)
 target_compile_features(detail_displace PRIVATE cxx_std_17)
-	
+
+
 add_executable(nd2ply 
 	src/nd2ply.cpp 
 	src/tinyply.cpp 
 	src/tinyply.h)
+target_compile_features(nd2ply PRIVATE cxx_std_17)
+target_link_libraries(nd2ply PRIVATE $<$<AND:$<CXX_COMPILER_ID:GNU>,$<VERSION_LESS:$<CXX_COMPILER_VERSION>,9.0>>:stdc++fs>)
 	
 	
 add_executable(rbf_imp 
@@ -43,15 +49,16 @@ add_executable(rbf_imp
 	src/rbf_imp.h 
 	src/tinyply.cpp 
 	src/tinyply.h)
-target_include_directories (rbf_imp PUBLIC $ENV{EIGEN3_INCLUDE_DIR} ${FLANN_INCLUDE_DIR})
-target_link_libraries(rbf_imp ${FLANN_LIBRARY_DIR}${FLANN_LIBRARY})
+target_include_directories (rbf_imp PUBLIC ${EIGEN3_INCLUDE_DIR} ${FLANN_INCLUDE_DIR})
+target_compile_features(rbf_imp PRIVATE cxx_std_17)
+target_link_libraries(rbf_imp ${FLANN_LIBRARY_DIR}${FLANN_LIBRARY} )
 	
 	
 add_executable(rbf_sample 
 	src/rbf_sample.cpp
 	src/rbf_interpolation.h 
 	src/rbf_interpolation.cpp)
-target_include_directories (rbf_sample PUBLIC $ENV{EIGEN3_INCLUDE_DIR} ${FLANN_INCLUDE_DIR})
+target_include_directories (rbf_sample PUBLIC ${EIGEN3_INCLUDE_DIR} ${FLANN_INCLUDE_DIR})
 target_link_libraries(rbf_sample ${FLANN_LIBRARY_DIR}${FLANN_LIBRARY})
 	
 	
@@ -60,6 +67,8 @@ add_executable(replace_vertices
 	src/ilamp_utils.h
 	src/tinyply.h 
 	src/tinyply.cpp)
+target_compile_features(replace_vertices PRIVATE cxx_std_17)
+target_link_libraries(replace_vertices PRIVATE $<$<AND:$<CXX_COMPILER_ID:GNU>,$<VERSION_LESS:$<CXX_COMPILER_VERSION>,9.0>>:stdc++fs>)
 
 	
 

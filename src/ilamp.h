@@ -45,7 +45,7 @@ public:
 		// Build dataset
 		//
 		const uint8_t dimension_2d = 2;
-		dataset_2d.reset(new flann::Matrix<Type>(verts_2d.data()->data(), verts_2d.size(), dimension_2d));
+		dataset_2d.reset(new flann::Matrix<Type>(this->verts_2d.data()->data(), this->verts_2d.size(), dimension_2d));
 		//
 		// Construct an randomized kd-tree index using 4 kd-trees
 		//
@@ -60,8 +60,8 @@ public:
 		try
 		{
 
-			const size_t dimension_2d = verts_2d.at(0).rows();
-			const size_t dimension_Nd = verts_Nd.at(0).rows();
+			const size_t dimension_2d = this->verts_2d.at(0).rows();
+			const size_t dimension_Nd = this->verts_Nd.at(0).rows();
 
 			Eigen::Matrix<Type, 2, 1> p(px, py);
 
@@ -89,18 +89,18 @@ public:
 			{
 				const int index = kdtree_indices[0][j];
 
-				if (index < 0 || index >(verts_Nd.size() - 1) || index > (verts_2d.size() - 1))
+				if (index < 0 || index >(this->verts_Nd.size() - 1) || index > (this->verts_2d.size() - 1))
 					continue;
 
-				const auto& x_i = verts_Nd[index];
-				const auto& y_i = verts_2d[index];
+				const auto& x_i = this->verts_Nd[index];
+				const auto& y_i = this->verts_2d[index];
 
 				//Xs.push_back(verts_Nd[index]);
 				//Ys.push_back(ilamp.verts_2d.[index]);
 
 				// eq 2
 				// ###################### 
-				// Verificar no paper. A divisão pode ser por zero
+				// Verificar no paper. A divisï¿½o pode ser por zero
 				// ###################### 
 				Type squaredNorm = std::max(static_cast<Type>((y_i - p).squaredNorm()), static_cast<Type>(0.0001));
 				Type alpha_i = static_cast<Type>(1) / squaredNorm;
@@ -124,11 +124,11 @@ public:
 			{
 				const int index = kdtree_indices[0][j];
 			
-				if (index < 0 || index >(verts_Nd.size() - 1) || index >(verts_2d.size() - 1))
+				if (index < 0 || index >(this->verts_Nd.size() - 1) || index >(this->verts_2d.size() - 1))
 					continue;
 
-				const auto& x_i = verts_Nd[index];
-				const auto& y_i = verts_2d[index];
+				const auto& x_i = this->verts_Nd[index];
+				const auto& y_i = this->verts_2d[index];
 
 				Type squaredNorm = std::max(static_cast<Type>((y_i - p).squaredNorm()), static_cast<Type>(0.0001));
 				Type alpha_i = static_cast<Type>(1) / squaredNorm;
@@ -181,7 +181,7 @@ public:
 			out << "<Error> " << ex.what() << std::endl;
 		}
 
-		return q;
+		return this->q;
 	}
 
 };
