@@ -18,7 +18,7 @@
     <ClInclude Include="..\src\tinyply.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\rbf_interpolation.hpp">
+    <ClInclude Include="..\src\rbf_interpolation.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

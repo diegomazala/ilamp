@@ -18,7 +18,7 @@
   <ItemGroup>
     <ClInclude Include="..\src\ilamp.h" />
     <ClInclude Include="..\src\ilamp_project.h" />
-    <ClInclude Include="..\src\rbf_interpolation.hpp" />
+    <ClInclude Include="..\src\rbf_interpolation.h" />
     <ClInclude Include="..\src\tinyply.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
