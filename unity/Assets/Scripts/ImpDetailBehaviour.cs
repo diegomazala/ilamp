@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System.Runtime.InteropServices;
 using System.Linq;
+using mattatz.MeshSmoothingSystem;
 
 
 public class ImpDetailBehaviour : MonoBehaviour
@@ -24,16 +25,31 @@ public class ImpDetailBehaviour : MonoBehaviour
 
     private ImpUI impUI = null;
 
-    private float[] q_data = null;
+    //private float[] q_data = null;
+    private Vector3[] q_data = null;
     private GCHandle q_handle;
 
     public bool RunLamp = true;
 
     public string FileName2d;
     public string FileNameNd;
-    public int meshSelected = 0;
+
+    [Range(0, 100)]
+    public int laplaceIterations = 0;
+    [Range(0, 6)]
+    public int levelIndex = 0;
+    [Range(0, 7)]
+    public int meshSourceIndex = 0;
+    [Range(0, 7)]
+    public int meshTargetIndex = 0;
     public MeshFilter[] baseMeshes;
-    public MeshFilter[] laplaceMeshes;
+
+    [System.Serializable]
+    public class MeshFilterList
+    {
+        public MeshFilter[] MeshList;
+    }
+    public List<MeshFilterList> laplaceMeshes;
 
     [System.Serializable]
     public class ILampConfig
@@ -66,9 +82,6 @@ public class ImpDetailBehaviour : MonoBehaviour
 
     private bool controlKeyPressed = false;
 
-    Vector3[] originalVertices;
-
-
     public Vector2 MinCoords
     {
         get { return new Vector2(ImpPlugin.Imp_MinX(), ImpPlugin.Imp_MinY()); }
@@ -78,10 +91,67 @@ public class ImpDetailBehaviour : MonoBehaviour
         get { return new Vector2(ImpPlugin.Imp_MaxX(), ImpPlugin.Imp_MaxY()); }
     }
 
-
+    private bool runLaplace = false;
+    private Vector3[] laplacedVertices = null;
+    private Dictionary<int, VertexConnection> vertexAdjacency = null;
 
     void Start ()
     {
+        if (templateMesh == null)
+        {
+            Debug.LogError("Template Mesh is null. Did you forget to fill inspector fields?");
+            enabled = false;
+            return;
+        }
+
+        //
+        // Check if the number of meshes and vertices matches
+        //
+        foreach (var m in baseMeshes)
+        {
+            if (m == null)
+            {
+                Debug.LogError("Mesh is null. Did you forget to fill inspector fields?");
+                enabled = false;
+                return;
+            }
+        }
+        foreach (var ml in laplaceMeshes)
+        {
+            if (baseMeshes.Length != ml.MeshList.Length)
+            {
+                Debug.LogError("The number of meshes does not match: " + baseMeshes.Length + " != " + ml.MeshList.Length);
+                enabled = false;
+                return;
+            }
+
+            if (ml.MeshList[0] == null)
+            {
+                Debug.LogError("Mesh is null. Did you forget to fill inspector fields?");
+                enabled = false;
+                return;
+            }
+
+            var vertCount = ml.MeshList[0].mesh.vertexCount;
+            for (int i=1; i<ml.MeshList.Length; ++i)
+            {
+                if (ml.MeshList[i] == null)
+                {
+                    Debug.LogError("Mesh null. Did you forget to fill inspector fields?");
+                    enabled = false;
+                    return;
+                }
+
+                if (vertCount != ml.MeshList[i].mesh.vertexCount)
+                {
+                    Debug.LogError("The number of vertices does not match: " + ml.MeshList[i].name);
+                    enabled = false;
+                    return;
+                }
+            }
+        }
+
+
         if (ImpType == ImpTypeEnum.ILamp)
         {
             ImpPlugin.Imp_Initialize_ILamp();
@@ -101,16 +171,7 @@ public class ImpDetailBehaviour : MonoBehaviour
 
         if (RunLamp)
         {
-#if false
             ImpPlugin.BuildNdFile(baseMeshes, FileNameNd, 1.0f / ModelScaleFactor);
-#else
-            if (!ImpPlugin.BuildNdDetailsFile(baseMeshes, laplaceMeshes, FileNameNd, 1.0f / ModelScaleFactor))
-            {
-                Debug.LogError("Could not build Nd file. Abort");
-                enabled = false;
-                return;
-            }
-#endif
 
             if (!ImpPlugin.Imp_ExecuteLamp(FileNameNd, FileName2d))
             {
@@ -120,13 +181,13 @@ public class ImpDetailBehaviour : MonoBehaviour
             }
         }
 
-
         if (!ImpPlugin.Imp_LoadInputFiles(FileName2d, FileNameNd))
         {
             Debug.LogError("Could not load input files: " + FileName2d + ' ' + FileNameNd);
             enabled = false;
             return;
         }
+
 
         if (!ImpPlugin.Imp_Build())
         {
@@ -156,7 +217,8 @@ public class ImpDetailBehaviour : MonoBehaviour
         {
             if (q_data == null) // q_data.Count must be (3 * vertices.Length)
             {
-                q_data = new float[ImpPlugin.Imp_QRows() * ImpPlugin.Imp_QCols()];
+                //q_data = new float[ImpPlugin.Imp_QRows() * ImpPlugin.Imp_QCols()];
+                q_data = new Vector3[templateMesh.mesh.vertexCount];
                 q_handle = GCHandle.Alloc(q_data, GCHandleType.Pinned);
             }
         }
@@ -172,9 +234,9 @@ public class ImpDetailBehaviour : MonoBehaviour
         if (impUI)
             impUI.Setup(vertices2d, MinCoords, MaxCoords);
 
+        laplacedVertices = new Vector3[templateMesh.mesh.vertexCount];
+        vertexAdjacency = VertexConnection.BuildNetwork(templateMesh.mesh.triangles);
 
-        //originalVertices = templateMesh.mesh.vertices;
-        originalVertices = laplaceMeshes[meshSelected].mesh.vertices;
     }
 
 
@@ -188,6 +250,13 @@ public class ImpDetailBehaviour : MonoBehaviour
 
     void Update()
     {
+        // 
+        // Fixing possible OutOfRange
+        //
+        levelIndex = levelIndex % laplaceMeshes.Count;
+        meshSourceIndex = meshSourceIndex % laplaceMeshes[levelIndex].MeshList.Length;
+        meshTargetIndex = meshTargetIndex % laplaceMeshes[levelIndex].MeshList.Length;
+
         if (Input.GetKeyDown(KeyCode.LeftControl))
         {
             controlKeyPressed = true;
@@ -222,13 +291,13 @@ public class ImpDetailBehaviour : MonoBehaviour
             {
                 if (Input.GetKeyDown(key))
                 {
-                    originalVertices = laplaceMeshes[v % laplaceMeshes.Length].mesh.vertices;
-
                     p = vertices2d[v % vertices2d.Count];
 
                     MeshRenderer source = baseMeshes[v % vertices2d.Count].GetComponent<MeshRenderer>();
                     if (target && source)
                         target.sharedMaterial = source.sharedMaterial;
+
+                    Execute(p);
                 }
                 ++v;
             }
@@ -237,14 +306,21 @@ public class ImpDetailBehaviour : MonoBehaviour
             {
                 target.sharedMaterial = wireframe;
             }
+        }
 
+        
+        if (Input.GetKeyDown(KeyCode.S))
+        {
+            runLaplace = true;
             Execute(p);
         }
+
 
 
         if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.Space))
             Execute(p);
 
+        //Execute(p);
     }
 
 
@@ -255,27 +331,43 @@ public class ImpDetailBehaviour : MonoBehaviour
             Debug.LogError("Could not execute imp : " + _p.ToString());
             return;
         }
-
         ImpPlugin.Imp_CopyQ(q_handle.AddrOfPinnedObject());
 
-        if (templateMesh)
+        Vector3[] vertSource = laplaceMeshes[levelIndex].MeshList[meshSourceIndex].mesh.vertices;
+        Vector3[] vertTarget = laplaceMeshes[levelIndex].MeshList[meshTargetIndex].mesh.vertices;
+        Vector3[] vertResult = templateMesh.mesh.vertices;
+
+        if (runLaplace)
         {
-            //Vector3[] vertices = templateMesh.mesh.vertices;
-            Vector3[] vertices = new Vector3[originalVertices.Length];
+            laplacedVertices = MeshSmoothing.LaplacianFilter(
+                                    q_data,
+                                    templateMesh.mesh.triangles,
+                                    laplaceIterations,
+                                    vertexAdjacency);
+            runLaplace = false;
 
-            for (long v = 0; v < vertices.Length; ++v)
+            for (long v = 0; v < templateMesh.mesh.vertexCount; ++v)
             {
-                long i = v * 3;
-                Vector3 detail = new Vector3(q_data[i + 0] * ModelScaleFactor, q_data[i + 1] * ModelScaleFactor, q_data[i + 2] * ModelScaleFactor);
-                vertices[v] = originalVertices[v] + detail;
+                Vector3 vertBlend = q_data[v] * ModelScaleFactor;
+                Vector3 vertSrc = laplacedVertices[v] * ModelScaleFactor;
+                vertResult[v] = vertBlend - vertSrc + vertTarget[v];
             }
-
-            templateMesh.mesh.vertices = vertices;
-            templateMesh.mesh.RecalculateBounds();
-            templateMesh.mesh.RecalculateNormals();
         }
+        else
+        {
+            vertSource = laplaceMeshes[levelIndex].MeshList[meshSourceIndex].mesh.vertices;
 
+            for (long v = 0; v < templateMesh.mesh.vertexCount; ++v)
+            {
+                Vector3 vertBlend = q_data[v] * ModelScaleFactor;
+                vertResult[v] = vertBlend - vertSource[v] + vertTarget[v];
+            }
+        }
+        
+
+        templateMesh.mesh.vertices = vertResult;
+        templateMesh.mesh.RecalculateBounds();
+        templateMesh.mesh.RecalculateNormals();
     }
-
 
 }
