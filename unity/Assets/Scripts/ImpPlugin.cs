@@ -12,10 +12,16 @@ public class ImpPlugin
     public const string DllName = "imp";
 
     [DllImport(DllName)]
-    public static extern void Imp_Initialize_ILamp();
+    public static extern void Imp_SetCurrent(int index);
 
     [DllImport(DllName)]
-    public static extern void Imp_Initialize_Rbf();
+    public static extern int Imp_GetCurrent();
+
+    [DllImport(DllName)]
+    public static extern void Imp_Create_ILamp();
+
+    [DllImport(DllName)]
+    public static extern void Imp_Create_Rbp();
 
     [DllImport(DllName)]
     public static extern bool Imp_ExecuteLamp(string input_filename_nd, string output_filename_2d);

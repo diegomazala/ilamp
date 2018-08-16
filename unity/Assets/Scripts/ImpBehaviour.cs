@@ -81,12 +81,12 @@ public class ImpBehaviour : MonoBehaviour
     {
         if (ImpType == ImpTypeEnum.ILamp)
         {
-            ImpPlugin.Imp_Initialize_ILamp();
+            ImpPlugin.Imp_Create_ILamp();
             ImpPlugin.Imp_ILamp_Setup(ILampParams.KdTreeCount, ILampParams.NumNeighbours, ILampParams.KnnSearchChecks);
         }
         else
         {
-            ImpPlugin.Imp_Initialize_Rbf();
+            ImpPlugin.Imp_Create_Rbp();
             ImpPlugin.Imp_Rbf_Setup((ushort)(RbfParams.Function), RbfParams.Constant);
         }
 

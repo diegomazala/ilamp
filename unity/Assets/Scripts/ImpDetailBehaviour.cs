@@ -28,6 +28,8 @@ public class ImpDetailBehaviour : MonoBehaviour
     //private float[] q_data = null;
     private Vector3[] q_data = null;
     private GCHandle q_handle;
+    private Vector3[] q_data_laplace = null;
+    private GCHandle q_handle_laplace;
 
     public bool RunLamp = true;
 
@@ -39,14 +41,13 @@ public class ImpDetailBehaviour : MonoBehaviour
     [Range(0, 6)]
     public int levelIndex = 0;
     [Range(0, 7)]
-    public int meshSourceIndex = 0;
-    [Range(0, 7)]
     public int meshTargetIndex = 0;
     public MeshFilter[] baseMeshes;
 
     [System.Serializable]
     public class MeshFilterList
     {
+        public string FileName;
         public MeshFilter[] MeshList;
     }
     public List<MeshFilterList> laplaceMeshes;
@@ -91,9 +92,6 @@ public class ImpDetailBehaviour : MonoBehaviour
         get { return new Vector2(ImpPlugin.Imp_MaxX(), ImpPlugin.Imp_MaxY()); }
     }
 
-    private bool runLaplace = false;
-    private Vector3[] laplacedVertices = null;
-    private Dictionary<int, VertexConnection> vertexAdjacency = null;
 
     void Start ()
     {
@@ -151,50 +149,23 @@ public class ImpDetailBehaviour : MonoBehaviour
             }
         }
 
-
-        if (ImpType == ImpTypeEnum.ILamp)
+        //Debug.Log("Building ILamp for base meshes: " + FileNameNd);
+        if (!BuildILamp(baseMeshes, FileName2d, FileNameNd))
         {
-            ImpPlugin.Imp_Initialize_ILamp();
-            ImpPlugin.Imp_ILamp_Setup(ILampParams.KdTreeCount, ILampParams.NumNeighbours, ILampParams.KnnSearchChecks);
-        }
-        else
-        {
-            ImpPlugin.Imp_Initialize_Rbf();
-            ImpPlugin.Imp_Rbf_Setup((ushort)(RbfParams.Function), RbfParams.Constant);
+            enabled = false;
+            return;
         }
 
-
-        System.Globalization.CultureInfo customCulture = (System.Globalization.CultureInfo)System.Threading.Thread.CurrentThread.CurrentCulture.Clone();
-        customCulture.NumberFormat.NumberDecimalSeparator = ".";
-        System.Threading.Thread.CurrentThread.CurrentCulture = customCulture;
-
-
-        if (RunLamp)
+        foreach (var ml in laplaceMeshes)
         {
-            ImpPlugin.BuildNdFile(baseMeshes, FileNameNd, 1.0f / ModelScaleFactor);
-
-            if (!ImpPlugin.Imp_ExecuteLamp(FileNameNd, FileName2d))
+            //Debug.Log("Building ILamp for laplace meshes: " + ml.FileName);
+            if (!BuildILamp(ml.MeshList, FileName2d, ml.FileName))
             {
-                Debug.LogError("Could not run lamp for " + FileNameNd + ' ' + FileName2d);
                 enabled = false;
                 return;
             }
         }
-
-        if (!ImpPlugin.Imp_LoadInputFiles(FileName2d, FileNameNd))
-        {
-            Debug.LogError("Could not load input files: " + FileName2d + ' ' + FileNameNd);
-            enabled = false;
-            return;
-        }
-
-
-        if (!ImpPlugin.Imp_Build())
-        {
-            Debug.LogError("Could not build imp");
-            enabled = false;
-            return;
-        }
+        ImpPlugin.Imp_SetCurrent(0);
 
 
         using (System.IO.TextReader reader = System.IO.File.OpenText(FileName2d))
@@ -221,6 +192,12 @@ public class ImpDetailBehaviour : MonoBehaviour
                 q_data = new Vector3[templateMesh.mesh.vertexCount];
                 q_handle = GCHandle.Alloc(q_data, GCHandleType.Pinned);
             }
+
+            if (q_data_laplace == null) 
+            {
+                q_data_laplace = new Vector3[templateMesh.mesh.vertexCount];
+                q_handle_laplace = GCHandle.Alloc(q_data_laplace, GCHandleType.Pinned);
+            }
         }
         else
         {
@@ -234,9 +211,6 @@ public class ImpDetailBehaviour : MonoBehaviour
         if (impUI)
             impUI.Setup(vertices2d, MinCoords, MaxCoords);
 
-        laplacedVertices = new Vector3[templateMesh.mesh.vertexCount];
-        vertexAdjacency = VertexConnection.BuildNetwork(templateMesh.mesh.triangles);
-
     }
 
 
@@ -244,6 +218,8 @@ public class ImpDetailBehaviour : MonoBehaviour
     {
         if (q_data != null)
             q_handle.Free();
+        if (q_data_laplace != null)
+            q_handle_laplace.Free();
     }
 
 
@@ -254,7 +230,6 @@ public class ImpDetailBehaviour : MonoBehaviour
         // Fixing possible OutOfRange
         //
         levelIndex = levelIndex % laplaceMeshes.Count;
-        meshSourceIndex = meshSourceIndex % laplaceMeshes[levelIndex].MeshList.Length;
         meshTargetIndex = meshTargetIndex % laplaceMeshes[levelIndex].MeshList.Length;
 
         if (Input.GetKeyDown(KeyCode.LeftControl))
@@ -297,6 +272,8 @@ public class ImpDetailBehaviour : MonoBehaviour
                     if (target && source)
                         target.sharedMaterial = source.sharedMaterial;
 
+                    meshTargetIndex = v % laplaceMeshes.Count;
+
                     Execute(p);
                 }
                 ++v;
@@ -308,13 +285,29 @@ public class ImpDetailBehaviour : MonoBehaviour
             }
         }
 
-        
-        if (Input.GetKeyDown(KeyCode.S))
+        // +1 is because of laplaceMeshes + baseMeshes
+        for (var key = KeyCode.Keypad0; key <= KeyCode.Keypad0 + laplaceMeshes.Count + 1; ++key)
         {
-            runLaplace = true;
-            Execute(p);
+            if (Input.GetKeyDown(key))
+            {
+                ImpPlugin.Imp_SetCurrent(key - KeyCode.Keypad0);
+            }
         }
+        
 
+
+
+        switch (levelIndex)
+        {
+            default:
+            case 0: laplaceIterations = 0; break;
+            case 1: laplaceIterations = 2; break;
+            case 2: laplaceIterations = 5; break;
+            case 3: laplaceIterations = 10; break;
+            case 4: laplaceIterations = 25; break;
+            case 5: laplaceIterations = 50; break;
+            case 6: laplaceIterations = 100; break;
+        }
 
 
         if (Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.Space))
@@ -323,7 +316,10 @@ public class ImpDetailBehaviour : MonoBehaviour
         //Execute(p);
     }
 
-
+    public void Execute()
+    {
+        Execute(p);
+    }
     void Execute(Vector2 _p)
     {
         if (!ImpPlugin.Imp_Execute(_p.x, _p.y))
@@ -333,41 +329,85 @@ public class ImpDetailBehaviour : MonoBehaviour
         }
         ImpPlugin.Imp_CopyQ(q_handle.AddrOfPinnedObject());
 
-        Vector3[] vertSource = laplaceMeshes[levelIndex].MeshList[meshSourceIndex].mesh.vertices;
+        //
+        // Computing laplace meshes blend
+        //
+        int currentImp = ImpPlugin.Imp_GetCurrent();
+        { 
+            ImpPlugin.Imp_SetCurrent(levelIndex + 1); // +1 is because the level 0 is for baseMeshes
+
+            if (!ImpPlugin.Imp_Execute(_p.x, _p.y))
+            {
+                Debug.LogError("Could not execute imp : " + _p.ToString());
+                return;
+            }
+            ImpPlugin.Imp_CopyQ(q_handle_laplace.AddrOfPinnedObject());
+        }
+        ImpPlugin.Imp_SetCurrent(currentImp);
+
+
         Vector3[] vertTarget = laplaceMeshes[levelIndex].MeshList[meshTargetIndex].mesh.vertices;
         Vector3[] vertResult = templateMesh.mesh.vertices;
 
-        if (runLaplace)
+        for (long v = 0; v < templateMesh.mesh.vertexCount; ++v)
         {
-            laplacedVertices = MeshSmoothing.LaplacianFilter(
-                                    q_data,
-                                    templateMesh.mesh.triangles,
-                                    laplaceIterations,
-                                    vertexAdjacency);
-            runLaplace = false;
-
-            for (long v = 0; v < templateMesh.mesh.vertexCount; ++v)
-            {
-                Vector3 vertBlend = q_data[v] * ModelScaleFactor;
-                Vector3 vertSrc = laplacedVertices[v] * ModelScaleFactor;
-                vertResult[v] = vertBlend - vertSrc + vertTarget[v];
-            }
+            Vector3 vertBlend = q_data[v] * ModelScaleFactor;
+            Vector3 vertBlendLaplace = q_data_laplace[v] * ModelScaleFactor;
+            vertResult[v] = vertBlend - vertBlendLaplace + vertTarget[v];
         }
-        else
-        {
-            vertSource = laplaceMeshes[levelIndex].MeshList[meshSourceIndex].mesh.vertices;
-
-            for (long v = 0; v < templateMesh.mesh.vertexCount; ++v)
-            {
-                Vector3 vertBlend = q_data[v] * ModelScaleFactor;
-                vertResult[v] = vertBlend - vertSource[v] + vertTarget[v];
-            }
-        }
-        
 
         templateMesh.mesh.vertices = vertResult;
         templateMesh.mesh.RecalculateBounds();
         templateMesh.mesh.RecalculateNormals();
     }
 
+    bool BuildILamp(MeshFilter[] meshes, string filename2d, string filenameNd)
+    {
+        if (ImpType == ImpTypeEnum.ILamp)
+        {
+            ImpPlugin.Imp_Create_ILamp();
+            ImpPlugin.Imp_ILamp_Setup(ILampParams.KdTreeCount, ILampParams.NumNeighbours, ILampParams.KnnSearchChecks);
+        }
+        else
+        {
+            ImpPlugin.Imp_Create_Rbp();
+            ImpPlugin.Imp_Rbf_Setup((ushort)(RbfParams.Function), RbfParams.Constant);
+        }
+
+
+        System.Globalization.CultureInfo customCulture = (System.Globalization.CultureInfo)System.Threading.Thread.CurrentThread.CurrentCulture.Clone();
+        customCulture.NumberFormat.NumberDecimalSeparator = ".";
+        System.Threading.Thread.CurrentThread.CurrentCulture = customCulture;
+
+
+        if (RunLamp)
+        {
+            ImpPlugin.BuildNdFile(meshes, filenameNd, 1.0f / ModelScaleFactor);
+
+            if (!ImpPlugin.Imp_ExecuteLamp(filenameNd, filename2d))
+            {
+                Debug.LogError("Could not run lamp for " + filename2d + ' ' + filenameNd);
+                enabled = false;
+                return false;
+            }
+        }
+
+        if (!ImpPlugin.Imp_LoadInputFiles(filename2d, filenameNd))
+        {
+            Debug.LogError("Could not load input files: " + filename2d + ' ' + FileNameNd);
+            enabled = false;
+            return false;
+        }
+
+
+        if (!ImpPlugin.Imp_Build())
+        {
+            Debug.LogError("Could not build imp");
+            enabled = false;
+            return false;
+        }
+
+        return true;
+
+    }
 }

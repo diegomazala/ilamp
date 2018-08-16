@@ -8,42 +8,71 @@
 #include <experimental/filesystem>
 namespace fs = std::experimental::filesystem;
 
+using ImpPtr = std::shared_ptr<Imp<float>>;
+static std::vector<ImpPtr> imp_array;
+static int current_imp_index = 0;
 
 
-
-static std::unique_ptr<Imp<float>> imp_ptr;
+static std::shared_ptr<Imp<float>> imp_ptr;
 static std::unique_ptr<std::ofstream> imp_log;
 static std::unique_ptr<PcaImage> pca_img_ptr;
 
 static cv::Mat backProjectedImage;
 
-
-
-DllExport void Imp_Initialize_ILamp()
+DllExport void Imp_SetCurrent(int index)
 {
-	imp_ptr.reset(new ILamp<float>());
-	imp_log.reset(new std::ofstream("imp_ilamp.log"));
-	(*imp_log) << "Info : Imp dll initilized as ILamp" << std::endl;
+	current_imp_index = index % imp_array.size();
+	imp_ptr = imp_array[current_imp_index];
+}
+
+DllExport int Imp_GetCurrent()
+{
+	return current_imp_index;
 }
 
 
-DllExport void Imp_Initialize_Rbf()
+DllExport void Imp_Create_ILamp()
 {
-	imp_ptr.reset(new RbfImp<float>());
-	imp_log.reset(new std::ofstream("imp_rbf.log"));
-	(*imp_log) << "Info : Imp dll initilized as Rbf" << std::endl;
+	if (!imp_log)
+		imp_log.reset(new std::ofstream("imp_ilamp.log"));
+
+	imp_array.push_back(std::shared_ptr<Imp<float>>(new ILamp<float>()));
+	Imp_SetCurrent(imp_array.size() - 1);
+	//imp_ptr.reset(new ILamp<float>());
+
+	if (imp_ptr)
+		(*imp_log) << "Info : ImpPtr " << imp_array.size() - 1 << ' ' << imp_ptr.get() << std::endl;
+	else
+		(*imp_log) << "Info : ImpPtr NULL " << imp_array.size() - 1  << std::endl;
+
+	(*imp_log) << "Info : New Imp created as ILamp" << std::endl;
+}
+
+
+DllExport void Imp_Create_Rbf()
+{
+	if (!imp_log)
+		imp_log.reset(new std::ofstream("imp_rbf.log"));
+
+	imp_array.push_back(std::shared_ptr<Imp<float>>(new RbfImp<float>()));
+	Imp_SetCurrent(imp_array.size() - 1);
+	//imp_ptr.reset(new RbfImp<float>());
+	
+	(*imp_log) << "Info : New Imp created as Rbf" << std::endl;
 }
 
 
 
 DllExport bool Imp_LoadInputFiles(const char* filename_2d, const char* filename_Nd)
 {
+	(*imp_log) << "Info : Imp_LoadInputFiles " << filename_2d << ' ' << filename_Nd << std::endl;
+
 	if (!imp_ptr)
 	{
 		(*imp_log) << "Error: <Imp_SetKdTree> ilamp not initilized" << std::endl;
 		return false;
 	}
-	
+
 
 	if (!(imp_ptr->load_data_2d(filename_2d) && imp_ptr->load_data_Nd(filename_Nd)))
 	{
@@ -72,7 +101,7 @@ DllExport void Imp_ILamp_Setup(uint16_t _kdtree_count, uint16_t _num_neighbours,
 		(*imp_log) << "Error: <Imp_ILamp_SetKdTree> ilamp not initilized" << std::endl;
 		return;
 	}
-	
+
 	ilamp_ptr->set_kdtree(_kdtree_count, _num_neighbours, _knn_search_checks);
 }
 
