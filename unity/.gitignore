@@ -1,0 +1,8 @@
+Library/
+.vs/
+Debug/
+obj/
+Packages/
+*.csproj
+*.sln
+*.log
