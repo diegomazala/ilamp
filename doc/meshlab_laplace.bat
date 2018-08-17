@@ -1,0 +1,1 @@
+"C:\Program Files\VCG\MeshLab\meshlabserver.exe" -i figurante2.obj -o fig_out.obj -m vf ff wn wt -s laplace_50.mlx
