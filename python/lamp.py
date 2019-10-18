@@ -3,16 +3,16 @@ import mppy
 import sys
 
 
-#input_nd_file = "datasets/iris.5d"
-#output_2d_file = "datasets/iris.2d"
+input_nd_file = "../data/iris.5d"
+output_2d_file = "../data/iris_5d_out.2d"
 #input_nd_file = "../../Data/Heads/heads.nd"
 #output_2d_file = "../../Data/Heads/heads.2d"
 #input_nd_file = "../../Data/Primitives/primitives.nd"
 #output_2d_file = "../../Data/Primitives/primitives.2d"
 #input_nd_file = "G:/Data/Heads/heads_csharp.nd"
 #output_2d_file = "G:/Data/Heads/heads_csharp.2d"
-input_nd_file = "F:/Projects/DSc/Data/Test/Heads.nd"
-output_2d_file = "F:/Projects/DSc/Data/Test/Heads.2d"
+#input_nd_file = "F:/Projects/DSc/Data/Test/Heads.nd"
+#output_2d_file = "F:/Projects/DSc/Data/Test/Heads.2d"
 
 
 # Check if we have input arguments from command line

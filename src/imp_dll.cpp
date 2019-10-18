@@ -266,7 +266,15 @@ DllExport bool Imp_ExecuteLamp(const char* input_filename_nd, const char* output
 	//
 	// Running lamp in order to generate 2d file from nd file
 	//
-	std::string lamp_script = std::getenv("ILAMP_LAMP_SCRIPT");
+	char * env_var = std::getenv("ILAMP_LAMP_SCRIPT");
+
+	if (env_var == nullptr)
+	{
+		std::cerr << "Environment variable pointing to ILAMP_LAMP_SCRIPT python script not found" << std::endl;
+		return false;
+	}
+
+	std::string lamp_script = env_var;
 
 	if (!fs::exists(lamp_script))
 	{
