@@ -95,10 +95,13 @@ public class ImpBehaviour : MonoBehaviour
         customCulture.NumberFormat.NumberDecimalSeparator = ".";
         System.Threading.Thread.CurrentThread.CurrentCulture = customCulture;
 
+        FileNameNd = System.IO.Path.GetFullPath(FileNameNd);
+        FileName2d = System.IO.Path.GetFullPath(FileName2d);
+
         if (RunLamp)
         {
             ImpPlugin.BuildNdFile(baseMeshes, FileNameNd, 1.0f / ModelScaleFactor);
-
+                       
             if (!ImpPlugin.Imp_ExecuteLamp(FileNameNd, FileName2d))
             {
                 Debug.LogError("Could not run lamp for " + FileNameNd + ' ' + FileName2d);

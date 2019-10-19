@@ -282,6 +282,12 @@ DllExport bool Imp_ExecuteLamp(const char* input_filename_nd, const char* output
 		return false;
 	}
 
+	if (!fs::exists(input_filename_nd))
+	{
+		std::cerr << "Lamp input file not found" << std::endl;
+		return false;
+	}
+
 	std::stringstream lamp_cmd;
 	lamp_cmd << "python " << lamp_script << ' ' << input_filename_nd << ' ' << output_filename_2d << " > lamp.log";
 	std::system(lamp_cmd.str().c_str());

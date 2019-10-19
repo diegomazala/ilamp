@@ -32,8 +32,8 @@ data = np.loadtxt(input_nd_file)
 print("- Computing... ")
 matrix_2d = mppy.force_2d(data)
 
-print("- Plotting... ")
-mppy.simple_scatter_plot(matrix_2d)
+#print("- Plotting... ")
+#mppy.simple_scatter_plot(matrix_2d)
 
 print("- Saving result... ")
 #np.savetxt(output_2d_file, matrix_2d, fmt='%10.5f', delimiter=",")

@@ -102,9 +102,9 @@ public class ImpPlugin
                 foreach (var vec in verts)
                 {
                     var v = vec * scale;
-                    writer.Write(v.x.ToString("0.####") + ' ' + v.y.ToString("0.####") + ' ' + v.z.ToString("0.####") + ' ');
+                    writer.Write(v.x.ToString("0.#### ") + v.y.ToString("0.#### ") + v.z.ToString("0.#### "));
                 }
-                writer.WriteLine();
+                writer.Write("\r\n");
             }
         }
     }
