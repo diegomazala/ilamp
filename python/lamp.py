@@ -13,20 +13,20 @@ from scipy.optimize import minimize
 from sklearn.utils.extmath import randomized_svd
 
 input_nd_file = "iris.data"
-input_ctp_file = "iris.ctp"
-output_2d_file = "iris_out.2d"
+output_2d_file = "output.2d"
+input_ctp_file = None
 
 # Check if we have input arguments from command line
 if (len(sys.argv) > 3):
-    output_2d_file = str(sys.argv[3])
+    input_ctp_file = str(sys.argv[3])
 if (len(sys.argv) > 2):
-    input_ctp_file = str(sys.argv[2])
+    output_2d_file = str(sys.argv[2])
 if (len(sys.argv) > 1):
     input_nd_file = str(sys.argv[1])
 
-print("- Input   : ", input_nd_file )
-print("- Control : ", input_ctp_file )
-print("- Output  : ", output_2d_file )
+print("- Input          : ", input_nd_file )
+print("- Output         : ", output_2d_file )
+print("- Control Points : ", input_ctp_file )
 
 
 epsilon = 1e-7
@@ -343,11 +343,19 @@ if __name__ == "__main__":
     #control_points = np.hstack((control_points,sample_ids.reshape(-1,1)))  # including ids of original points as the last column of control_points
 
     print("- Loading input files... ")
-    D = np.loadtxt(input_nd_file)
-    control_points = np.loadtxt(input_ctp_file)
+    data = np.loadtxt(input_nd_file)
 
-    print("- Computing... ")
-    lamp = Lamp(Xdata=D,control_points=control_points)
+    
+
+    if input_ctp_file:
+        print("- Computing with Control Points... ")
+        control_points = np.loadtxt(input_ctp_file)
+        lamp = Lamp(Xdata=data,control_points=control_points)
+    else:
+        print("- Computing with no Control Points... ")
+        lamp = Lamp(Xdata = data, label=True)
+
+
     proj = lamp.fit()
 
 
