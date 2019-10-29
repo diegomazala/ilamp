@@ -6,80 +6,6 @@
 
 
 
-template<typename decimal_t>
-static bool save_to_file(const std::string& filename, const Eigen::Matrix<decimal_t, Eigen::Dynamic, Eigen::Dynamic>& matrix)
-{
-	std::ofstream file(filename);
-
-	if (!file.is_open())
-		return false;
-
-	file << std::fixed;
-
-	for (auto i = 0; i < matrix.rows(); i++)
-	{
-		for (auto j = 0; j < matrix.cols(); ++j)
-		{
-			file << matrix(i, j) << ' ';
-		}
-		file << '\n';
-	}
-
-	//std::cout << matrix << std::endl;
-
-	return true;
-}
-
-
-template<typename decimal_t>
-static bool load_from_file(const std::string& filename, Eigen::Matrix<decimal_t, Eigen::Dynamic, Eigen::Dynamic>& matrix)
-{
-	std::ifstream file(filename);
-
-	if (!file.is_open())
-		return false;
-
-	size_t n_cols = 0;
-	{
-		decimal_t number;
-		std::string line;
-		std::getline(file, line);
-		std::istringstream fin(line);
-		while (fin >> number)
-		{
-			n_cols++;
-		}
-	}
-	file.clear();
-	file.seekg(0, std::ios::beg);
-
-	size_t n_rows = 0;
-	while (!file.eof())
-	{
-		std::string line;
-		std::getline(file, line);
-		if (!line.empty())
-			n_rows++;
-	}
-	file.clear();
-	file.seekg(0, std::ios::beg);
-
-	matrix = Eigen::Matrix<decimal_t, Eigen::Dynamic, Eigen::Dynamic>(n_rows, n_cols);
-	//std::cout << matrix.rows() << ' ' << matrix.cols() << std::endl;
-
-	for (auto i = 0; i < n_rows; i++)
-	{
-		for (auto j = 0; j < n_cols; ++j)
-		{
-			file >> matrix(i, j);
-		}
-		file.ignore(0, '\n');
-	}
-	
-	//std::cout << matrix << std::endl;
-
-	return true;
-}
 
 
 
@@ -170,21 +96,19 @@ int main(int argc, char* argv[])
 	//
 	// Read data from file
 	//
-	if (!load_from_file(nd_filename, lamp.X))
+	if (!lamp.load_matrix_from_file(nd_filename))
 	{
 		std::cerr << "Error: Could not load file with nd points" << std::endl;
 		return EXIT_FAILURE;
 	}
-	const size_t n_samples = lamp.X.rows();
-	const size_t dim = lamp.X.cols();
 
-
+	lamp.compute_control_points_by_distance();
 	lamp.fit();
 
 	
-	std::cout << "y:\n" << lamp.Y << std::endl;
+	//std::cout << "y:\n" << lamp.Y << std::endl;
 
-	save_to_file(output_filename, lamp.Y);
+	lamp.save_matrix_to_file(output_filename);
 
 	return EXIT_SUCCESS;
 }
