@@ -2,7 +2,7 @@
 #include "ilamp.h"
 #include "rbf_imp.h"
 #include "pca_image.h"
-
+#include "lamp.h"
 #include <vector>
 #include <fstream>
 #include <experimental/filesystem>
@@ -16,6 +16,7 @@ static int current_imp_index = 0;
 static std::shared_ptr<Imp<float>> imp_ptr;
 static std::unique_ptr<std::ofstream> imp_log;
 static std::unique_ptr<PcaImage> pca_img_ptr;
+static std::unique_ptr<Lamp<float>> lamp_ptr;
 
 static cv::Mat backProjectedImage;
 
@@ -266,6 +267,17 @@ DllExport bool Imp_ExecuteLamp(const char* input_filename_nd, const char* output
 	//
 	// Running lamp in order to generate 2d file from nd file
 	//
+#if 1
+	lamp_ptr.reset(new Lamp<float>());
+	if (!lamp_ptr->load_matrix_from_file(input_filename_nd))
+	{
+		(*imp_log) << "Error: ExecuteLamp: Could not load file with nd points" << std::endl;
+		return false;
+	}
+	lamp_ptr->compute_control_points_by_distance();
+	lamp_ptr->fit();
+	lamp_ptr->save_matrix_to_file(output_filename_2d);
+#else
 	char * env_var = std::getenv("ILAMP_LAMP_SCRIPT");
 
 	if (env_var == nullptr)
@@ -293,6 +305,7 @@ DllExport bool Imp_ExecuteLamp(const char* input_filename_nd, const char* output
 	std::system(lamp_cmd.str().c_str());
 #if _DEBUG
 	std::cout << std::ifstream("lamp.log").rdbuf();
+#endif
 #endif
 
 	return true;
