@@ -2,7 +2,8 @@
 #include "ilamp_utils.h"
 #include "ilamp_project.h"
 #include "cmdline.h"
-
+#include "lamp.h"
+#include "timer.h"
 
 #include <iostream>
 #include <iomanip> 
@@ -54,6 +55,19 @@ static void run_lamp(const std::string& filenameNd, const std::string& filename2
 	//
 	// Running lamp in order to generate 2d file from nd file
 	//
+#if 1
+	Lamp<float> lamp;
+	if (!lamp.load_matrix_from_file(filenameNd))
+	{
+		std::cerr << "Error: Could not load file with nd points" << std::endl;
+		return;
+	}
+
+	lamp.compute_control_points_by_distance();
+	lamp.fit();
+	lamp.save_matrix_to_file(filename2d);
+
+#else
 	std::string lamp_script = std::getenv("ILAMP_LAMP_SCRIPT");
 
 	if (!fs::exists(lamp_script))
@@ -68,11 +82,13 @@ static void run_lamp(const std::string& filenameNd, const std::string& filename2
 #if _DEBUG
 	std::cout << std::ifstream("lamp.log").rdbuf();
 #endif
+#endif
 }
 
 
 int main(int argc, char* argv[])
 {
+	std::cout << std::fixed;
 	//
 	// Parse command line
 	//
@@ -117,7 +133,7 @@ int main(int argc, char* argv[])
 		run_lamp(ilp_prj.filenameNd, ilp_prj.filename2d);
 	}
 
-		
+
 
 	ILamp<float> ilamp;
 
@@ -144,7 +160,7 @@ int main(int argc, char* argv[])
 	const int dimension_2d = ilamp.verts_2d.at(0).rows();	// = 2
 	const int dimension_Nd = ilamp.verts_Nd.at(0).rows();	// = N
 	const int test_index = cmd_parser.get<int>("test");
-	if (test_index > -1 )
+	if (test_index > -1)
 		query = ilamp.verts_2d.at(test_index);
 
 	//
@@ -159,30 +175,35 @@ int main(int argc, char* argv[])
 	//
 	// Build the kd-tree
 	//
-	ilamp.set_kdtree(
-		ilp_prj.kdTreeCount,
-		ilp_prj.numNeighbours,
-		ilp_prj.knnSearchChecks);
-	//
-	ilamp.build();
+	timer tm_build_kdtree;
+	tm_build_kdtree.start();
+	{
+		ilamp.set_kdtree(
+			ilp_prj.kdTreeCount,
+			ilp_prj.numNeighbours,
+			ilp_prj.knnSearchChecks);
+		//
+		ilamp.build();
+	}
+	std::cout << std::fixed << "<Info>  Building KDTree   : " << tm_build_kdtree.diff_msec_now() << " msec " << std::endl;
 
 
 	//
 	// Computing ilamp
 	//
-	std::cout << "<Info>  Computing vertex  : " << query.transpose() << std::endl;
-	auto start_time = std::chrono::system_clock::now();
-	
-	//const auto& q = ilamp.execute(		// 'query' is the 'p' in the paper
-	//	query.x(), query.y(), 
-	//	ilp_prj.numNeighbours, 
-	//	ilp_prj.knnSearchChecks);			
+	//std::cout << "<Info>  Computing vertex  : " << query.transpose() << std::endl;
+	timer tm_computing_ilamp;
+	tm_computing_ilamp.start();
+	{
+		//const auto& q = ilamp.execute(		// 'query' is the 'p' in the paper
+		//	query.x(), query.y(), 
+		//	ilp_prj.numNeighbours, 
+		//	ilp_prj.knnSearchChecks);			
 
-	ilamp.execute(query.x(), query.y());
+		ilamp.execute(query.x(), query.y());
+	}
+	std::cout << std::fixed << "<Info>  ILamp Computing   : " << tm_computing_ilamp.diff_msec_now() << " msec " << std::endl;
 
-
-	std::chrono::duration<double> elapsed_seconds = std::chrono::system_clock::now() - start_time;
-	std::cout << "<Info>  Elapsed Time      : " << elapsed_seconds.count() << "s\n";
 	
 	if (test_index > -1)
 	{

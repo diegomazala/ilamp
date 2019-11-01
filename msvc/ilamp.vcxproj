@@ -21,6 +21,7 @@
     <ClInclude Include="..\src\ilamp_utils.h" />
     <ClInclude Include="..\src\json.hpp" />
     <ClInclude Include="..\src\imp.h" />
+    <ClInclude Include="..\src\timer.h" />
     <ClInclude Include="..\src\tinyply.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
@@ -77,6 +78,7 @@
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <LanguageStandard>
       </LanguageStandard>
+      <AdditionalOptions>/bigobj %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <AdditionalDependencies>flann_cpp_s.lib;%(AdditionalDependencies)</AdditionalDependencies>

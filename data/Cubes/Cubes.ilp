@@ -1,0 +1,14 @@
+{
+    "ProjectName": "D:/Projects/Dev/MDP/ilamp/data/Cubes/Cubes.ilp",
+    "FileName2d": "D:/Projects/Dev/MDP/ilamp/data/Cubes/Cubes.2d",
+    "FileNameNd": "D:/Projects/Dev/MDP/ilamp/data/Cubes/Cubes.nd",
+    "OutputFolder": "D:/Projects/Dev/MDP/ilamp/data/Cubes/Output/",
+    "InputFiles": [
+        "D:/Projects/Dev/MDP/ilamp/data/Cubes/cube.ply",
+        "D:/Projects/Dev/MDP/ilamp/data/Cubes/pole.ply",
+        "D:/Projects/Dev/MDP/ilamp/data/Cubes/pyramid.ply"
+    ],
+    "NumNeighbours": 3,
+    "KdTreeCount": 3,
+    "KnnSearchChecks": 128
+}
