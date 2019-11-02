@@ -1,0 +1,71 @@
+#include <iostream>
+#include <vector>
+#include <fstream>
+
+template<typename T>
+static void vector_write(std::ofstream& out_file, const std::vector<T>& data)
+{
+	const std::size_t count = data.size();
+	out_file.write(reinterpret_cast<const char*>(&count), sizeof(std::size_t));
+	out_file.write(reinterpret_cast<const char*>(&data[0]), count * sizeof(T));
+}
+
+template<typename T>
+static void vector_write(const std::string& out_filename, const std::vector<T>& data)
+{
+	std::cout << "writing to " << out_filename << std::endl;
+	std::ofstream out_file;
+	out_file.open(out_filename, std::ios::out | std::ios::binary);
+	vector_write(out_file, data);
+	out_file.close();
+}
+
+
+template<typename T>
+static void vector_read(std::ifstream& in_file, std::vector<T>& data)
+{
+	std::size_t count;
+	in_file.read(reinterpret_cast<char*>(&count), sizeof(std::size_t));
+	data.resize(count);
+	in_file.read(reinterpret_cast<char*>(&data[0]), count * sizeof(T));
+}
+
+template<typename T>
+static void vector_read(const std::string& in_filename, std::vector<T>& data)
+{
+	std::ifstream in_file;
+	in_file.open(in_filename, std::ios::in | std::ios::binary);
+	vector_read(in_file, data);
+	in_file.close();
+}
+
+
+#if 0
+int main(int argc, char **argv)
+{
+	std::vector<double> v1 = { 1.1, 2.2, 3.3 };
+	std::vector<double> v2;
+
+	std::ofstream out_file;
+	out_file.open("test_io_double.bin", std::ios::out | std::ios::binary);
+	vector_write(out_file, v1);
+	out_file.close();
+
+	std::ifstream in_file;
+	in_file.open("test_io_double.bin", std::ios::in | std::ios::binary);
+	vector_read(in_file, v2);
+	in_file.close();
+
+	std::cout << "Saved Data  : ";
+	for (const auto v : v1)
+		std::cout << v << ' ';
+	std::cout << std::endl;
+
+	std::cout << "Loaded Data : ";
+	for (const auto v : v2)
+		std::cout << v << ' ';
+	std::cout << std::endl;
+
+	return EXIT_SUCCESS;
+}
+#endif

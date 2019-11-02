@@ -25,6 +25,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "detail_displace", "detail_d
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "lamp", "lamp.vcxproj", "{568F9CA1-CBD0-43E4-A397-B0B3115D0088}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "split_3d_file", "split_3d_file.vcxproj", "{663EEBD8-A764-4EC7-81E2-E5A561179AE7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -77,6 +79,10 @@ Global
 		{568F9CA1-CBD0-43E4-A397-B0B3115D0088}.Debug|x64.Build.0 = Debug|x64
 		{568F9CA1-CBD0-43E4-A397-B0B3115D0088}.Release|x64.ActiveCfg = Release|x64
 		{568F9CA1-CBD0-43E4-A397-B0B3115D0088}.Release|x64.Build.0 = Release|x64
+		{663EEBD8-A764-4EC7-81E2-E5A561179AE7}.Debug|x64.ActiveCfg = Debug|x64
+		{663EEBD8-A764-4EC7-81E2-E5A561179AE7}.Debug|x64.Build.0 = Debug|x64
+		{663EEBD8-A764-4EC7-81E2-E5A561179AE7}.Release|x64.ActiveCfg = Release|x64
+		{663EEBD8-A764-4EC7-81E2-E5A561179AE7}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
