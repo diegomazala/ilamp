@@ -62,12 +62,14 @@ int main(int argc, char* argv[])
 	
 	if (input_filename.extension() == ".ply")
 	{
-		std::vector<float> verts;
+		std::vector<float> verts, uv;
 		std::vector<uint32_t> faces;
 		
 		std::ifstream ss(input_filename.string(), std::ios::binary);
 		tinyply::PlyFile file(ss);
+
 		uint32_t vertex_count = file.request_properties_from_element("vertex", { "x", "y", "z" }, verts);
+		uint32_t uv_count = file.request_properties_from_element("vertex", { "u", "v" }, uv);
 		uint32_t face_count = file.request_properties_from_element("face", { "vertex_indices" }, faces);
 		file.read(ss);
 
@@ -75,7 +77,10 @@ int main(int argc, char* argv[])
 		{
 			auto out_filename = output_dir / input_filename.stem();
 			vector_write(out_filename.replace_extension(".vert").string(), verts);
-			vector_write(out_filename.replace_extension(".face").string(), faces);
+			std::string extension = ((faces.size() % 3 == 0) ? (".tri") : (".quad"));
+			vector_write(out_filename.replace_extension(extension).string(), faces);
+			if (uv.size() > 0)
+				vector_write(out_filename.replace_extension(".uv").string(), uv);
 		}
 		else
 		{
@@ -93,17 +98,23 @@ int main(int argc, char* argv[])
 
 			auto out_filename = output_dir / input_filename.stem();
 			vector_write(out_filename.replace_extension(".vert").string(), obj_geo.attrib.vertices);
-			std::vector<uint32_t> faces;
+			if (obj_geo.attrib.texcoords.size() > 0)
+				vector_write(out_filename.replace_extension(".uv").string(), obj_geo.attrib.texcoords);
+
 			if (!obj_geo.shapes.empty())
 			{
 				for (const auto& shape : obj_geo.shapes)
 				{
-					for (const auto& index : shape.mesh.indices)
+					auto vert_per_face = (uint8_t)shape.mesh.num_face_vertices[0];
+					std::string extension = shape.name + ((vert_per_face == 3) ? (".tri") : (".quad"));
+
+					std::vector<uint32_t> indices(shape.mesh.indices.size());
+					for (auto i = 0; i < indices.size(); ++i) 
 					{
-						faces.push_back(index.vertex_index);
+						indices[i] = shape.mesh.indices[i].vertex_index;
 					}
+					vector_write(out_filename.replace_extension(extension).string(), indices);
 				}
-				vector_write(out_filename.replace_extension(".face").string(), faces);
 			}
 		}
 		else

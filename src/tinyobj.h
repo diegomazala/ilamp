@@ -247,7 +247,6 @@ namespace tinyobj
 			for (const auto& ind : mesh.indices)
 			{
 				vert_freq[ind.vertex_index]++;
-				texcoord_freq[ind.texcoord_index]++;
 			}
 		}
 
@@ -264,19 +263,6 @@ namespace tinyobj
 			vertices.push_back(in.attrib.vertices[i3 + 2]);
 		}
 
-		// copy the used texcoords to a new vector
-		for (int i = 0; i < texcoord_freq.size(); i++)
-		{
-			if (texcoord_freq[i] == 0)
-				continue;
-
-			const auto i2 = i * 2;
-
-			texcoords.push_back(in.attrib.texcoords[i2]);
-			texcoords.push_back(in.attrib.texcoords[i2 + 1]);
-		}
-
-
 		int zero_count_vert = 0;
 		for (int i = 0; i < vert_freq.size(); i++)
 		{
@@ -285,18 +271,44 @@ namespace tinyobj
 
 			vert_freq[i] = zero_count_vert;
 		}
+		std::cout << "[Info] The number of unused vertices is " << zero_count_vert << std::endl;
 
-		int zero_count_texcoord = 0;
-		for (int i = 0; i < texcoord_freq.size(); i++)
+		if (texcoords.size() > 0)
 		{
-			if (texcoord_freq[i] == 0)
-				zero_count_texcoord++;
+			// count the amount of vertices which are not used
+			for (const auto& shape : in.shapes)
+			{
+				const auto& mesh = shape.mesh;
+				for (const auto& ind : mesh.indices)
+				{
+					texcoord_freq[ind.texcoord_index]++;
+				}
+			}
 
-			texcoord_freq[i] = zero_count_texcoord;
+			// copy the used texcoords to a new vector
+			for (int i = 0; i < texcoord_freq.size(); i++)
+			{
+				if (texcoord_freq[i] == 0)
+					continue;
+
+				const auto i2 = i * 2;
+
+				texcoords.push_back(in.attrib.texcoords[i2]);
+				texcoords.push_back(in.attrib.texcoords[i2 + 1]);
+			}
+
+			int zero_count_texcoord = 0;
+			for (int i = 0; i < texcoord_freq.size(); i++)
+			{
+				if (texcoord_freq[i] == 0)
+					zero_count_texcoord++;
+
+				texcoord_freq[i] = zero_count_texcoord;
+			}
+			std::cout << "[Info] The number of unused texcoord is " << zero_count_texcoord << std::endl;
 		}
 
-		std::cout << "[Info] The number of unused vertices is " << zero_count_vert << std::endl;
-		std::cout << "[Info] The number of unused texcoord is " << zero_count_texcoord << std::endl;
+		
 
 		// for each shape
 		out.shapes = in.shapes;
@@ -305,10 +317,15 @@ namespace tinyobj
 			for (auto& idx : shape.mesh.indices)
 			{
 				auto replace_vert = vert_freq[idx.vertex_index];
-				auto replace_texcoord = texcoord_freq[idx.texcoord_index];
 				idx.vertex_index -= replace_vert;
+
 				idx.normal_index = -1;
-				idx.texcoord_index -= replace_texcoord;
+
+				if (texcoord_freq.size() > 0)
+				{
+					auto replace_texcoord = texcoord_freq[idx.texcoord_index];
+					idx.texcoord_index -= replace_texcoord;
+				}
 			}
 		}
 	}
