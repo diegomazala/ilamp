@@ -35,18 +35,32 @@ int main(int argc, char* argv[])
 	//
 	// Initial parameters
 	//
-	const fs::path input_filename = argv[1];
-	const fs::path output_filename = (argc > 2) ? argv[2] : fs::path(input_filename).replace_extension(".tri");
+	const fs::path input_path = argv[1];
+	fs::path output_path = (argc > 2) ? argv[2] : input_path;
 
-	std::vector<uint32_t> quads;
-	vector_read(input_filename.string(), quads);
-
-
-	std::vector<uint32_t> tris;
-
-	convert_quad_to_tri(quads, tris);
-
-	vector_write(output_filename.string(), tris);
+	if (fs::is_directory(input_path))
+	{
+		for (auto it = fs::directory_iterator(input_path); it != fs::directory_iterator(); ++it)
+		{
+			if (it->path().extension() == ".quad")
+			{
+				std::vector<uint32_t> quads;
+				vector_read(it->path().string(), quads);
+				std::vector<uint32_t> tris;
+				convert_quad_to_tri(quads, tris);
+				auto out_filename = it->path();
+				vector_write(out_filename.replace_extension(".tri").string(), tris);
+			}
+		}
+	}
+	else
+	{
+		std::vector<uint32_t> quads;
+		vector_read(input_path.string(), quads);
+		std::vector<uint32_t> tris;
+		convert_quad_to_tri(quads, tris);
+		vector_write(output_path.replace_extension(".tri").string(), tris);
+	}
 
 
 	return EXIT_SUCCESS;
