@@ -29,6 +29,10 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "split_3d_file", "split_3d_f
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "quad_to_tri", "quad_to_tri.vcxproj", "{0404503E-A57C-4026-829C-E42579E2F56D}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "invert_triangles", "invert_triangles.vcxproj", "{F7CCAEFF-5F5F-44E0-A015-C0B8D4FEAFE3}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "invert_normals", "invert_normals.vcxproj", "{7586138E-EAC6-4022-80EF-4D7D39E31727}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -89,6 +93,14 @@ Global
 		{0404503E-A57C-4026-829C-E42579E2F56D}.Debug|x64.Build.0 = Debug|x64
 		{0404503E-A57C-4026-829C-E42579E2F56D}.Release|x64.ActiveCfg = Release|x64
 		{0404503E-A57C-4026-829C-E42579E2F56D}.Release|x64.Build.0 = Release|x64
+		{F7CCAEFF-5F5F-44E0-A015-C0B8D4FEAFE3}.Debug|x64.ActiveCfg = Debug|x64
+		{F7CCAEFF-5F5F-44E0-A015-C0B8D4FEAFE3}.Debug|x64.Build.0 = Debug|x64
+		{F7CCAEFF-5F5F-44E0-A015-C0B8D4FEAFE3}.Release|x64.ActiveCfg = Release|x64
+		{F7CCAEFF-5F5F-44E0-A015-C0B8D4FEAFE3}.Release|x64.Build.0 = Release|x64
+		{7586138E-EAC6-4022-80EF-4D7D39E31727}.Debug|x64.ActiveCfg = Debug|x64
+		{7586138E-EAC6-4022-80EF-4D7D39E31727}.Debug|x64.Build.0 = Debug|x64
+		{7586138E-EAC6-4022-80EF-4D7D39E31727}.Release|x64.ActiveCfg = Release|x64
+		{7586138E-EAC6-4022-80EF-4D7D39E31727}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

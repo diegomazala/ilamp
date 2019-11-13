@@ -35,40 +35,20 @@ void join_files(const std::string& vert_file, const std::string& face_file)
 }
 
 
-
-int main(int argc, char* argv[])
+int split_file(const fs::path& input_filename, const fs::path output_dir)
 {
-	//join_files(argv[1], argv[2]);
-	//return 0;
-
-	if (argc < 2)
-	{
-		std::cout
-			<< std::fixed << std::endl
-			<< "Usage            : ./<app.exe> <input_filename> <output_dir>" << std::endl
-			<< "Default          : ./split_3d_file.exe cube.ply C:/tmp/" << std::endl
-			<< std::endl;
-		return EXIT_FAILURE;
-	}
-
-	//
-	// Initial parameters
-	//
-	const fs::path input_filename = argv[1];
-	const fs::path output_dir = (argc > 2) ? argv[2] : input_filename.parent_path();
 	const std::string file_extension = fs::path(input_filename).extension().string();
 
-	fs::create_directory(output_dir);
-	
 	if (input_filename.extension() == ".ply")
 	{
-		std::vector<float> verts, uv;
+		std::vector<float> verts, norms, uv;
 		std::vector<uint32_t> faces;
-		
+
 		std::ifstream ss(input_filename.string(), std::ios::binary);
 		tinyply::PlyFile file(ss);
 
 		uint32_t vertex_count = file.request_properties_from_element("vertex", { "x", "y", "z" }, verts);
+		uint32_t normal_count = file.request_properties_from_element("vertex", { "nx", "ny", "nz" }, norms);
 		uint32_t uv_count = file.request_properties_from_element("vertex", { "u", "v" }, uv);
 		uint32_t face_count = file.request_properties_from_element("face", { "vertex_indices" }, faces);
 		file.read(ss);
@@ -79,6 +59,8 @@ int main(int argc, char* argv[])
 			vector_write(out_filename.replace_extension(".vert").string(), verts);
 			std::string extension = ((faces.size() % 3 == 0) ? (".tri") : (".quad"));
 			vector_write(out_filename.replace_extension(extension).string(), faces);
+			if (norms.size() > 0)
+				vector_write(out_filename.replace_extension(".nor").string(), norms);
 			if (uv.size() > 0)
 				vector_write(out_filename.replace_extension(".uv").string(), uv);
 		}
@@ -98,6 +80,8 @@ int main(int argc, char* argv[])
 
 			auto out_filename = output_dir / input_filename.stem();
 			vector_write(out_filename.replace_extension(".vert").string(), obj_geo.attrib.vertices);
+			if (obj_geo.attrib.normals.size() > 0)
+				vector_write(out_filename.replace_extension(".nor").string(), obj_geo.attrib.normals);
 			if (obj_geo.attrib.texcoords.size() > 0)
 				vector_write(out_filename.replace_extension(".uv").string(), obj_geo.attrib.texcoords);
 
@@ -109,7 +93,7 @@ int main(int argc, char* argv[])
 					std::string extension = shape.name + ((vert_per_face == 3) ? (".tri") : (".quad"));
 
 					std::vector<uint32_t> indices(shape.mesh.indices.size());
-					for (auto i = 0; i < indices.size(); ++i) 
+					for (auto i = 0; i < indices.size(); ++i)
 					{
 						indices[i] = shape.mesh.indices[i].vertex_index;
 					}
@@ -129,6 +113,42 @@ int main(int argc, char* argv[])
 		return EXIT_FAILURE;
 	}
 
+}
 
-	return EXIT_SUCCESS;
+
+int main(int argc, char* argv[])
+{
+	//join_files(argv[1], argv[2]);
+	//return 0;
+
+	if (argc < 2)
+	{
+		std::cout
+			<< std::fixed << std::endl
+			<< "Usage            : ./<app.exe> <input_filename> <output_dir>" << std::endl
+			<< "Default          : ./split_3d_file.exe cube.ply C:/tmp/" << std::endl
+			<< std::endl;
+		return EXIT_FAILURE;
+	}
+
+	//
+	// Initial parameters
+	//
+	const fs::path input_path = argv[1];
+	const fs::path output_dir = ((argc > 2) ? argv[2] : (fs::is_directory(input_path) ? input_path : input_path.parent_path()));
+
+	fs::create_directory(output_dir);
+
+	if (fs::is_directory(input_path))
+	{
+		for (auto it = fs::directory_iterator(input_path); it != fs::directory_iterator(); ++it)
+		{
+			if (it->path().extension() == ".obj" || it->path().extension() == ".ply")
+				split_file(*it, output_dir);
+		}
+	}
+	else
+	{
+		return split_file(input_path, output_dir);
+	}
 }
