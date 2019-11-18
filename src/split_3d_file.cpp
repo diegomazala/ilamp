@@ -75,8 +75,12 @@ int split_file(const fs::path& input_filename, const fs::path output_dir)
 		tinyobj::scene_t obj_load;
 		if (tinyobj::load(obj_load, input_filename.string()))
 		{
+#if 1
 			tinyobj::scene_t& obj_geo = obj_load;
-			//tinyobj::garbage_collect(obj_geo, obj_load);
+#else
+			tinyobj::scene_t obj_geo = obj_load;
+			tinyobj::garbage_collect(obj_geo, obj_load);
+#endif
 
 			auto out_filename = output_dir / input_filename.stem();
 			vector_write(out_filename.replace_extension(".vert").string(), obj_geo.attrib.vertices);
