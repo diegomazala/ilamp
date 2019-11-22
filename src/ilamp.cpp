@@ -168,7 +168,7 @@ int main(int argc, char* argv[])
 	// 
 	//if (!ilamp.load_data_Nd(ilp_prj.filenameNd))
 	//	return EXIT_FAILURE;
-	load_Nd_data(ilamp.verts_Nd, ilp_prj.inputFiles, ilp_prj.vertexCount);
+	load_Nd_data(ilamp.verts_Nd, ilp_prj.inputFiles, ilp_prj.vertexCount * 3);
 
 
 	//
@@ -193,18 +193,13 @@ int main(int argc, char* argv[])
 		lamp.save_matrix_to_file(ilp_prj.filename2d);
 		std::cerr << "<Info>  Lamp file saved: " << ilp_prj.filename2d << std::endl;
 	}
-	else
-	{
 
-		
-	}
 	//
 	// Import 2d file
 	// 
 	if (!ilamp.load_data_2d(ilp_prj.filename2d))
 		return EXIT_FAILURE;
 
-	
 
 
 	if (ilamp.verts_Nd.size() != ilamp.verts_2d.size())
@@ -269,18 +264,12 @@ int main(int argc, char* argv[])
 		std::cout << "<Info>  Distance Error    : " << dist << std::endl;
 	}
 
-
-	//write_ply_file(
-	//	output_filename, 
-	//	std::vector<float>(&ilamp.q[0], ilamp.q.data() + ilamp.q.cols()*ilamp.q.rows()), 
-	//	template_filename);
-
 	std::vector<uint32_t> triangles;
 	vector_read(ilp_prj.trianglesFile, triangles);
 
 	write_ply_file(
 		output_filename, 
-		std::vector<float>(&ilamp.q[0], ilamp.q.data() + ilamp.q.cols()*ilamp.q.rows()), 
+		std::vector<float>(&ilamp.q[0], ilamp.q.data() + ilamp.q.cols()*ilamp.q.rows()),
 		triangles);
 
 	std::cout << std::endl;
