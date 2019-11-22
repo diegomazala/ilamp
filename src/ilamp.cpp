@@ -86,30 +86,6 @@ static void run_lamp(const std::string& filenameNd, const std::string& filename2
 #endif
 }
 
-template <typename decimal_t>
-bool load_matrix_from_files(Eigen::Matrix<decimal_t, Eigen::Dynamic, Eigen::Dynamic>& X, const std::vector<std::string>& input_files, const std::size_t cols)
-{
-	X = Eigen::Matrix<decimal_t, Eigen::Dynamic, Eigen::Dynamic, Eigen::ColMajor>(input_files.size(), cols);
-
-	auto file_size = cols * sizeof(decimal_t);
-	try
-	{
-		for (auto i = 0; i < input_files.size(); ++i)
-		{
-			std::vector<float> verts;
-			const auto vertex_count = vector_read(input_files[i], verts);
-			if (vertex_count > 0)
-				X.row(i) << Eigen::Map<Eigen::Matrix<float, 1, Eigen::Dynamic>>(verts.data(), 1, cols);
-		}
-	}
-	catch (const std::exception& ex)
-	{
-		std::cout << "<Error>  Could not read input files for matrix X" << std::endl;
-		return false;
-	}
-
-	return true;
-}
 
 template <typename decimal_t>
 void load_Nd_data(std::vector<Eigen::Matrix<decimal_t, Eigen::Dynamic, 1>>& verts_Nd, const std::vector<std::string>& input_files, const std::size_t cols)
@@ -157,7 +133,6 @@ int main(int argc, char* argv[])
 	fs::path prj_path(project_filename);
 	const std::string prj_dir = prj_path.remove_filename().string();
 	fs::create_directories(ilp_prj.outputFolder);
-
 
 	ILamp<float> ilamp;
 	
