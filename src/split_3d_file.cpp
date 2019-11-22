@@ -111,7 +111,7 @@ int split_file(const fs::path& input_filename, const fs::path output_dir)
 				for (const auto& shape : obj_geo.shapes)
 				{
 					auto vert_per_face = (uint8_t)shape.mesh.num_face_vertices[0];
-					std::string extension = shape.name + ((vert_per_face == 3) ? (".tri") : (".quad"));
+					std::string extension = ((vert_per_face == 3) ? (".tri") : (".quad"));
 
 					std::vector<uint32_t> indices(shape.mesh.indices.size());
 					for (auto i = 0; i < indices.size(); ++i)

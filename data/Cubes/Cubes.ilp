@@ -1,14 +1,14 @@
 {
-    "ProjectName": "D:/Projects/Dev/MDP/ilamp/data/Cubes/Cubes.ilp",
-    "FileName2d": "D:/Projects/Dev/MDP/ilamp/data/Cubes/Cubes.2d",
-    "FileNameNd": "D:/Projects/Dev/MDP/ilamp/data/Cubes/Cubes.nd",
-    "OutputFolder": "D:/Projects/Dev/MDP/ilamp/data/Cubes/Output/",
+    "ProjectName": "G:/DSc/ilamp/data/Cubes/Cubes.ilp",
+    "FileName2d": "G:/DSc/ilamp/data/Cubes/Cubes.2d",
+    "FileNameNd": "G:/DSc/ilamp/data/Cubes/Cubes.nd",
+    "OutputFolder": "G:/DSc/ilamp/data/Cubes/Output/",
     "InputFiles": [
-        "D:/Projects/Dev/MDP/ilamp/data/Cubes/cube.vert",
-        "D:/Projects/Dev/MDP/ilamp/data/Cubes/pole.vert",
-        "D:/Projects/Dev/MDP/ilamp/data/Cubes/pyramid.vert"
+        "G:/DSc/ilamp/data/Cubes/cube.vert",
+        "G:/DSc/ilamp/data/Cubes/pole.vert",
+        "G:/DSc/ilamp/data/Cubes/pyramid.vert"
     ],
-    "TrianglesFile": "D:/Projects/Dev/MDP/ilamp/data/Cubes/cube.tri",
+    "TrianglesFile": "G:/DSc/ilamp/data/Cubes/cube.tri",
     "VertexCount": 8,
     "NumNeighbours": 3,
     "KdTreeCount": 3,

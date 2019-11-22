@@ -151,8 +151,6 @@ int main(int argc, char* argv[])
 	Eigen::Vector2f query(cmd_parser.get<float>("query_x"), cmd_parser.get<float>("query_y"));
 
 
-	Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> X;
-
 	//
 	// Create output directory
 	//
@@ -182,8 +180,10 @@ int main(int argc, char* argv[])
 		//
 		// Build X matrix
 		//
-		load_matrix_from_files(X, ilp_prj.inputFiles, ilp_prj.vertexCount * 3);
-		lamp.set_matrix_X(X);
+		lamp.X = Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic, Eigen::ColMajor>(ilamp.verts_Nd.size(), ilamp.verts_Nd[0].size());
+		//X << Eigen::Map<Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic>>(ilamp.verts_Nd[0].data(), ilamp.verts_Nd.size(), ilamp.verts_Nd[0].size());
+		for (auto i = 0; i < ilamp.verts_Nd.size(); ++i)
+			lamp.X.row(i) << Eigen::Map<Eigen::Matrix<float, 1, Eigen::Dynamic>>(ilamp.verts_Nd[i].data(), 1, ilamp.verts_Nd[0].size());
 
 		//
 		// Run lamp
@@ -222,7 +222,6 @@ int main(int argc, char* argv[])
 	std::stringstream output_file;
 	output_file << ilp_prj.outputFolder << "/" << output_basename << '_' << query.x() << '_' << query.y() << ".ply";
 	const std::string output_filename = output_file.str();
-	const std::string template_filename = ilp_prj.inputFiles[0];
 
 	//
 	// Build the kd-tree
