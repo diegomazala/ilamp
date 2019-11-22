@@ -4,10 +4,12 @@
     "FileNameNd": "D:/Projects/Dev/MDP/ilamp/data/Cubes/Cubes.nd",
     "OutputFolder": "D:/Projects/Dev/MDP/ilamp/data/Cubes/Output/",
     "InputFiles": [
-        "D:/Projects/Dev/MDP/ilamp/data/Cubes/cube.ply",
-        "D:/Projects/Dev/MDP/ilamp/data/Cubes/pole.ply",
-        "D:/Projects/Dev/MDP/ilamp/data/Cubes/pyramid.ply"
+        "D:/Projects/Dev/MDP/ilamp/data/Cubes/cube.vert",
+        "D:/Projects/Dev/MDP/ilamp/data/Cubes/pole.vert",
+        "D:/Projects/Dev/MDP/ilamp/data/Cubes/pyramid.vert"
     ],
+    "TrianglesFile": "D:/Projects/Dev/MDP/ilamp/data/Cubes/cube.tri",
+    "VertexCount": 8,
     "NumNeighbours": 3,
     "KdTreeCount": 3,
     "KnnSearchChecks": 128

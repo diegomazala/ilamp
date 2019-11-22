@@ -3,11 +3,11 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LocalDebuggerWorkingDirectory>$(OutDir)</LocalDebuggerWorkingDirectory>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
-    <LocalDebuggerCommandArguments>-p D:/Projects/Dev/MDP/ilamp/data/Figurantes/Figurantes.ilp -t 0 -l</LocalDebuggerCommandArguments>
+    <LocalDebuggerCommandArguments>-p ../../data/Figurantes/Figurantes.ilp -t 0 -l</LocalDebuggerCommandArguments>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LocalDebuggerWorkingDirectory>$(OutDir)</LocalDebuggerWorkingDirectory>
     <DebuggerFlavor>WindowsLocalDebugger</DebuggerFlavor>
-    <LocalDebuggerCommandArguments>-p D:/Projects/Dev/MDP/ilamp/data/Figurantes/Figurantes.ilp -t 0 -l</LocalDebuggerCommandArguments>
+    <LocalDebuggerCommandArguments>-p ../../data/Figurantes/Figurantes.ilp -t 0 -l</LocalDebuggerCommandArguments>
   </PropertyGroup>
 </Project>

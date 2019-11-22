@@ -7,6 +7,7 @@
 #include <algorithm>
 #include <vector>
 
+#include "vector_read_write_binary.h"
 
 
 #include "tinyply.h"
@@ -39,13 +40,19 @@ static void build_nd_file(const std::vector<std::string>& models_file_array, con
 #endif
 
 		std::vector<float> verts;
+
+#if 0
 		const auto vertex_count = read_ply_file(filename, verts);
+#else
+		const auto vertex_count = vector_read(filename, verts);
+#endif
 		if (vertex_count > 0)
 		{
 			for (const auto v : verts)
 				output_file << std::fixed << std::setprecision(2) << v << ' ';
 			output_file << std::endl;
 		}
+
 	}
 
 	output_file.close();
@@ -133,6 +140,40 @@ static bool write_ply_file(const std::string& output_filename, std::vector<float
 
 		fb.close();
 
+
+		std::cout << "<Info>  Ply file saved    : " << output_filename << std::endl;
+
+		return true;
+	}
+	catch (const std::exception & e)
+	{
+		std::cerr << "Caught exception: " << e.what() << std::endl;
+		return false;
+	}
+
+}
+
+
+static bool write_ply_file(const std::string& output_filename, std::vector<float>& verts, std::vector<uint32_t>& triangles)
+{
+	try
+	{
+		//
+		// Write ply file
+		//
+		std::filebuf fb;
+		fb.open(output_filename, std::ios::out | std::ios::binary);
+		std::ostream outputStream(&fb);
+
+		tinyply::PlyFile ply_out_file;
+
+		ply_out_file.add_properties_to_element("vertex", { "x", "y", "z" }, verts);
+		if (!triangles.empty())
+			ply_out_file.add_properties_to_element("face", { "vertex_indices" }, triangles, 3, tinyply::PlyProperty::Type::UINT8);
+
+		ply_out_file.write(outputStream, true);
+
+		fb.close();
 
 		std::cout << "<Info>  Ply file saved    : " << output_filename << std::endl;
 

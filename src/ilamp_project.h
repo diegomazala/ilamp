@@ -19,8 +19,9 @@ struct ilamp_project
 	std::string filename2d = "Filename.2d";
 	std::string filenameNd = "Filename.nd";
 	std::string outputFolder = "C:/tmp/";
-	std::vector<std::string> inputFiles = { std::string("mod1.ply"), std::string("mod2.ply"), std::string("mod3.ply") };
-
+	std::vector<std::string> inputFiles = { std::string("mod1.vert"), std::string("mod2.vert"), std::string("mod3.vert") };
+	std::string trianglesFile = "Filename.tri";
+	size_t   vertexCount = 22424;
 	uint16_t numNeighbours = 4;
 	uint16_t kdTreeCount = 4;
 	uint16_t knnSearchChecks = 128;
@@ -45,6 +46,8 @@ struct ilamp_project
 			{ "FileNameNd", p.filenameNd },
 			{ "OutputFolder", p.outputFolder },
 			{ "InputFiles", p.inputFiles },
+			{ "TrianglesFile", p.trianglesFile},
+			{ "VertexCount", p.vertexCount },
 			{ "NumNeighbours", p.numNeighbours },
 			{ "KdTreeCount", p.kdTreeCount },
 			{ "KnnSearchChecks", p.knnSearchChecks }
@@ -56,10 +59,12 @@ struct ilamp_project
 		p.projectName	= j.at("ProjectName").get<std::string>();
 		p.filename2d	= j.at("FileName2d").get<std::string>();
 		p.filenameNd	= j.at("FileNameNd").get<std::string>();
-		p.outputFolder = j.at("OutputFolder").get<std::string>();
+		p.outputFolder  = j.at("OutputFolder").get<std::string>();
 		p.inputFiles	= j.at("InputFiles").get<std::vector<std::string>>();
+		p.trianglesFile = j.at("TrianglesFile").get<std::string>();
+		p.vertexCount   = j.at("VertexCount").get<size_t>();
 		p.numNeighbours = j.at("NumNeighbours").get<uint16_t>();
-		p.kdTreeCount = j.at("KdTreeCount").get<uint16_t>();
+		p.kdTreeCount   = j.at("KdTreeCount").get<uint16_t>();
 		p.knnSearchChecks = j.at("KnnSearchChecks").get<uint16_t>();
 	}
 

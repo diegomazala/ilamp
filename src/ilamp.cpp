@@ -66,6 +66,7 @@ static void run_lamp(const std::string& filenameNd, const std::string& filename2
 	lamp.compute_control_points_by_distance();
 	lamp.fit();
 	lamp.save_matrix_to_file(filename2d);
+	std::cerr << "<Info>  Lamp file saved: " << filename2d << std::endl;
 
 #else
 	std::string lamp_script = std::getenv("ILAMP_LAMP_SCRIPT");
@@ -85,9 +86,49 @@ static void run_lamp(const std::string& filenameNd, const std::string& filename2
 #endif
 }
 
+template <typename decimal_t>
+bool load_matrix_from_files(Eigen::Matrix<decimal_t, Eigen::Dynamic, Eigen::Dynamic>& X, const std::vector<std::string>& input_files, const std::size_t cols)
+{
+	X = Eigen::Matrix<decimal_t, Eigen::Dynamic, Eigen::Dynamic, Eigen::ColMajor>(input_files.size(), cols);
+
+	auto file_size = cols * sizeof(decimal_t);
+	try
+	{
+		for (auto i = 0; i < input_files.size(); ++i)
+		{
+			std::vector<float> verts;
+			const auto vertex_count = vector_read(input_files[i], verts);
+			if (vertex_count > 0)
+				X.row(i) << Eigen::Map<Eigen::Matrix<float, 1, Eigen::Dynamic>>(verts.data(), 1, cols);
+		}
+	}
+	catch (const std::exception& ex)
+	{
+		std::cout << "<Error>  Could not read input files for matrix X" << std::endl;
+		return false;
+	}
+
+	return true;
+}
+
+template <typename decimal_t>
+void load_Nd_data(std::vector<Eigen::Matrix<decimal_t, Eigen::Dynamic, 1>>& verts_Nd, const std::vector<std::string>& input_files, const std::size_t cols)
+{
+	auto file_size = cols * sizeof(decimal_t);
+
+	verts_Nd.resize(input_files.size());
+	for (auto i = 0; i < input_files.size(); ++i)
+	{
+		std::vector<float> verts;
+		const auto vertex_count = vector_read(input_files[i], verts);
+		if (vertex_count > 0)
+			verts_Nd[i] = Eigen::Map<Eigen::Matrix<float, 1, Eigen::Dynamic>>(verts.data(), 1, cols);
+	}
+}
 
 int main(int argc, char* argv[])
 {
+
 	std::cout << std::fixed;
 	//
 	// Parse command line
@@ -100,14 +141,17 @@ int main(int argc, char* argv[])
 	//
 	const std::string& project_filename = cmd_parser.get<std::string>("project");
 	ilamp_project ilp_prj(project_filename);
+	
 
 #if _DEBUG
 	std::cout << std::setw(4) << ilp_prj << std::endl << std::endl;
 #endif
-
+	
 
 	Eigen::Vector2f query(cmd_parser.get<float>("query_x"), cmd_parser.get<float>("query_y"));
 
+
+	Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic> X;
 
 	//
 	// Create output directory
@@ -116,43 +160,56 @@ int main(int argc, char* argv[])
 	const std::string prj_dir = prj_path.remove_filename().string();
 	fs::create_directories(ilp_prj.outputFolder);
 
+
+	ILamp<float> ilamp;
+	
+	//
+	// Import Nd file
+	// 
+	//if (!ilamp.load_data_Nd(ilp_prj.filenameNd))
+	//	return EXIT_FAILURE;
+	load_Nd_data(ilamp.verts_Nd, ilp_prj.inputFiles, ilp_prj.vertexCount);
+
+
 	//
 	// If true, build a new nd file and run lamp for it
 	// Otherwise, use the existent file
 	//
 	if (cmd_parser.exist("lamp"))
 	{
+		Lamp<float> lamp;
+
 		//
-		// Creating nd file
+		// Build X matrix
 		//
-		build_nd_file(ilp_prj.inputFiles, ilp_prj.filenameNd);
+		load_matrix_from_files(X, ilp_prj.inputFiles, ilp_prj.vertexCount * 3);
+		lamp.set_matrix_X(X);
 
 		//
 		// Run lamp
 		//
-		run_lamp(ilp_prj.filenameNd, ilp_prj.filename2d);
+		lamp.compute_control_points_by_distance();
+		lamp.fit();
+		lamp.save_matrix_to_file(ilp_prj.filename2d);
+		std::cerr << "<Info>  Lamp file saved: " << ilp_prj.filename2d << std::endl;
 	}
+	else
+	{
 
-
-
-	ILamp<float> ilamp;
-
+		
+	}
 	//
 	// Import 2d file
 	// 
 	if (!ilamp.load_data_2d(ilp_prj.filename2d))
 		return EXIT_FAILURE;
 
-	//
-	// Import Nd file
-	// 
-	if (!ilamp.load_data_Nd(ilp_prj.filenameNd))
-		return EXIT_FAILURE;
+	
 
 
 	if (ilamp.verts_Nd.size() != ilamp.verts_2d.size())
 	{
-		std::cerr << "<Error> Vertex arrays do not have the same size. Abort" << std::endl;
+		std::cerr << "<Error> Vertex arrays do not have the same size. " << ilamp.verts_Nd.size() << " != " << ilamp.verts_2d.size() << ". Abort" << std::endl;
 		return EXIT_FAILURE;
 	}
 
@@ -213,11 +270,18 @@ int main(int argc, char* argv[])
 	}
 
 
+	//write_ply_file(
+	//	output_filename, 
+	//	std::vector<float>(&ilamp.q[0], ilamp.q.data() + ilamp.q.cols()*ilamp.q.rows()), 
+	//	template_filename);
+
+	std::vector<uint32_t> triangles;
+	vector_read(ilp_prj.trianglesFile, triangles);
+
 	write_ply_file(
 		output_filename, 
 		std::vector<float>(&ilamp.q[0], ilamp.q.data() + ilamp.q.cols()*ilamp.q.rows()), 
-		template_filename);
-
+		triangles);
 
 	std::cout << std::endl;
 

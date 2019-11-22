@@ -38,6 +38,22 @@ public:
 		return true;
 	}
 
+	void set_matrix_X(const Eigen::Matrix<decimal_t, Eigen::Dynamic, Eigen::Dynamic>& Xmat)
+	{
+		this->X = Xmat;
+	}
+
+	bool load_matrix_from_files(const std::vector<std::string>& input_files, const std::size_t vertex_count)
+	{
+		this->X = Eigen::Matrix<decimal_t, Eigen::Dynamic, Eigen::Dynamic>(input_files.size(), vertex_count);
+		auto file_size = vertex_count * sizeof(decimal_t);
+		for (auto i = 0; i < input_files.size(); ++i)
+		{
+			std::ifstream file(input_file[i], std::ios::in | std::ios::binary | std::ios::ate);
+			file.read(reinterpret_cast<char*>(&this->X.row(i)[0]), file_size);
+			file.close();
+		}
+	}
 
 	bool load_matrix_from_file(const std::string& filename)
 	{

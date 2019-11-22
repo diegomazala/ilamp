@@ -20,6 +20,18 @@ static void vector_write(const std::string& out_filename, const std::vector<T>& 
 }
 
 
+
+template<typename T>
+static auto vector_read(std::ifstream& file, std::shared_ptr<T>& data)
+{
+	auto fsize = file.tellg();
+	file.seekg(0, std::ios::beg);
+	const auto count = fsize / sizeof(T);
+	data->reset(count);
+	file.read(reinterpret_cast<char*>(data->get()), fsize);
+	return count;
+}
+
 template<typename T>
 static auto vector_read(std::ifstream& file, std::vector<T>& data)
 {
@@ -28,7 +40,6 @@ static auto vector_read(std::ifstream& file, std::vector<T>& data)
 	const auto count = fsize / sizeof(T);
 	data.resize(count);
 	file.read(reinterpret_cast<char*>(&data[0]), fsize);
-	file.close();
 	return count;
 }
 
@@ -37,6 +48,19 @@ static auto vector_read(const std::string& in_filename, std::vector<T>& data)
 {
 	std::ifstream file(in_filename, std::ios::in | std::ios::binary | std::ios::ate);
 	return vector_read(file, data);
+}
+
+
+template<typename T>
+static auto read_data_from_file(const std::string& in_filename, T& data)
+{
+	std::ifstream file(in_filename, std::ios::in | std::ios::binary | std::ios::ate);
+	auto fsize = file.tellg();
+	file.seekg(0, std::ios::beg);
+	const auto count = fsize / sizeof(T);
+	file.read(reinterpret_cast<char*>(&data), fsize);
+	file.close();
+	return count;
 }
 
 

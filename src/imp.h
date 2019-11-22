@@ -10,8 +10,6 @@
 #include <Eigen/Dense>
 
 
-
-
 template <typename Type>
 class Imp
 {
@@ -81,6 +79,14 @@ public:
 	}
 
 
+	//virtual void load_data_Nd(const std::vector<std::string>& input_files)
+	//{
+	//	verts_Nd.resize(input_files.size());
+	//	for (auto i = 0; i < input_files.size(); ++i)
+	//	{
+	//		vector_read(input_files[i], verts_Nd[i]);
+	//	}
+	//}
 
 
 	virtual bool load_data_Nd(const std::string& filename)

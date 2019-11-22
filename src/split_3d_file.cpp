@@ -41,6 +41,8 @@ int split_file(const fs::path& input_filename, const fs::path output_dir)
 
 	if (input_filename.extension() == ".ply")
 	{
+		std::cout << "PLY File Format: " << input_filename.filename() << std::endl;
+
 		std::vector<float> verts, norms, uv;
 		std::vector<uint32_t> faces;
 
@@ -52,6 +54,13 @@ int split_file(const fs::path& input_filename, const fs::path output_dir)
 		uint32_t uv_count = file.request_properties_from_element("vertex", { "u", "v" }, uv);
 		uint32_t face_count = file.request_properties_from_element("face", { "vertex_indices" }, faces);
 		file.read(ss);
+
+		std::cout
+			<< "File Info: " << std::endl
+			<< '\t' << vertex_count/3 << " vertices\n"
+			<< '\t' << normal_count/3 << " normals\n"
+			<< '\t' << uv_count/2 << " texcoords\n"
+			<< '\t' << face_count << " faces\n\n";
 
 		if (vertex_count > 0 && face_count > 0)
 		{
@@ -72,6 +81,8 @@ int split_file(const fs::path& input_filename, const fs::path output_dir)
 	}
 	else if (input_filename.extension() == ".obj")
 	{
+		std::cout << "OBJ File Format: " << input_filename.filename() << std::endl;
+
 		tinyobj::scene_t obj_load;
 		if (tinyobj::load(obj_load, input_filename.string()))
 		{
@@ -81,6 +92,12 @@ int split_file(const fs::path& input_filename, const fs::path output_dir)
 			tinyobj::scene_t obj_geo = obj_load;
 			tinyobj::garbage_collect(obj_geo, obj_load);
 #endif
+			std::cout
+				<< "File Info: " << std::endl
+				<< '\t' << obj_geo.attrib.vertices.size()/3 << " vertices\n"
+				<< '\t' << obj_geo.attrib.normals.size()/3 << " normals\n"
+				<< '\t' << obj_geo.attrib.texcoords.size()/2 << " texcoords\n"
+				<< '\t' << obj_geo.shapes.size() << " shapes\n";
 
 			auto out_filename = output_dir / input_filename.stem();
 			vector_write(out_filename.replace_extension(".vert").string(), obj_geo.attrib.vertices);
@@ -102,8 +119,10 @@ int split_file(const fs::path& input_filename, const fs::path output_dir)
 						indices[i] = shape.mesh.indices[i].vertex_index;
 					}
 					vector_write(out_filename.replace_extension(extension).string(), indices);
+					std::cout << '\t' << indices.size() << ' ' << extension << '\n';
 				}
 			}
+			
 		}
 		else
 		{

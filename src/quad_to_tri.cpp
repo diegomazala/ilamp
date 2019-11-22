@@ -3,17 +3,33 @@
 #include <experimental/filesystem>
 namespace fs = std::experimental::filesystem;
 
-void convert_quad_to_tri(const std::vector<uint32_t>& quads, std::vector<uint32_t>& tris)
+void convert_quad_to_tri(const std::vector<uint32_t>& quads, std::vector<uint32_t>& tris, bool invert_face = false)
 {
-	for (auto i = 0; i < quads.size(); i += 4)
+	if (invert_face)
 	{
-		tris.push_back(quads[i + 0]);
-		tris.push_back(quads[i + 1]);
-		tris.push_back(quads[i + 2]);
+		for (auto i = 0; i < quads.size(); i += 4)
+		{
+			tris.push_back(quads[i + 2]);
+			tris.push_back(quads[i + 1]);
+			tris.push_back(quads[i + 0]);
 
-		tris.push_back(quads[i + 2]);
-		tris.push_back(quads[i + 3]);
-		tris.push_back(quads[i + 0]);
+			tris.push_back(quads[i + 0]);
+			tris.push_back(quads[i + 3]);
+			tris.push_back(quads[i + 2]);
+		}
+	}
+	else
+	{
+		for (auto i = 0; i < quads.size(); i += 4)
+		{
+			tris.push_back(quads[i + 0]);
+			tris.push_back(quads[i + 1]);
+			tris.push_back(quads[i + 2]);
+
+			tris.push_back(quads[i + 2]);
+			tris.push_back(quads[i + 3]);
+			tris.push_back(quads[i + 0]);
+		}
 	}
 }
 
@@ -26,11 +42,12 @@ int main(int argc, char* argv[])
 		std::cout
 			<< std::fixed << std::endl
 			<< "Usage            : ./<app.exe> <input_filename> <output_filename>" << std::endl
-			<< "Default          : ./quad_to_tri.exe cube.quad cube.tri" << std::endl
+			<< "Default          : ./quad_to_tri.exe cube.quad cube.tri " << std::endl
 			<< std::endl;
 		return EXIT_FAILURE;
 	}
 
+	bool invert_face = false; // (std::string(argv[argc - 1]) == "inv");
 
 	//
 	// Initial parameters
@@ -47,7 +64,7 @@ int main(int argc, char* argv[])
 				std::vector<uint32_t> quads;
 				vector_read(it->path().string(), quads);
 				std::vector<uint32_t> tris;
-				convert_quad_to_tri(quads, tris);
+				convert_quad_to_tri(quads, tris, invert_face);
 				auto out_filename = it->path();
 				vector_write(out_filename.replace_extension(".tri").string(), tris);
 			}
@@ -58,7 +75,7 @@ int main(int argc, char* argv[])
 		std::vector<uint32_t> quads;
 		vector_read(input_path.string(), quads);
 		std::vector<uint32_t> tris;
-		convert_quad_to_tri(quads, tris);
+		convert_quad_to_tri(quads, tris, invert_face);
 		vector_write(output_path.replace_extension(".tri").string(), tris);
 	}
 
