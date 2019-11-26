@@ -1,6 +1,6 @@
 #include "ilamp.h"
 #include "ilamp_utils.h"
-#include "ilamp_project.h"
+#include "imp_project.h"
 #include "rbf_imp.h"
 #include "cmdline.h"
 
@@ -83,7 +83,7 @@ int main(int argc, char* argv[])
 	// Set variables
 	//
 	const std::string& project_filename = cmd_parser.get<std::string>("project");
-	ilamp_project ilp_prj(project_filename);
+	imp_project ilp_prj(project_filename);
 
 #if _DEBUG
 	std::cout << std::setw(4) << ilp_prj << std::endl << std::endl;

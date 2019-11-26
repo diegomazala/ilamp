@@ -9,4 +9,8 @@
 DllExport void* Imp_GetQ();
 DllExport cv::Mat& Imp_BackProjectedImage();
 
+//DllExport static void Imp_Create_ILamp();
+//DllExport static bool Imp_LoadProject(const char* filename);
+
+
 #endif // __IMP_DLL_H__

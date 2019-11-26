@@ -1,5 +1,5 @@
-#ifndef __ILAMP_PROJECT_H__
-#define __ILAMP_PROJECT_H__
+#ifndef __IMP_PROJECT_H__
+#define __IMP_PROJECT_H__
 
 #include <string>
 #include <vector>
@@ -13,7 +13,7 @@ using json = nlohmann::json;
 
 
 
-struct ilamp_project
+struct imp_project
 {
 	std::string projectName = "ProjectName.ilp";
 	std::string filename2d = "Filename.2d";
@@ -26,18 +26,18 @@ struct ilamp_project
 	uint16_t kdTreeCount = 4;
 	uint16_t knnSearchChecks = 128;
 
-	ilamp_project() 
+	imp_project() 
 	{
 	}
 
-	ilamp_project(const std::string& json_file)
+	imp_project(const std::string& json_file)
 	{
 		std::ifstream ilp(json_file);
 		ilp >> *this;
 		ilp.close();
 	}
 
-	friend void to_json(json& j, const ilamp_project& p)
+	friend void to_json(json& j, const imp_project& p)
 	{
 		j = json
 		{ 
@@ -47,14 +47,13 @@ struct ilamp_project
 			{ "OutputFolder", p.outputFolder },
 			{ "InputFiles", p.inputFiles },
 			{ "TrianglesFile", p.trianglesFile},
-			{ "VertexCount", p.vertexCount },
 			{ "NumNeighbours", p.numNeighbours },
 			{ "KdTreeCount", p.kdTreeCount },
 			{ "KnnSearchChecks", p.knnSearchChecks }
 		};
 	}
 
-	friend void from_json(const json& j, ilamp_project& p)
+	friend void from_json(const json& j, imp_project& p)
 	{
 		p.projectName	= j.at("ProjectName").get<std::string>();
 		p.filename2d	= j.at("FileName2d").get<std::string>();
@@ -62,20 +61,19 @@ struct ilamp_project
 		p.outputFolder  = j.at("OutputFolder").get<std::string>();
 		p.inputFiles	= j.at("InputFiles").get<std::vector<std::string>>();
 		p.trianglesFile = j.at("TrianglesFile").get<std::string>();
-		p.vertexCount   = j.at("VertexCount").get<size_t>();
 		p.numNeighbours = j.at("NumNeighbours").get<uint16_t>();
 		p.kdTreeCount   = j.at("KdTreeCount").get<uint16_t>();
 		p.knnSearchChecks = j.at("KnnSearchChecks").get<uint16_t>();
 	}
 
-	friend void from_file(const std::string& json_file, ilamp_project& p)
+	friend void from_file(const std::string& json_file, imp_project& p)
 	{
 		std::ifstream ilp(json_file);
 		ilp >> p;
 		ilp.close();
 	}
 
-	friend std::ostream& operator << (std::ostream& os, const ilamp_project& p)
+	friend std::ostream& operator << (std::ostream& os, const imp_project& p)
 	{
 		json j;
 		to_json(j, p);
@@ -83,7 +81,7 @@ struct ilamp_project
 		return os;
 	}
 
-	friend std::istream& operator >> (std::istream& is, ilamp_project& p)
+	friend std::istream& operator >> (std::istream& is, imp_project& p)
 	{
 		json j;
 		is >> j;
@@ -94,7 +92,7 @@ struct ilamp_project
 
 	void test()
 	{
-		ilamp_project p1;
+		imp_project p1;
 
 		// conversion: person -> json
 		json j1 = p1;
@@ -107,7 +105,7 @@ struct ilamp_project
 		o.close();
 
 		// conversion: json -> person
-		ilamp_project p2 = j1;
+		imp_project p2 = j1;
 
 		json j2 = p2;
 		std::cout << std::setw(4) << j2 << std::endl << std::endl;
@@ -123,7 +121,7 @@ struct ilamp_project
 
 
 
-		ilamp_project p4;
+		imp_project p4;
 		std::ifstream i2("ilp.json");
 		i2 >> p4;
 		i2.close();
@@ -131,7 +129,7 @@ struct ilamp_project
 
 
 
-		ilamp_project py_prj;
+		imp_project py_prj;
 		std::ifstream py_ilp("PyProjectName.ilp");
 		py_ilp >> py_prj;
 		py_ilp.close();
@@ -140,4 +138,4 @@ struct ilamp_project
 };
 
 
-#endif  //__ILAMP_PROJECT_H__
+#endif  //__IMP_PROJECT_H__

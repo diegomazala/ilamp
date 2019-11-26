@@ -9,27 +9,24 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\src\ilamp.h">
+    <ClInclude Include="..\src\cmdline.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\src\tinyply.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\rbf_interpolation.h">
+    <ClInclude Include="..\src\imp.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\src\imp_project.h">
+    <ClInclude Include="..\src\timer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\src\ilamp_dll.cpp">
+    <ClCompile Include="..\src\tinyply.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\src\tinyply.cpp">
-      <Filter>Header Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\src\rbf_interpolation.cpp">
+    <ClCompile Include="..\src\imp_test.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

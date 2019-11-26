@@ -131,7 +131,7 @@ int main(int argc, char** argv)
 		tmp = tmp.reshape(pca_img.images[0].channels(), pca_img.images[0].rows); // reshape from a row vector into image shape
 		tmp = PcaImage::toGrayscale(tmp); // re-scale for displaying purposes
 		std::stringstream ss;
-		ss << "G:/Data/Figurantes/Textures/back_projected_" << i << ".jpg";
+		ss << "G:/DSc/ilamp/data/Figurantes/Textures/_back_projected_" << i << ".jpg";
 		cv::imwrite(ss.str(), tmp);
 	}
 

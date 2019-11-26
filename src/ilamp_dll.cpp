@@ -1,5 +1,5 @@
 #include "ilamp.h"
-#include "ilamp_project.h"
+#include "imp_project.h"
 #include "ilamp_utils.h"
 
 #include <vector>
@@ -21,7 +21,7 @@ DllExport void ILamp_BuildNdFile(const char* ilamp_project_filename)
 	//
 	// Creating nd file
 	//
-	ilamp_project ilp_prj(ilamp_project_filename);
+	imp_project ilp_prj(ilamp_project_filename);
 	build_nd_file(ilp_prj.inputFiles, ilp_prj.filenameNd);
 }
 

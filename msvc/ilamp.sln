@@ -33,6 +33,11 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "invert_triangles", "invert_
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "invert_normals", "invert_normals.vcxproj", "{7586138E-EAC6-4022-80EF-4D7D39E31727}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "imp_test", "imp_test.vcxproj", "{6747B91F-2AD5-4CB9-9882-A91AE9E6F8F4}"
+	ProjectSection(ProjectDependencies) = postProject
+		{A2EED107-E762-485A-96D0-768B7BB14CCF} = {A2EED107-E762-485A-96D0-768B7BB14CCF}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -101,6 +106,10 @@ Global
 		{7586138E-EAC6-4022-80EF-4D7D39E31727}.Debug|x64.Build.0 = Debug|x64
 		{7586138E-EAC6-4022-80EF-4D7D39E31727}.Release|x64.ActiveCfg = Release|x64
 		{7586138E-EAC6-4022-80EF-4D7D39E31727}.Release|x64.Build.0 = Release|x64
+		{6747B91F-2AD5-4CB9-9882-A91AE9E6F8F4}.Debug|x64.ActiveCfg = Debug|x64
+		{6747B91F-2AD5-4CB9-9882-A91AE9E6F8F4}.Debug|x64.Build.0 = Debug|x64
+		{6747B91F-2AD5-4CB9-9882-A91AE9E6F8F4}.Release|x64.ActiveCfg = Release|x64
+		{6747B91F-2AD5-4CB9-9882-A91AE9E6F8F4}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

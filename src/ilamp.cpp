@@ -1,6 +1,6 @@
 #include "ilamp.h"
 #include "ilamp_utils.h"
-#include "ilamp_project.h"
+#include "imp_project.h"
 #include "cmdline.h"
 #include "lamp.h"
 #include "timer.h"
@@ -86,22 +86,6 @@ static void run_lamp(const std::string& filenameNd, const std::string& filename2
 #endif
 }
 
-
-template <typename decimal_t>
-void load_Nd_data(std::vector<Eigen::Matrix<decimal_t, Eigen::Dynamic, 1>>& verts_Nd, const std::vector<std::string>& input_files, const std::size_t cols)
-{
-	auto file_size = cols * sizeof(decimal_t);
-
-	verts_Nd.resize(input_files.size());
-	for (auto i = 0; i < input_files.size(); ++i)
-	{
-		std::vector<float> verts;
-		const auto vertex_count = vector_read(input_files[i], verts);
-		if (vertex_count > 0)
-			verts_Nd[i] = Eigen::Map<Eigen::Matrix<float, 1, Eigen::Dynamic>>(verts.data(), 1, cols);
-	}
-}
-
 int main(int argc, char* argv[])
 {
 
@@ -116,7 +100,7 @@ int main(int argc, char* argv[])
 	// Set variables
 	//
 	const std::string& project_filename = cmd_parser.get<std::string>("project");
-	ilamp_project ilp_prj(project_filename);
+	imp_project ilp_prj(project_filename);
 	
 
 #if _DEBUG
@@ -141,47 +125,7 @@ int main(int argc, char* argv[])
 	// 
 	//if (!ilamp.load_data_Nd(ilp_prj.filenameNd))
 	//	return EXIT_FAILURE;
-	load_Nd_data(ilamp.verts_Nd, ilp_prj.inputFiles, ilp_prj.vertexCount * 3);
-
-
-	//
-	// If true, build a new nd file and run lamp for it
-	// Otherwise, use the existent file
-	//
-	if (cmd_parser.exist("lamp"))
-	{
-		Lamp<float> lamp;
-
-		//
-		// Build X matrix
-		//
-		lamp.X = Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic, Eigen::ColMajor>(ilamp.verts_Nd.size(), ilamp.verts_Nd[0].size());
-		//X << Eigen::Map<Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic>>(ilamp.verts_Nd[0].data(), ilamp.verts_Nd.size(), ilamp.verts_Nd[0].size());
-		for (auto i = 0; i < ilamp.verts_Nd.size(); ++i)
-			lamp.X.row(i) << Eigen::Map<Eigen::Matrix<float, 1, Eigen::Dynamic>>(ilamp.verts_Nd[i].data(), 1, ilamp.verts_Nd[0].size());
-
-		//
-		// Run lamp
-		//
-		lamp.compute_control_points_by_distance();
-		lamp.fit();
-		lamp.save_matrix_to_file(ilp_prj.filename2d);
-		std::cerr << "<Info>  Lamp file saved: " << ilp_prj.filename2d << std::endl;
-	}
-
-	//
-	// Import 2d file
-	// 
-	if (!ilamp.load_data_2d(ilp_prj.filename2d))
-		return EXIT_FAILURE;
-
-
-
-	if (ilamp.verts_Nd.size() != ilamp.verts_2d.size())
-	{
-		std::cerr << "<Error> Vertex arrays do not have the same size. " << ilamp.verts_Nd.size() << " != " << ilamp.verts_2d.size() << ". Abort" << std::endl;
-		return EXIT_FAILURE;
-	}
+	ilamp.load_project(project_filename, cmd_parser.exist("lamp"));
 
 
 	const int dimension_2d = ilamp.verts_2d.at(0).rows();	// = 2
@@ -190,13 +134,6 @@ int main(int argc, char* argv[])
 	if (test_index > -1)
 		query = ilamp.verts_2d.at(test_index);
 
-	//
-	// Set output file name
-	//
-	std::string output_basename = fs::path(cmd_parser.get<std::string>("output3d")).replace_extension("").string();
-	std::stringstream output_file;
-	output_file << ilp_prj.outputFolder << "/" << output_basename << '_' << query.x() << '_' << query.y() << ".ply";
-	const std::string output_filename = output_file.str();
 
 	//
 	// Build the kd-tree
@@ -237,6 +174,16 @@ int main(int argc, char* argv[])
 		const auto dist = (ilamp.q - q_orig).norm();
 		std::cout << "<Info>  Distance Error    : " << dist << std::endl;
 	}
+
+
+
+	//
+	// Set output file name
+	//
+	std::string output_basename = fs::path(cmd_parser.get<std::string>("output3d")).replace_extension("").string();
+	std::stringstream output_file;
+	output_file << ilp_prj.outputFolder << "/" << output_basename << '_' << query.x() << '_' << query.y() << ".ply";
+	const std::string output_filename = output_file.str();
 
 	std::vector<uint32_t> triangles;
 	vector_read(ilp_prj.trianglesFile, triangles);

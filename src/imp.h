@@ -8,6 +8,8 @@
 #include <algorithm>
 #include <vector>
 #include <Eigen/Dense>
+#include "lamp.h"
+#include "vector_read_write_binary.h"
 
 
 template <typename Type>
@@ -32,6 +34,47 @@ public:
 	virtual void build() = 0;
 
 	virtual Eigen::Matrix<Type, Eigen::Dynamic, Eigen::Dynamic> execute(Type px, Type py) = 0;
+
+	virtual bool load_project(const std::string& project_filename, bool compute_lamp)
+	{
+		imp_project ilp_prj(project_filename);
+
+		//
+		// Import Nd file
+		// 
+		verts_Nd.resize(ilp_prj.inputFiles.size());
+		for (auto i = 0; i < ilp_prj.inputFiles.size(); ++i)
+		{
+			std::vector<Type> verts;
+			if (vector_read<Type>(ilp_prj.inputFiles[i], verts))
+				verts_Nd[i] = Eigen::Map<Eigen::Matrix<float, 1, Eigen::Dynamic>>(verts.data(), 1, verts.size());
+		}
+
+		//
+		// If true, build a new nd file and run lamp for it
+		// Otherwise, use the existent file
+		//
+		if (compute_lamp)
+		{
+			run_lamp(ilp_prj.filename2d);
+			std::cerr << "<Info>  Lamp file saved: " << ilp_prj.filename2d << std::endl;
+		}
+
+		//
+		// Import 2d file
+		// 
+		if (!load_data_2d(ilp_prj.filename2d))
+			return false;
+
+
+		if (verts_Nd.size() != verts_2d.size())
+		{
+			std::cerr << "<Error> Vertex arrays do not have the same size. " << verts_Nd.size() << " != " << verts_2d.size() << ". Abort" << std::endl;
+			return false;
+		}
+
+		return true;
+	}
 
 	
 	virtual bool load_data_2d(const std::string& filename)
@@ -131,6 +174,27 @@ public:
 		}
 	}
 
+
+	void run_lamp(const std::string& out_filename2d)
+	{
+		Lamp<float> lamp;
+
+		//
+		// Build X matrix
+		//
+		lamp.X = Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic, Eigen::ColMajor>(verts_Nd.size(), verts_Nd[0].size());
+		//X << Eigen::Map<Eigen::Matrix<float, Eigen::Dynamic, Eigen::Dynamic>>(ilamp.verts_Nd[0].data(), ilamp.verts_Nd.size(), ilamp.verts_Nd[0].size());
+		for (auto i = 0; i < verts_Nd.size(); ++i)
+			lamp.X.row(i) << Eigen::Map<Eigen::Matrix<float, 1, Eigen::Dynamic>>(verts_Nd[i].data(), 1, verts_Nd[0].size());
+
+		//
+		// Run lamp
+		//
+		lamp.compute_control_points_by_distance();
+		lamp.fit();
+		lamp.save_matrix_to_file(out_filename2d);
+		//std::cerr << "<Info>  Lamp file saved: " << ilp_prj.filename2d << std::endl;
+	}
 
 
 };

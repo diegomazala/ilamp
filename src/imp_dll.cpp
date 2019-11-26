@@ -1,4 +1,5 @@
 #include "imp_dll.h"
+#include "imp_project.h"
 #include "ilamp.h"
 #include "rbf_imp.h"
 #include "pca_image.h"
@@ -62,6 +63,17 @@ DllExport void Imp_Create_Rbf()
 	(*imp_log) << "Info : New Imp created as Rbf" << std::endl;
 }
 
+
+
+DllExport bool Imp_LoadProject(const char* project_filename, bool compute_lamp)
+{
+	if (!imp_ptr)
+	{
+		imp_ptr->load_project(project_filename, compute_lamp);
+	}
+	
+	return true;
+}
 
 
 DllExport bool Imp_LoadInputFiles(const char* filename_2d, const char* filename_Nd)

@@ -25,6 +25,8 @@ public:
 		while (getline(file, line))
 		{
 			images.push_back(cv::imread(line, cv::IMREAD_GRAYSCALE));
+			if (images.back().empty())
+				images.pop_back();
 		}
 		return true;
 	}
