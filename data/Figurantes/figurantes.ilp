@@ -1,0 +1,20 @@
+{
+    "ProjectName": "G:/DSc/ilamp/data/figurantes/figurantes.ilp",
+    "FileName2d": "G:/DSc/ilamp/data/figurantes/figurantes.2d",
+    "FileNameNd": "G:/DSc/ilamp/data/figurantes/figurantes.nd",
+    "OutputFolder": "G:/DSc/ilamp/data/figurantes/Output/",
+    "InputFiles": [
+        "G:/DSc/ilamp/data/figurantes/figurante1.vert",
+        "G:/DSc/ilamp/data/figurantes/figurante2.vert",
+        "G:/DSc/ilamp/data/figurantes/figurante3.vert",
+        "G:/DSc/ilamp/data/figurantes/figurante4.vert",
+        "G:/DSc/ilamp/data/figurantes/figurante5.vert",
+        "G:/DSc/ilamp/data/figurantes/figurante6.vert",
+        "G:/DSc/ilamp/data/figurantes/figurante7.vert",
+        "G:/DSc/ilamp/data/figurantes/figurante8.vert"
+    ],
+    "TrianglesFile": "G:/DSc/ilamp/data/figurantes/figurantes.tri",
+    "NumNeighbours": 8,
+    "KdTreeCount": 8,
+    "KnnSearchChecks": 128
+}
