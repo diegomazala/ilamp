@@ -26,10 +26,19 @@ public:
 	uint16_t knn_search_checks = 128;
 
 
-
 public:
 	ILamp(){}
 	~ILamp() {}
+
+	virtual bool load_project(const std::string& project_filename, bool compute_lamp)
+	{
+		if (Imp<Type>::load_project(project_filename, compute_lamp))
+		{
+			set_kdtree(project.kdTreeCount, project.numNeighbours, project.knnSearchChecks);
+			return true;
+		}
+		return false;
+	}
 
 	void set_kdtree(uint16_t _kdtree_count, uint16_t _num_neighbours, uint16_t _knn_search_checks)
 	{

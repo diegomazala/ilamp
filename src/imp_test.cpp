@@ -1,6 +1,10 @@
 #include "imp_dll.h"
+#include "ilamp_utils.h"
 #include "cmdline.h"
 #include "timer.h"
+#include "imp_project.h"
+#include "vector_read_write_binary.h"
+
 
 #include <iostream>
 #include <experimental/filesystem>
@@ -34,20 +38,64 @@ int main(int argc, char* argv[])
 	// Set variables
 	//
 	const std::string& project_filename = cmd_parser.get<std::string>("project");
+	float query[2] = { cmd_parser.get<float>("query_x"), cmd_parser.get<float>("query_y") };
 
 
-	//Imp_Create_ILamp();
+	Imp_Create_ILamp();
+
+	if (!Imp_LoadProject(project_filename.c_str(), cmd_parser.exist("lamp")))
+	{
+		std::cerr << "Error: Could not load project file" << std::endl;
+		return EXIT_FAILURE;
+	}
+
+	if (!Imp_Build())
+	{
+		std::cerr << "Error: Could not build project" << std::endl;
+		return EXIT_FAILURE;
+	}
 
 
-#if 0
-	std::vector<uint32_t> triangles;
-	vector_read(ilp_prj.trianglesFile, triangles);
+	const int test_index = cmd_parser.get<int>("test");
+	if (test_index > -1)
+	{
+		float* query_ptr = (float*)Imp_GetVertices2d(test_index);
+		query[0] = query_ptr[0];
+		query[1] = query_ptr[1];
+	}
 
-	write_ply_file(
-		output_filename, 
-		std::vector<float>(&ilamp.q[0], ilamp.q.data() + ilamp.q.cols()*ilamp.q.rows()),
-		triangles);
-#endif
+	if (!Imp_Execute(query[0], query[1]))
+	{
+		std::cerr << "Error: Could not execute query: " << query[0] << ", " << query[1] << std::endl;
+		return EXIT_FAILURE;
+	}
+
+	float* q = (float*)Imp_GetQ();
+
+
+	//
+	// Output ply file for sanity check
+	//
+	{
+		imp_project ilp_prj(project_filename);
+
+		//
+		// Set output file name
+		//
+		std::string output_basename = fs::path(cmd_parser.get<std::string>("output3d")).replace_extension("").string();
+		std::stringstream output_file;
+		output_file << ilp_prj.outputFolder << "/" << output_basename << '_' << query[0] << '_' << query[1] << ".ply";
+		const std::string output_filename = output_file.str();
+
+		
+		std::vector<uint32_t> triangles;
+		vector_read(ilp_prj.trianglesFile, triangles);
+
+		write_ply_file(
+			output_filename,
+			std::vector<float>(q, q + Imp_QRows() * Imp_QCols()),
+			triangles);
+	}
 	std::cout << std::endl;
 
 	return EXIT_SUCCESS;

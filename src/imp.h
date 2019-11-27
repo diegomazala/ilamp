@@ -8,6 +8,7 @@
 #include <algorithm>
 #include <vector>
 #include <Eigen/Dense>
+#include "imp_project.h"
 #include "lamp.h"
 #include "vector_read_write_binary.h"
 
@@ -16,6 +17,8 @@ template <typename Type>
 class Imp
 {
 public:
+
+	imp_project project;
 	
 	Type min_x = FLT_MAX;
 	Type max_x = FLT_MIN;
@@ -37,16 +40,16 @@ public:
 
 	virtual bool load_project(const std::string& project_filename, bool compute_lamp)
 	{
-		imp_project ilp_prj(project_filename);
+		project = {project_filename};
 
 		//
 		// Import Nd file
 		// 
-		verts_Nd.resize(ilp_prj.inputFiles.size());
-		for (auto i = 0; i < ilp_prj.inputFiles.size(); ++i)
+		verts_Nd.resize(project.inputFiles.size());
+		for (auto i = 0; i < project.inputFiles.size(); ++i)
 		{
 			std::vector<Type> verts;
-			if (vector_read<Type>(ilp_prj.inputFiles[i], verts))
+			if (vector_read<Type>(project.inputFiles[i], verts))
 				verts_Nd[i] = Eigen::Map<Eigen::Matrix<float, 1, Eigen::Dynamic>>(verts.data(), 1, verts.size());
 		}
 
@@ -56,14 +59,14 @@ public:
 		//
 		if (compute_lamp)
 		{
-			run_lamp(ilp_prj.filename2d);
-			std::cerr << "<Info>  Lamp file saved: " << ilp_prj.filename2d << std::endl;
+			run_lamp(project.filename2d);
+			std::cerr << "<Info>  Lamp file saved: " << project.filename2d << std::endl;
 		}
 
 		//
 		// Import 2d file
 		// 
-		if (!load_data_2d(ilp_prj.filename2d))
+		if (!load_data_2d(project.filename2d))
 			return false;
 
 

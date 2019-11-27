@@ -21,6 +21,16 @@ static std::unique_ptr<Lamp<float>> lamp_ptr;
 
 static cv::Mat backProjectedImage;
 
+DllExport void* Imp_GetVertices2d(int index)
+{
+	return imp_ptr->verts_2d.at(index).data();
+}
+
+DllExport void* Imp_GetVerticesNd(int index)
+{
+	return imp_ptr->verts_Nd.at(index).data();
+}
+
 DllExport void Imp_SetCurrent(int index)
 {
 	current_imp_index = index % imp_array.size();
@@ -67,12 +77,12 @@ DllExport void Imp_Create_Rbf()
 
 DllExport bool Imp_LoadProject(const char* project_filename, bool compute_lamp)
 {
-	if (!imp_ptr)
+	if (imp_ptr)
 	{
-		imp_ptr->load_project(project_filename, compute_lamp);
+		return imp_ptr->load_project(project_filename, compute_lamp);
 	}
-	
-	return true;
+
+	return false;
 }
 
 

@@ -22,7 +22,7 @@ public:
 
 	virtual void DrawSimpleTriangles(const float worldMatrix[16], int triangleCount, const void* verticesFloat3Byte4);
 
-	virtual void* BeginModifyTexture(void* textureHandle, int textureWidth, int textureHeight, int channels, int* outRowPitch);
+	virtual void* BeginModifyTexture(void* textureHandle, int textureWidth, int textureHeight, int* outRowPitch);
 	virtual void EndModifyTexture(void* textureHandle, int textureWidth, int textureHeight, int rowPitch, void* dataPtr);
 
 	virtual void* BeginModifyVertexBuffer(void* bufferHandle, size_t* outBufferSize);
@@ -243,9 +243,9 @@ void RenderAPI_D3D11::DrawSimpleTriangles(const float worldMatrix[16], int trian
 }
 
 
-void* RenderAPI_D3D11::BeginModifyTexture(void* textureHandle, int textureWidth, int textureHeight, int channels, int* outRowPitch)
+void* RenderAPI_D3D11::BeginModifyTexture(void* textureHandle, int textureWidth, int textureHeight, int* outRowPitch)
 {
-	const int rowPitch = textureWidth * channels;
+	const int rowPitch = textureWidth * 4;
 	// Just allocate a system memory buffer here for simplicity
 	unsigned char* data = new unsigned char[rowPitch * textureHeight];
 	*outRowPitch = rowPitch;

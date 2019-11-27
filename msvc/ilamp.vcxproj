@@ -17,8 +17,8 @@
   <ItemGroup>
     <ClInclude Include="..\src\cmdline.h" />
     <ClInclude Include="..\src\ilamp.h" />
-    <ClInclude Include="..\src\ilamp_project.h" />
     <ClInclude Include="..\src\ilamp_utils.h" />
+    <ClInclude Include="..\src\imp_project.h" />
     <ClInclude Include="..\src\json.hpp" />
     <ClInclude Include="..\src\imp.h" />
     <ClInclude Include="..\src\timer.h" />

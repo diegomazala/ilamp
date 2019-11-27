@@ -21,7 +21,6 @@ struct imp_project
 	std::string outputFolder = "C:/tmp/";
 	std::vector<std::string> inputFiles = { std::string("mod1.vert"), std::string("mod2.vert"), std::string("mod3.vert") };
 	std::string trianglesFile = "Filename.tri";
-	size_t   vertexCount = 22424;
 	uint16_t numNeighbours = 4;
 	uint16_t kdTreeCount = 4;
 	uint16_t knnSearchChecks = 128;
