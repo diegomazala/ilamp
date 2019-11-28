@@ -84,7 +84,7 @@ int main(int argc, char* argv[])
 		//
 		std::string output_basename = fs::path(cmd_parser.get<std::string>("output3d")).replace_extension("").string();
 		std::stringstream output_file;
-		output_file << ilp_prj.outputFolder << "/" << output_basename << '_' << query[0] << '_' << query[1] << ".ply";
+		output_file << ilp_prj.outputFolder << output_basename << '_' << query[0] << '_' << query[1] << ".ply";
 		const std::string output_filename = output_file.str();
 
 		

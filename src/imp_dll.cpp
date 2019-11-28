@@ -2,7 +2,7 @@
 #include "imp_project.h"
 #include "ilamp.h"
 #include "rbf_imp.h"
-#include "pca_image.h"
+
 #include "lamp.h"
 #include <vector>
 #include <fstream>
@@ -16,17 +16,20 @@ static int current_imp_index = 0;
 
 static std::shared_ptr<Imp<float>> imp_ptr;
 static std::unique_ptr<std::ofstream> imp_log;
-static std::unique_ptr<PcaImage> pca_img_ptr;
 static std::unique_ptr<Lamp<float>> lamp_ptr;
 
+#if USE_OPENCV_IMAGES
+#include "pca_image.h"
+static std::unique_ptr<PcaImage> pca_img_ptr;
 static cv::Mat backProjectedImage;
+#endif
 
-DllExport void* Imp_GetVertices2d(int index)
+DllExport void* Imp_GetVertices2d(size_t index)
 {
 	return imp_ptr->verts_2d.at(index).data();
 }
 
-DllExport void* Imp_GetVerticesNd(int index)
+DllExport void* Imp_GetVerticesNd(size_t index)
 {
 	return imp_ptr->verts_Nd.at(index).data();
 }
@@ -215,8 +218,11 @@ DllExport void* Imp_GetQ()
 	}
 	else
 	{
-		//return imp_ptr->q.data();
+#if USE_OPENCV_IMAGES
 		return pca_img_ptr->images[0].data;
+#else
+		return imp_ptr->q.data();
+#endif
 	}
 }
 
@@ -333,7 +339,7 @@ DllExport bool Imp_ExecuteLamp(const char* input_filename_nd, const char* output
 	return true;
 }
 
-
+#if USE_OPENCV_IMAGES
 
 DllExport bool Imp_ExecutePcaImages(const char* input_image_list_file, const char* output_file)
 {
@@ -433,3 +439,5 @@ DllExport cv::Mat& Imp_BackProjectedImage()
 {
 	return backProjectedImage;
 }
+
+#endif
