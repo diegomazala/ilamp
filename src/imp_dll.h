@@ -25,7 +25,7 @@ DllExport void* Imp_GetQ();
 DllExport size_t Imp_QRows();
 DllExport size_t Imp_QCols();
 
-
+DllExport float Imp_Pow(float inValue);
 
 #ifdef __cplusplus
 };

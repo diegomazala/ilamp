@@ -24,6 +24,11 @@ static std::unique_ptr<PcaImage> pca_img_ptr;
 static cv::Mat backProjectedImage;
 #endif
 
+DllExport float Imp_Pow(float inValue)
+{
+	return inValue * inValue;
+}
+
 DllExport void* Imp_GetVertices2d(size_t index)
 {
 	return imp_ptr->verts_2d.at(index).data();

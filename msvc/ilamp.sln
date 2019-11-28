@@ -38,6 +38,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "imp_test", "imp_test.vcxpro
 		{A2EED107-E762-485A-96D0-768B7BB14CCF} = {A2EED107-E762-485A-96D0-768B7BB14CCF}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CreateAndLinkDLLTut", "CreateAndLinkDLLTut.vcxproj", "{627D7B97-7BED-475A-B8FD-647316646450}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -110,6 +112,10 @@ Global
 		{6747B91F-2AD5-4CB9-9882-A91AE9E6F8F4}.Debug|x64.Build.0 = Debug|x64
 		{6747B91F-2AD5-4CB9-9882-A91AE9E6F8F4}.Release|x64.ActiveCfg = Release|x64
 		{6747B91F-2AD5-4CB9-9882-A91AE9E6F8F4}.Release|x64.Build.0 = Release|x64
+		{627D7B97-7BED-475A-B8FD-647316646450}.Debug|x64.ActiveCfg = Debug|x64
+		{627D7B97-7BED-475A-B8FD-647316646450}.Debug|x64.Build.0 = Debug|x64
+		{627D7B97-7BED-475A-B8FD-647316646450}.Release|x64.ActiveCfg = Release|x64
+		{627D7B97-7BED-475A-B8FD-647316646450}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
