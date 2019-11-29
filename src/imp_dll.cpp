@@ -1,6 +1,7 @@
 #include "imp_dll.h"
 #include "imp_project.h"
 #include "ilamp.h"
+#include "ilamp_utils.h"
 #include "rbf_imp.h"
 
 #include "lamp.h"
@@ -446,3 +447,33 @@ DllExport cv::Mat& Imp_BackProjectedImage()
 }
 
 #endif
+
+
+DllExport bool Imp_SavePly(const char* filename, float x, float y)
+{
+	if (!imp_ptr)
+	{
+		(*imp_log) << "Error: <Imp_SavePly> ilamp not initilized" << std::endl;
+		return false;
+	}
+
+	imp_ptr->execute(x, y);
+
+	//
+	// Set output file name
+	//
+	std::string output_basename = fs::path(filename).replace_extension("").string();
+	std::stringstream output_file;
+	output_file << imp_ptr->project.outputFolder << "/" << output_basename << '_' << x << '_' << y << ".ply";
+	const std::string output_filename = output_file.str();
+
+	std::vector<uint32_t> triangles;
+	vector_read(imp_ptr->project.trianglesFile, triangles);
+
+	return 
+		write_ply_file(
+		output_filename,
+		std::vector<float>(&imp_ptr->q[0], imp_ptr->q.data() + imp_ptr->q.cols() * imp_ptr->q.rows()),
+		triangles);
+
+}

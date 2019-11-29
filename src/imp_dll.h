@@ -24,6 +24,7 @@ DllExport void* Imp_GetVerticesNd(size_t index);
 DllExport void* Imp_GetQ();
 DllExport size_t Imp_QRows();
 DllExport size_t Imp_QCols();
+DllExport bool Imp_SavePly(const char* filename, float x, float y);
 
 DllExport float Imp_Pow(float inValue);
 

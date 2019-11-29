@@ -15,15 +15,18 @@
     <ClInclude Include="..\src\imp.h" />
     <ClInclude Include="..\src\imp_dll.h" />
     <ClInclude Include="..\src\rbf_imp.h" />
+    <ClInclude Include="..\src\tinyply.h" />
     <ClInclude Include="..\src\Unity\IUnityGraphics.h" />
     <ClInclude Include="..\src\Unity\IUnityGraphicsD3D11.h" />
     <ClInclude Include="..\src\Unity\IUnityGraphicsD3D12.h" />
     <ClInclude Include="..\src\Unity\IUnityInterface.h" />
     <ClInclude Include="..\src\Unity\PlatformBase.h" />
     <ClInclude Include="..\src\Unity\RenderAPI.h" />
+    <ClInclude Include="..\src\vector_read_write_binary.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\src\imp_dll.cpp" />
+    <ClCompile Include="..\src\tinyply.cpp" />
     <ClCompile Include="..\src\Unity\RenderAPI.cpp" />
     <ClCompile Include="..\src\Unity\RenderAPI_D3D11.cpp" />
     <ClCompile Include="..\src\Unity\RenderAPI_D3D12.cpp" />
