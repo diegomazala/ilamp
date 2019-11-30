@@ -19,6 +19,7 @@ DllExport void Imp_Create_ILamp();
 DllExport bool Imp_LoadProject(const char* filename, bool compute_lamp);
 DllExport bool Imp_Build();
 DllExport bool Imp_Execute(float x, float y);
+DllExport bool Imp_CopyVertices(float* out_verts);
 DllExport void* Imp_GetVertices2d(size_t index);
 DllExport void* Imp_GetVerticesNd(size_t index);
 DllExport void* Imp_GetQ();

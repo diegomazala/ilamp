@@ -195,6 +195,21 @@ DllExport bool Imp_Execute(float x, float y)
 	}
 }
 
+
+DllExport bool Imp_CopyVertices(float* out_verts)
+{
+	if (!imp_ptr)
+	{
+		(*imp_log) << "Error: <Imp_CopyVertices> ilamp not initilized" << std::endl;
+		return false;
+	}
+
+	std::memcpy(out_verts, imp_ptr->q.data(), imp_ptr->q.cols() * imp_ptr->q.rows() * sizeof(float));
+
+	return true;
+}
+
+
 DllExport size_t Imp_QRows()
 {
 	if (!imp_ptr)
@@ -447,7 +462,6 @@ DllExport cv::Mat& Imp_BackProjectedImage()
 }
 
 #endif
-
 
 DllExport bool Imp_SavePly(const char* filename, float x, float y)
 {
