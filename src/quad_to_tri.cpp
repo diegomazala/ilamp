@@ -65,20 +65,26 @@ int main(int argc, char* argv[])
 				vector_read(it->path().string(), quads);
 				std::vector<uint32_t> tris;
 				convert_quad_to_tri(quads, tris, invert_face);
-				auto out_filename = it->path();
-				vector_write(out_filename.replace_extension(".tri").string(), tris);
+				auto out_filename = it->path(); 
+				out_filename.replace_extension(".tri");
+				vector_write(out_filename.string(), tris);
+				std::cout << "File saved: " << out_filename.string() << std::endl;
 			}
 		}
 	}
 	else
 	{
+		output_path.replace_extension(".tri");
 		std::vector<uint32_t> quads;
 		vector_read(input_path.string(), quads);
 		std::vector<uint32_t> tris;
 		convert_quad_to_tri(quads, tris, invert_face);
-		vector_write(output_path.replace_extension(".tri").string(), tris);
+		vector_write(output_path.string(), tris);
+
+		std::cout << "File saved: " << output_path.string() << std::endl;
 	}
 
+	
 
 	return EXIT_SUCCESS;
 
