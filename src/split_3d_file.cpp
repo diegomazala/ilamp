@@ -35,6 +35,47 @@ void join_files(const std::string& vert_file, const std::string& face_file)
 }
 
 
+void split_obj(tinyobj::scene_t& scene)
+{
+	auto max_size = max(scene.attrib.vertices.size() / 3, scene.attrib.texcoords.size() / 2);
+
+	std::vector<tinyobj::real_t> vertices, texcoords, normals;
+	vertices.reserve(max_size * 3);
+	normals.reserve(max_size * 3);
+	texcoords.reserve(max_size * 2);
+	
+	std::vector<uint32_t> indices;
+
+	for (auto& shape : scene.shapes)
+	{
+		for (const auto& idx : shape.mesh.indices)
+		{
+			vertices.push_back(scene.attrib.vertices[idx.vertex_index * 3 + 0]);
+			vertices.push_back(scene.attrib.vertices[idx.vertex_index * 3 + 1]);
+			vertices.push_back(scene.attrib.vertices[idx.vertex_index * 3 + 2]);
+
+			normals.push_back(scene.attrib.normals[idx.normal_index * 3 + 0]);
+			normals.push_back(scene.attrib.normals[idx.normal_index * 3 + 1]);
+			normals.push_back(scene.attrib.normals[idx.normal_index * 3 + 2]);
+
+			texcoords.push_back(scene.attrib.texcoords[idx.texcoord_index * 2 + 0]);
+			texcoords.push_back(scene.attrib.texcoords[idx.texcoord_index * 2 + 1]);
+
+			indices.push_back(indices.size());
+		}
+	}
+
+	std::cout
+		<< "File Info: " << std::endl
+		<< '\t' << vertices.size() / 3 << " vertices\n"
+		<< '\t' << normals.size() / 3 << " normals\n"
+		<< '\t' << texcoords.size() / 2 << " texcoords\n"
+		<< '\t' << indices.size() << " indices\n";
+
+}
+
+
+
 int split_file(const fs::path& input_filename, const fs::path output_dir)
 {
 	const std::string file_extension = fs::path(input_filename).extension().string();
@@ -87,42 +128,62 @@ int split_file(const fs::path& input_filename, const fs::path output_dir)
 		if (tinyobj::load(obj_load, input_filename.string()))
 		{
 #if 1
-			tinyobj::scene_t& obj_geo = obj_load;
+			tinyobj::scene_t& scene = obj_load;
 #else
-			tinyobj::scene_t obj_geo = obj_load;
-			tinyobj::garbage_collect(obj_geo, obj_load);
+			tinyobj::scene_t scene = obj_load;
+			tinyobj::garbage_collect(scene, obj_load);
 #endif
-			std::cout
-				<< "File Info: " << std::endl
-				<< '\t' << obj_geo.attrib.vertices.size()/3 << " vertices\n"
-				<< '\t' << obj_geo.attrib.normals.size()/3 << " normals\n"
-				<< '\t' << obj_geo.attrib.texcoords.size()/2 << " texcoords\n"
-				<< '\t' << obj_geo.shapes.size() << " shapes\n";
+			auto max_size = max(scene.attrib.vertices.size() / 3, scene.attrib.texcoords.size() / 2);
 
-			auto out_filename = output_dir / input_filename.stem();
-			vector_write(out_filename.replace_extension(".vert").string(), obj_geo.attrib.vertices);
-			if (obj_geo.attrib.normals.size() > 0)
-				vector_write(out_filename.replace_extension(".nor").string(), obj_geo.attrib.normals);
-			if (obj_geo.attrib.texcoords.size() > 0)
-				vector_write(out_filename.replace_extension(".uv").string(), obj_geo.attrib.texcoords);
+			std::vector<tinyobj::real_t> vertices, texcoords, normals;
+			vertices.reserve(max_size * 3);
+			normals.reserve(max_size * 3);
+			texcoords.reserve(max_size * 2);
 
-			if (!obj_geo.shapes.empty())
+			std::vector<uint32_t> indices;
+
+			for (auto& shape : scene.shapes)
 			{
-				for (const auto& shape : obj_geo.shapes)
+				for (const auto& idx : shape.mesh.indices)
 				{
-					auto vert_per_face = (uint8_t)shape.mesh.num_face_vertices[0];
-					std::string extension = ((vert_per_face == 3) ? (".tri") : (".quad"));
+					vertices.push_back(scene.attrib.vertices[idx.vertex_index * 3 + 0]);
+					vertices.push_back(scene.attrib.vertices[idx.vertex_index * 3 + 1]);
+					vertices.push_back(scene.attrib.vertices[idx.vertex_index * 3 + 2]);
 
-					std::vector<uint32_t> indices(shape.mesh.indices.size());
-					for (auto i = 0; i < indices.size(); ++i)
+					if (scene.attrib.normals.size() > 0)
 					{
-						indices[i] = shape.mesh.indices[i].vertex_index;
+						normals.push_back(scene.attrib.normals[idx.normal_index * 3 + 0]);
+						normals.push_back(scene.attrib.normals[idx.normal_index * 3 + 1]);
+						normals.push_back(scene.attrib.normals[idx.normal_index * 3 + 2]);
 					}
-					vector_write(out_filename.replace_extension(extension).string(), indices);
-					std::cout << '\t' << indices.size() << ' ' << extension << '\n';
+
+					if (scene.attrib.texcoords.size() > 0)
+					{
+						texcoords.push_back(scene.attrib.texcoords[idx.texcoord_index * 2 + 0]);
+						texcoords.push_back(scene.attrib.texcoords[idx.texcoord_index * 2 + 1]);
+					}
+
+					indices.push_back(indices.size());
 				}
 			}
-			
+
+			std::cout
+				<< "File Info: " << std::endl
+				<< '\t' << vertices.size() / 3 << " vertices\n"
+				<< '\t' << normals.size() / 3 << " normals\n"
+				<< '\t' << texcoords.size() / 2 << " texcoords\n"
+				<< '\t' << indices.size() << " indices\n";
+
+			auto out_filename = output_dir / input_filename.stem();
+			vector_write(out_filename.replace_extension(".vert").string(), vertices);
+			if (normals.size() > 0)
+				vector_write(out_filename.replace_extension(".nor").string(), normals);
+			if (texcoords.size() > 0)
+				vector_write(out_filename.replace_extension(".uv").string(), texcoords);
+
+			auto vert_per_face = (uint8_t)scene.shapes[0].mesh.num_face_vertices[0];
+			std::string extension = ((vert_per_face == 3) ? (".tri") : (".quad"));
+			vector_write(out_filename.replace_extension(extension).string(), indices);
 		}
 		else
 		{
@@ -136,6 +197,7 @@ int split_file(const fs::path& input_filename, const fs::path output_dir)
 		return EXIT_FAILURE;
 	}
 
+	return EXIT_SUCCESS;
 }
 
 
